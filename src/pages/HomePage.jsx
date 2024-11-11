@@ -2,7 +2,9 @@ import {
   View, 
   Text, 
   StyleSheet,
-  Image
+  Image,
+  TouchableOpacity,
+  FlatList
 } from 'react-native'
 import React from 'react'
 //constants
@@ -12,11 +14,55 @@ import { iconSizes, textSizes } from '../constants/demensions'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import UserAvatar from '../../assets/img/user_avatar.png'
+import GenreCard from '../components/GenreCard'
 
 const HomePage = () => {
   const tempUserData = {
     userName: 'Coichung2hondaicuamay'
   }
+
+  const playListData = [
+    {
+      id: 1,
+      playlistUrl: require('../../assets/img/temp_playlist_pic.jpg'),
+      playlistName: 'Strong Music'
+    },
+    {
+      id: 2,
+      playlistUrl: require('../../assets/img/temp_playlist_pic.jpg'),
+      playlistName: 'EDM Music'
+    },
+    {
+      id: 3,
+      playlistUrl: require('../../assets/img/temp_playlist_pic.jpg'),
+      playlistName: 'listen while working'
+    },
+    {
+      id: 4,
+      playlistUrl: require('../../assets/img/temp_playlist_pic.jpg'),
+      playlistName: 'sad music'
+    },
+    {
+      id: 5,
+      playlistUrl: require('../../assets/img/temp_playlist_pic.jpg'),
+      playlistName: 'best of the bestttttttttttttttttttttttttttttttttttttttt'
+    }
+  ]
+
+  const genreData = {
+    genreName: 'EDM',
+    genreUrl: require('../../assets/img/temp_playlist_pic.jpg')
+  }
+
+  const renderItem = ({item}) => (
+    <TouchableOpacity style={styles.itemContainer}>
+      <Image 
+        source={item.playlistUrl}
+        style={styles.playlistImg}
+      />
+      <Text style={styles.playlistName}>{item.playlistName}</Text>
+    </TouchableOpacity>
+  )
 
   return (
     <View style={styles.container}>
@@ -53,7 +99,21 @@ const HomePage = () => {
 
         </View>
       </View>
-      <Text style={{ color: 'white' }}>HomePage</Text>
+
+      <View style={styles.playListContainer}>
+        <Text style={styles.playListTxt}>From your Library</Text>
+        <FlatList
+          data={playListData}
+          renderItem={renderItem}
+          keyExtractor={item => item.id}
+          horizontal= {true}
+          ItemSeparatorComponent={
+            <View style={{marginHorizontal: 10}} />
+          }
+        />
+      </View>
+
+      <GenreCard genreName={genreData.genreName} genreUrl={genreData.genreUrl} />
     </View>
   )
 }
@@ -65,7 +125,6 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     flexDirection: 'row',
-    // backgroundColor: '#ccc',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 10,
@@ -95,6 +154,28 @@ const styles = StyleSheet.create({
   userOptionsContainer: {
     flexDirection: 'row',
     gap: 10
+  },
+  playListContainer: {
+    paddingHorizontal: 10
+  },
+  playListTxt: {
+    fontSize: textSizes.sm,
+    color: colors.textPrimary,
+    fontWeight: '600',
+    marginVertical: 15
+  },
+  //Item style
+  itemContainer: {
+    
+  },
+  playlistImg: {
+    height: 150,
+    width: 150,
+    borderRadius: 10
+  },
+  playlistName: {
+    width: 150,
+    color: colors.textPrimary
   }
 })
 
