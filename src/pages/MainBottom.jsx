@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import HomePage from './HomePage';
 import ExplorePage from './ExplorePage';
 import Library from './Library';
+import AudioList from './AudioList';
 //contanst
 import {colors} from '../constants/color'
 //icons
@@ -66,6 +67,13 @@ const MainBottom = () => {
         component={Library}
         options={{
           title: 'Library'
+        }}
+      />
+      <Tab.Screen
+        name='AudioList'
+        component={AudioList}
+        options={{
+          title: 'AudioList'
         }}
       />
     </Tab.Navigator>
