@@ -16,6 +16,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import UserAvatar from '../../assets/img/user_avatar.png'
 import GenreCard from '../components/GenreCard'
+import SongCard from '../components/SongCard'
 
 const HomePage = () => {
   const tempUserData = {
@@ -172,7 +173,7 @@ const HomePage = () => {
     </TouchableOpacity>
   )
 
-  // Function to group music data into chunks of 4
+  // Function to group music data into pack of 4
   const packData = (data, packSize) => {
     const result = [];
     for (let i = 0; i < data.length; i += packSize) {
@@ -182,29 +183,6 @@ const HomePage = () => {
   };
   const packMusic = packData(musicData, 4);
 
-  const SongItem = ({ song }) => (
-    <TouchableOpacity style={styles.songContainer}>
-      <View style={styles.extraContainer}>
-        <Image source={song.musicURL} style={styles.songImg} />
-        <View style={styles.songTxtContainer}>
-          <Text
-            numberOfLines={1}
-            ellipsizeMode='tail'
-            style={styles.songName}
-          >{song.musicName}</Text>
-          <Text
-            numberOfLines={1}
-            ellipsizeMode='tail'
-            style={styles.songAuthor}>{song.musicAuthor}</Text>
-        </View>
-      </View>
-      <MaterialCommunityIcons
-        name='dots-vertical'
-        size={iconSizes.md}
-        color={colors.iconPrimary}
-      />
-    </TouchableOpacity>
-  )
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -278,7 +256,7 @@ const HomePage = () => {
             renderItem={({ item }) => (
               <View style={styles.rowSong}>
                 {item.map(song => (
-                  <SongItem key={song.id} song={song} />
+                  <SongCard key={song.id} musicName={song.musicName} musicURL={song.musicURL} musicAuthor={song.musicAuthor}/>
                 ))}
               </View>
             )}
@@ -366,49 +344,12 @@ const styles = StyleSheet.create({
     width: '48%',
     marginBottom: 10
   },
-
-  //Quickpick
   quickpickTxt: {
     fontSize: textSizes.sm,
     color: colors.textPrimary,
     fontWeight: '600',
     marginBottom: 15
   },
-  rowSong: {
-  },
-  songContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 15,
-    marginRight: 15,
-    borderRadius: 10,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    width: 325
-  },
-  extraContainer: {
-    flexDirection: 'row',
-  },
-  songImg: {
-    height: 55,
-    width: 55,
-    borderRadius: 10
-  },
-  songTxtContainer: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    marginLeft: 5,
-    width: 240,
-  },
-  songName: {
-    fontSize: textSizes.xm,
-    color: colors.textPrimary
-  },
-  songAuthor: {
-    fontSize: textSizes.xxm,
-    color: colors.textSecondary
-  }
 })
 
 export default HomePage
