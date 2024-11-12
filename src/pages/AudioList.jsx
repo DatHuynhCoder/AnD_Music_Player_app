@@ -5,9 +5,22 @@ import { AudioContext } from '../context/AudioProvider'
 
 import { RecyclerListView, LayoutProvider } from 'recyclerlistview'
 import AudioListItem from '../components/AudioListItem'
+import OptionModal from '../components/OptionModal'
+import { Audio, Video } from 'expo-av';
 
 export class AudioList extends Component {
   static contextType = AudioContext
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      optionModalVisible: false,
+      playbackObj: null,
+      soundObj: null,
+      currentAudio: {}
+    }
+    this.currentItem = {}
+  }
 
   layoutProvider = new LayoutProvider((i) => 'audio', (type, dim) => {
     switch(type) {
@@ -19,11 +32,57 @@ export class AudioList extends Component {
         dim.width = 0
         dim.height = 0
     }
-    
   })
 
+  handleAudioPress = async (audio) => {
+    // console.log(audio)
+    if(this.state.soundObj === null) { // no audio is playing now
+      const playbackObj = new Audio.Sound()
+      const status = await playbackObj.loadAsync(
+        {uri: audio.uri}, 
+        {shouldPlay: true}
+      )
+      console.log(status)
+      return this.setState({
+        ...this.state,
+        currentAudio: audio,
+        playbackObj: playbackObj,
+        soundObj: status,
+      })
+    }
+    // pause
+    if(this.state.soundObj.isLoaded && this.state.soundObj.isPlaying) { 
+      const status = await this.state.playbackObj.setStatusAsync({shouldPlay: false})
+      console.log(status)
+      return this.setState({
+        ...this.state,
+        soundObj: status
+      })
+    }
+
+    //resume audio
+    if(this.state.soundObj.isLoaded && !this.state.soundObj.isPlaying && this.state.currentAudio.id === audio.id) {
+      const status = await this.state.playbackObj.playAsync()
+      return this.setState({
+        ...this.state,
+        soundObj: status
+      })
+    }
+  }
+
   rowRenderer = (type, item) => {
-    return <AudioListItem title={item.filename} duration={item.duration}></AudioListItem>
+    return (
+      <AudioListItem 
+        title={item.filename} 
+        duration={item.duration}
+        onOptionPress={() => {
+          this.currentItem = item
+          this.setState({...this.state, optionModalVisible: true})
+        }}
+        onAudioPress={() => this.handleAudioPress(item)}
+      >
+      </AudioListItem>
+    )
   }
 
   render() {
@@ -31,7 +90,21 @@ export class AudioList extends Component {
       <AudioContext.Consumer>
         {({dataProvider}) => {
           return <View style={{flex: 1}}>
-            <RecyclerListView dataProvider={dataProvider} layoutProvider={this.layoutProvider} rowRenderer={this.rowRenderer}></RecyclerListView>
+            <RecyclerListView 
+              dataProvider={dataProvider} 
+              layoutProvider={this.layoutProvider} 
+              rowRenderer={this.rowRenderer}
+            >
+            </RecyclerListView>
+            <OptionModal 
+              currentItem={this.currentItem}
+              visible={this.state.optionModalVisible}
+              onClose={() => {
+                this.setState({...this.state, optionModalVisible: false})
+              }}
+              onPlayPress={() => console.log('Playing')}
+              onPlayListPress={() => console.log('Playlist')}
+            ></OptionModal>
           </View>
         }}
       </AudioContext.Consumer>
