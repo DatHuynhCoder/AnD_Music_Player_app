@@ -42,6 +42,13 @@ export class AudioList extends Component {
         {uri: audio.uri}, 
         {shouldPlay: true}
       )
+      // const soundObject = new Audio.Sound();
+      // try {
+      //   await soundObject.loadAsync({ uri: 'http://192.168.137.1:3177/music/ThuyenQuyen.mp3' });
+      //   await soundObject.playAsync(); // Phát nhạc
+      // } catch (error) {
+      //   console.log(error);
+      // }
       console.log(status)
       return this.setState({
         ...this.state,
