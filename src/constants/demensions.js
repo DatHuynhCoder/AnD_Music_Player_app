@@ -3,7 +3,8 @@ export const iconSizes = {
   md: 24,
   lg: 32,
   xl: 40,
-  xxl: 48
+  xxl: 48,
+  super: 80,
 }
 
 export const textSizes= {
