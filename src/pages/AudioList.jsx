@@ -23,20 +23,18 @@ export class AudioList extends Component {
   })
 
   rowRenderer = (type, item) => {
-    return <Text>
-      {item.filename}
-    </Text>
+    return <AudioListItem title={item.filename} duration={item.duration}></AudioListItem>
   }
 
   render() {
     return (
-      // <AudioContext.Consumer>
-      //   {({dataProvider}) => {
-      //     return <View style={{flex: 1}}>
-      //       <RecyclerListView dataProvider={dataProvider} layoutProvider={this.layoutProvider} rowRenderer={this.rowRenderer}></RecyclerListView>
-      //     </View>
-      //   }}
-      // </AudioContext.Consumer>
+      <AudioContext.Consumer>
+        {({dataProvider}) => {
+          return <View style={{flex: 1}}>
+            <RecyclerListView dataProvider={dataProvider} layoutProvider={this.layoutProvider} rowRenderer={this.rowRenderer}></RecyclerListView>
+          </View>
+        }}
+      </AudioContext.Consumer>
       // <ScrollView>
       //   {
       //     this.context.audioFiles.map(item => (
@@ -44,9 +42,6 @@ export class AudioList extends Component {
       //     ))
       //   }
       // </ScrollView>
-      <View style={{marginTop: 50}}>
-        <AudioListItem/>
-      </View>
     )
   }
 }
