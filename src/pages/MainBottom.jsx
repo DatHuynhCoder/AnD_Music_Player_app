@@ -5,7 +5,7 @@ import ExplorePage from './ExplorePage';
 import Library from './Library';
 import AudioList from './AudioList';
 //contanst
-import {colors} from '../constants/color'
+import { colors } from '../constants/color'
 //icons
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -22,7 +22,8 @@ const MainBottom = () => {
           tabBarInactiveTintColor: 'white',
           tabBarHideOnKeyboard: true,
           tabBarStyle: {
-            backgroundColor: colors.background
+            backgroundColor: colors.background,
+            borderTopWidth: 0, // Removes any border on top
           },
           tabBarIcon: ({ focused, color, size }) => {
             let iconName
