@@ -28,15 +28,16 @@ const Login = ({ navigation }) => {
         </View>
       </View>
       <Text style={styles.or}>
-        or
+        ___________ or ___________
       </Text>
       <TouchableOpacity 
-        onPress={() => navigation.navigate('MainBottom')}
+        onPress={() => navigation.navigate('LoginAccount')}
         activeOpacity={0.1}
         style={{marginTop: 30, marginBottom: 30}}
       >
         <View style={styles.btn}>
-          <Text style={{color: colors.textPrimary}}>To Home page</Text>
+          <Text style={{color: colors.textPrimary}}>Log in with a password  
+          </Text>
         </View>
       </TouchableOpacity>
       <Text style={{color: colors.textPrimary}}>
@@ -55,29 +56,32 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.background,
     flex: 1,
-    alignItems: 'center'
+    alignItems: 'center',
+    paddingTop: 150
   },
   appLogo: {
     height: 150,
     width: 150,
-    borderRadius: 30
+    borderRadius: 30,
+    marginBottom: 50
   },
   appTxt: {
     fontSize: 47,
     fontWeight: '1',
-    color: colors.textPrimary
+    color: colors.textPrimary,
+    marginBottom: 50
   },
   googleLogin: {
     display: 'flex',
     flexDirection: 'row',
     height: 50,
     width: 330,
-    backgroundColor: '#141414',
+    backgroundColor: '#242323',
     justifyContent: 'center',
     alignItems: 'center',
     paddingTop: 10,
     paddingBottom: 10,
-    borderColor: '#1c1c1c',
+    borderColor: '#3b3a3a',
     borderWidth: 1,
     borderRadius: 10,
     marginTop: 10,
@@ -89,7 +93,9 @@ const styles = StyleSheet.create({
   },
   or: {
     color: colors.textPrimary,
-    fontSize: textSizes.xm
+    fontSize: textSizes.xm,
+    marginTop: 20,
+    marginBottom: 20
   },
   btn: {
     justifyContent: 'center',
@@ -97,10 +103,10 @@ const styles = StyleSheet.create({
     height:50, 
     width: 330,
     borderWidth:0, 
-    borderRadius:10,
+    borderRadius:50,
     shadowColor: colors.emphasis,
     shadowRadius: 5,
-    elevation: 19,
+    elevation: 3,
   }
 })
 export default Login;
