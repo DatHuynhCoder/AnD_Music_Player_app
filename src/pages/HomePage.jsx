@@ -1,6 +1,6 @@
-import { 
-  View, 
-  Text, 
+import {
+  View,
+  Text,
   StyleSheet,
   Image,
   TouchableOpacity,
@@ -49,14 +49,41 @@ const HomePage = () => {
     }
   ]
 
-  const genreData = {
-    genreName: 'EDM',
-    genreUrl: require('../../assets/img/temp_playlist_pic.jpg')
-  }
-
-  const renderItem = ({item}) => (
+  const genreData = [
+    {
+      id: 1,
+      genreName: 'EDM',
+      genreUrl: require('../../assets/img/temp_playlist_pic.jpg')
+    },
+    {
+      id: 2,
+      genreName: 'Anime OSTs',
+      genreUrl: require('../../assets/img/temp_playlist_pic.jpg')
+    },
+    {
+      id: 3,
+      genreName: 'Morning',
+      genreUrl: require('../../assets/img/temp_playlist_pic.jpg')
+    },
+    {
+      id: 4,
+      genreName: 'Courage',
+      genreUrl: require('../../assets/img/temp_playlist_pic.jpg')
+    },
+    {
+      id: 5,
+      genreName: 'Lofi beats',
+      genreUrl: require('../../assets/img/temp_playlist_pic.jpg')
+    },
+    {
+      id: 6,
+      genreName: 'Classical',
+      genreUrl: require('../../assets/img/temp_playlist_pic.jpg')
+    },
+  ]
+  const renderItem = ({ item }) => (
     <TouchableOpacity style={styles.itemContainer}>
-      <Image 
+      <Image
         source={item.playlistUrl}
         style={styles.playlistImg}
       />
@@ -68,7 +95,7 @@ const HomePage = () => {
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <View style={styles.welcomeUserContainer}>
-          <Image 
+          <Image
             source={UserAvatar}
             style={styles.userAvatar}
           />
@@ -106,14 +133,23 @@ const HomePage = () => {
           data={playListData}
           renderItem={renderItem}
           keyExtractor={item => item.id}
-          horizontal= {true}
+          horizontal={true}
           ItemSeparatorComponent={
-            <View style={{marginHorizontal: 10}} />
+            <View style={{ marginHorizontal: 10 }} />
           }
         />
       </View>
 
-      <GenreCard genreName={genreData.genreName} genreUrl={genreData.genreUrl} />
+      <View>
+        <Text style={styles.genreTxt}>Genres you may love</Text>
+        <View style={styles.genreCardContainer}>
+          {genreData.map((item, index) => (
+            <View style={styles.cardWrapper} key={item.id}>
+              <GenreCard genreName={item.genreName} genreUrl={item.genreUrl} />
+            </View>
+          ))}
+        </View>
+      </View>
     </View>
   )
 }
@@ -122,19 +158,19 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.background,
     flex: 1,
+    paddingHorizontal: 10
   },
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 10,
     paddingVertical: 5
   },
   welcomeUserContainer: {
     flexDirection: 'row',
     gap: 10
   },
-  userContainer:{
+  userContainer: {
     flexDirection: 'column',
   },
   welcometxt: {
@@ -146,7 +182,7 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     fontSize: textSizes.xxm
   },
-  userAvatar:{
+  userAvatar: {
     height: iconSizes.xl,
     width: iconSizes.xl,
     borderRadius: 24
@@ -156,7 +192,7 @@ const styles = StyleSheet.create({
     gap: 10
   },
   playListContainer: {
-    paddingHorizontal: 10
+    // paddingHorizontal: 10
   },
   playListTxt: {
     fontSize: textSizes.sm,
@@ -166,7 +202,7 @@ const styles = StyleSheet.create({
   },
   //Item style
   itemContainer: {
-    
+
   },
   playlistImg: {
     height: 150,
@@ -176,6 +212,22 @@ const styles = StyleSheet.create({
   playlistName: {
     width: 150,
     color: colors.textPrimary
+  },
+  //end PlaylistItem
+  genreTxt:{
+    fontSize: textSizes.sm,
+    color: colors.textPrimary,
+    fontWeight: '600',
+  },
+  genreCardContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    padding: 10,
+  },
+  cardWrapper: {
+    width: '48%',
+    marginBottom: 10
   }
 })
 
