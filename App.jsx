@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import LaunchScreen from './src/pages/LaunchScreen';
 import Login from './src/pages/Login';
+import LoginAccount from './src/pages/LoginAccount';
 import Signup from './src/pages/Signup';
 import MainBottom from './src/pages/MainBottom';
 
@@ -25,6 +26,12 @@ const App = () => {
           <Stack.Screen 
             name='Login'
             component={Login}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen 
+            name='LoginAccount'
+            component={LoginAccount}
+            options={{headerShown: false}}
           />
           <Stack.Screen 
             name='Signup'
