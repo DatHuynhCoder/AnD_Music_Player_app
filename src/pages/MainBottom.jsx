@@ -72,7 +72,8 @@ const MainBottom = () => {
         name='AudioList'
         component={AudioList}
         options={{
-          title: 'AudioList'
+          title: 'AudioList',
+          headerShown: false
         }}
       />
     </Tab.Navigator>
