@@ -4,6 +4,7 @@ import React, { Component } from 'react'
 import { AudioContext } from '../context/AudioProvider'
 
 import { RecyclerListView, LayoutProvider } from 'recyclerlistview'
+import AudioListItem from '../components/AudioListItem'
 
 export class AudioList extends Component {
   static contextType = AudioContext
@@ -29,13 +30,13 @@ export class AudioList extends Component {
 
   render() {
     return (
-      <AudioContext.Consumer>
-        {({dataProvider}) => {
-          return <View style={{flex: 1}}>
-            <RecyclerListView dataProvider={dataProvider} layoutProvider={this.layoutProvider} rowRenderer={this.rowRenderer}></RecyclerListView>
-          </View>
-        }}
-      </AudioContext.Consumer>
+      // <AudioContext.Consumer>
+      //   {({dataProvider}) => {
+      //     return <View style={{flex: 1}}>
+      //       <RecyclerListView dataProvider={dataProvider} layoutProvider={this.layoutProvider} rowRenderer={this.rowRenderer}></RecyclerListView>
+      //     </View>
+      //   }}
+      // </AudioContext.Consumer>
       // <ScrollView>
       //   {
       //     this.context.audioFiles.map(item => (
@@ -43,6 +44,9 @@ export class AudioList extends Component {
       //     ))
       //   }
       // </ScrollView>
+      <View style={{marginTop: 50}}>
+        <AudioListItem/>
+      </View>
     )
   }
 }
