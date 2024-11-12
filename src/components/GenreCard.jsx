@@ -1,16 +1,20 @@
 import { View, Text, StyleSheet, Image } from 'react-native'
 import React from 'react'
-import {colors} from '../constants/color'
-import {textSizes} from '../constants/demensions'
+import { colors } from '../constants/color'
+import { textSizes } from '../constants/demensions'
 
-const GenreCard = ({genreName,genreUrl}) => {
+const GenreCard = ({ genreName, genreUrl }) => {
   return (
     <View style={styles.container}>
       <Image
         source={genreUrl}
         style={styles.genreImg}
       />
-      <Text style={styles.genreTxt}>{genreName}</Text>
+      <Text
+        numberOfLines={1}
+        ellipsizeMode='tail'
+        style={styles.genreTxt}
+      >{genreName}</Text>
     </View>
   )
 }

@@ -46,7 +46,6 @@ const MainBottom = () => {
           }
         }
       )}
-
     >
       <Tab.Screen
         name='HomePage'
