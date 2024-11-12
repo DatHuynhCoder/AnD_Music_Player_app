@@ -158,5 +158,8 @@ const styles = StyleSheet.create({
   authorSongsContainer: {
     backgroundColor: '#403e3e',
     borderRadius: 15
+  },
+  cardWrapper: {
+    margin: 5
   }
 })
