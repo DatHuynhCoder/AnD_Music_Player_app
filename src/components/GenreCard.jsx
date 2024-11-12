@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, Image } from 'react-native'
 import React from 'react'
-import colors from '../constants/color'
-import textSizes from  '../constants/demensions'
+import {colors} from '../constants/color'
+import {textSizes} from '../constants/demensions'
 
 const GenreCard = ({genreName,genreUrl}) => {
   return (
@@ -20,15 +20,19 @@ styles = StyleSheet.create({
     flexDirection: 'row',
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 10
+    borderRadius: 10,
   },
   genreImg: {
-    height: 40,
-    width: 40,
+    height: 55,
+    width: 55,
     borderRadius: 10
   },
-  genreName: {
-
+  genreTxt: {
+    fontSize: textSizes.xm,
+    color: colors.textPrimary,
+    alignSelf: 'center',
+    fontWeight: '600',
+    paddingLeft: 10
   }
 })
 
