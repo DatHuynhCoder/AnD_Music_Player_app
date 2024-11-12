@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Dimensions } from 'react-native'
+import { View, Text, StyleSheet, Dimensions,TouchableWithoutFeedback } from 'react-native'
 import React from 'react'
 import Entypo from '@expo/vector-icons/Entypo';
 import { colors, misc_colors } from '../constants/color';
@@ -28,23 +28,36 @@ const convertTime = minutes => {
   }
 }
 
-const AudioListItem = ({title, duration}) => {
+const AudioListItem = ({
+  title, 
+  duration, 
+  onOptionPress, 
+  onAudioPress
+}) => {
   return (
     <>
       <View style={styles.container}>
-        <View style={styles.leftContainer}>
-          <View style={styles.thumbnail}>
-            <Text style={styles.thumbnailText}>{getThumbnailText(title)}</Text>
+        <TouchableWithoutFeedback onPress={() => onAudioPress()}>
+          <View style={styles.leftContainer}>
+            <View style={styles.thumbnail}>
+              <Text style={styles.thumbnailText}>{getThumbnailText(title)}</Text>
+            </View>
+            <View style={styles.titleContainer}>
+              <Text numberOfLines={1} style={styles.title}>{title}</Text>
+              <Text style={styles.timeText}>
+                {convertTime(duration)}
+              </Text>
+            </View>
           </View>
-          <View style={styles.titleContainer}>
-            <Text numberOfLines={1} style={styles.title}>{title}</Text>
-            <Text style={styles.timeText}>
-              {convertTime(duration)}
-            </Text>
-          </View>
-        </View>
+        </TouchableWithoutFeedback>
         <View style={styles.rightContainer}>
-          <Entypo name="dots-three-vertical" size={20} color={misc_colors.FONT_MEDIUM}/>
+          <Entypo 
+            name="dots-three-vertical" 
+            size={20} 
+            color={misc_colors.FONT_MEDIUM}
+            onPress={() => onOptionPress()}
+            style={{padding: 10}}
+          />
         </View>
       </View>
       <View style={styles.separator}></View>
@@ -68,7 +81,7 @@ const styles = StyleSheet.create({
     flexBasis: 50,
     height: 50,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   thumbnail: {
     height: 50,
