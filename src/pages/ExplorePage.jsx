@@ -10,8 +10,11 @@ import React, { useState } from 'react'
 //constants
 import { colors } from '../constants/color'
 import { textSizes } from '../constants/demensions';
+//components
 import SongCard2 from '../components/SongCard2';
 import AuthorCard from '../components/AuthorCard';
+//icons
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
 const ExplorePage = () => {
   const musicData = [
@@ -165,12 +168,15 @@ const ExplorePage = () => {
 
   return (
     <View style={styles.container}>
-      <TextInput
-        placeholder='Enter songs or artists...'
-        value={searchQuery}
-        style={styles.searchBar}
-        onChangeText={(queryData) => handleSearch(queryData)}
-      />
+      <View style={styles.searchContainer}>
+        <MaterialIcons name="search" size={20} color="#888" style={styles.searchIcon} />
+        <TextInput
+          placeholder='Enter songs or artists...'
+          value={searchQuery}
+          style={styles.searchBar}
+          onChangeText={(queryData) => handleSearch(queryData)}
+        />
+      </View>
 
       {/* Author list */}
       {filteredAuthor.length > 0 && searchQuery !== '' &&
@@ -218,8 +224,20 @@ const ExplorePage = () => {
         />
       }
 
+      {/* Khong tim thay ket qua */}
+      {filteredAuthor.length === 0 && filteredSongs.length === 0 && searchQuery !== '' &&
+        <View style={styles.noResultContainer}>
+          <MaterialIcons
+            name='search-off'
+            color={colors.iconPrimary}
+            size={60}
+          />
+          <Text style={styles.noResultTxt}>No result for <Text style={styles.noResultTxtEnter}>{searchQuery}</Text></Text>
+          <Text style={styles.noResultSubTxt}>Try different keywords</Text>
+        </View>
+      }
+
       {/* Man hinh goi y cua trang */}
-      
 
     </View>
   )
@@ -231,18 +249,43 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10
   },
-  searchBar: {
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#fff',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
     borderRadius: 20,
-    marginVertical: 15
+    paddingHorizontal: 10,
+    marginVertical: 15,
+  },
+  searchIcon: {
+    marginRight: 5,
+  },
+  searchBar: {
+    flex: 1,
+    paddingVertical: 5,
   },
   HeaderTxt: {
     fontSize: textSizes.sm,
     color: colors.textPrimary,
     fontWeight: '600',
     marginVertical: 15
+  },
+  // No result style
+  noResultContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noResultTxt: {
+    color: colors.textPrimary,
+    fontSize: textSizes.sm
+  },
+  noResultTxtEnter: {
+    fontWeight: 'bold'
+  },
+  noResultSubTxt: {
+    color: colors.textSecondary,
+    fontSize: textSizes.xm
   }
 })
 
