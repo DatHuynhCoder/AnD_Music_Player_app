@@ -17,8 +17,11 @@ export class AudioProvider extends Component {
       soundObj: null,
       currentAudio: {},
       isPlaying: false,
-      currentAudioIndex: null
+      currentAudioIndex: null,
+      playbackPosition: null,
+      playbackDuration: null
     }
+    this.totalAudioCount = 0
   }
  
   permissionAlert = () => {
@@ -40,6 +43,7 @@ export class AudioProvider extends Component {
       mediaType: 'audio',
       first: media.totalCount,
     })
+    this.totalAudioCount = media.totalCount
 
     this.setState({
       ...this.state,
@@ -98,14 +102,41 @@ export class AudioProvider extends Component {
   }
 
   render() {
-    const {audioFiles, dataProvider, permissionError,playbackObj,soundObj,currentAudio, isPlaying, currentAudioIndex} = this.state
+    const {
+      audioFiles, 
+      dataProvider, 
+      permissionError,
+      playbackObj,
+      soundObj,
+      currentAudio, 
+      isPlaying, 
+      currentAudioIndex,
+      playbackPosition,
+      playbackDuration
+    } = this.state
     if(permissionError) return <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <Text style={{fontSize: 25, textAlign: 'center', color: 'red'}}>
         It looks like you haven't accept the permission.
       </Text>
     </View>
-    return <AudioContext.Provider value={{audioFiles, dataProvider, playbackObj,soundObj,currentAudio, updateState: this.updateState, isPlaying, currentAudioIndex}}>
-      {this.props.children}
-    </AudioContext.Provider>
+    return(
+      <AudioContext.Provider 
+        value={{
+          audioFiles, 
+          dataProvider, 
+          playbackObj,
+          soundObj,
+          currentAudio, 
+          isPlaying, 
+          currentAudioIndex,
+          playbackPosition,
+          playbackDuration,
+          updateState: this.updateState, 
+          totalAudioCount: this.totalAudioCount
+        }}
+      >
+        {this.props.children}
+      </AudioContext.Provider>
+    ) 
   }
 }

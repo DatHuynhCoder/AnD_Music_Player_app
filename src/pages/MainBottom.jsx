@@ -4,6 +4,7 @@ import HomePage from './HomePage';
 import ExplorePage from './ExplorePage';
 import Library from './Library';
 import AudioList from './AudioList';
+import Player from './Player';
 //contanst
 import { colors } from '../constants/color'
 //icons
@@ -74,6 +75,14 @@ const MainBottom = () => {
         component={AudioList}
         options={{
           title: 'AudioList',
+          headerShown: false
+        }}
+      />
+      <Tab.Screen
+        name='Player'
+        component={Player}
+        options={{
+          title: 'Player',
           headerShown: false
         }}
       />
