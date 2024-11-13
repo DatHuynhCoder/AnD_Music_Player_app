@@ -218,6 +218,8 @@ const ExplorePage = () => {
         />
       }
 
+      {/* Man hinh goi y cua trang */}
+      
 
     </View>
   )

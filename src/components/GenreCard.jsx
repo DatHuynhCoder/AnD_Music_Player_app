@@ -1,3 +1,4 @@
+//This is used in Homepage.jsx
 import { View, Text, StyleSheet, Image } from 'react-native'
 import React from 'react'
 import { colors } from '../constants/color'
