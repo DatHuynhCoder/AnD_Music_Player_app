@@ -32,22 +32,52 @@ export class AudioList extends Component {
     }
   })
 
+  onPlaybackStatusUpdate = playbackStatus => {
+    console.log(playbackStatus)
+    // {
+    //   "didJustFinish": false,
+    //   "durationMillis": 5819,
+    //   "isBUffering": false,
+    //   "isLoaded": true,
+    //   "isLooping": false,
+    //   "isMuted": false,
+    //   "isPlaying": false,
+    //   "playableDurationMillis": 5819,
+    //   "positionMillis": 2108,
+    //   "progressUpdateIntervalMillis": 500,
+    //   "rate": 1,
+    //   "shouldCorrectPitch": false,
+    //   "shouldPlay": false,
+    //   "uri": "/.../.../....mp3",
+    //   "volume": 1
+    // }
+    if(playbackStatus.isLoaded && playbackStatus.isPlaying) {
+      this.context.updateState(
+        this.context,
+        {
+          playbackPosition: playbackStatus.positionMillis,
+          playbackDuration: playbackStatus.durationMillis
+        }
+      )
+    }
+  }
+
   handleAudioPress = async (audio) => {
     const {audioFiles, soundObj, playbackObj, currentAudio, updateState, currentAudioIndex} = this.context
     // console.log(audio)
     if(soundObj === null) { // no audio is playing now
       const playbackObj = new Audio.Sound()
       const status = await play(playbackObj, audio.uri)
-      // const soundObject = new Audio.Sound();
+      // const playbackObj = new Audio.Sound();
       // try {
-      //   await soundObject.loadAsync({ uri: 'http://192.168.137.1:3177/music/ThuyenQuyen.mp3' });
-      //   await soundObject.playAsync(); // Phát nhạc
+      //   await playbackObj.loadAsync({ uri: 'http://192.168.137.1:3177/music/ThuyenQuyen.mp3' });
+      //   await playbackObj.playAsync(); // Phát nhạc
       // } catch (error) {
       //   console.log(error);
       // }
       const index = audioFiles.indexOf(audio)
-      console.log(status)
-      return updateState(
+      // console.log(status)
+      updateState(
         this.context,
         {
           currentAudio: audio,
@@ -57,12 +87,14 @@ export class AudioList extends Component {
           currentAudioIndex: index
         }
       )
+      return playbackObj.setOnPlaybackStatusUpdate(this.onPlaybackStatusUpdate)
     }
+    
     // pause audio
     if(soundObj.isLoaded && soundObj.isPlaying && currentAudio.id === audio.id) { 
       const status = await pause(playbackObj)
-      console.log(status)
-      return updateState(
+      // console.log(status)
+      updateState(
         this.context,
         {
           soundObj: status,  
@@ -74,8 +106,8 @@ export class AudioList extends Component {
     //resume audio
     if(soundObj.isLoaded && !soundObj.isPlaying && currentAudio.id === audio.id) {
       const status = await resume(playbackObj)
-      console.log(status)
-      return updateState(
+      // console.log(status)
+      updateState(
         this.context,
         {
           soundObj: status,
@@ -87,7 +119,7 @@ export class AudioList extends Component {
     if(soundObj.isLoaded && currentAudio.id !== audio.id) {
       const status = await playNext(playbackObj, audio.uri)
       const index = audioFiles.indexOf(audio)
-      return updateState(
+      updateState(
         this.context,
         {
           currentAudio: audio,
