@@ -1,3 +1,7 @@
+/**
+ * 
+ */
+
 import { Text, View, Alert } from 'react-native'
 import React, { Component, createContext } from 'react'
 import * as MediaLibrary from 'expo-media-library'
@@ -10,16 +14,16 @@ export class AudioProvider extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      audioFiles: [],
+      audioFiles: [], // all audio files in device
       permissionError: false,
-      dataProvider: new DataProvider((r1, r2) => r1 !== r2),
-      playbackObj: null,
-      soundObj: null,
+      dataProvider: new DataProvider((r1, r2) => r1 !== r2), // for RecyclerListView
+      playbackObj: null, // for control playing audio
+      soundObj: null, // for control playing audio
       currentAudio: {},
-      isPlaying: false,
+      isPlaying: false, // is any audio playing
       currentAudioIndex: null,
-      playbackPosition: null,
-      playbackDuration: null
+      playbackPosition: null, // current audio position 
+      playbackDuration: null // current audio duration
     }
     this.totalAudioCount = 0
   }
@@ -122,8 +126,8 @@ export class AudioProvider extends Component {
     return(
       <AudioContext.Provider 
         value={{
-          audioFiles, 
-          dataProvider, 
+          audioFiles,
+          dataProvider,
           playbackObj,
           soundObj,
           currentAudio, 
@@ -131,7 +135,7 @@ export class AudioProvider extends Component {
           currentAudioIndex,
           playbackPosition,
           playbackDuration,
-          updateState: this.updateState, 
+          updateState: this.updateState,
           totalAudioCount: this.totalAudioCount
         }}
       >

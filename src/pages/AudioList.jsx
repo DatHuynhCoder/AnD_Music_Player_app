@@ -18,6 +18,7 @@ export class AudioList extends Component {
       optionModalVisible: false,
     }
     this.currentItem = {}
+    this.interval = null
   }
 
   layoutProvider = new LayoutProvider((i) => 'audio', (type, dim) => {
@@ -32,40 +33,36 @@ export class AudioList extends Component {
     }
   })
 
-  onPlaybackStatusUpdate = playbackStatus => {
-    console.log(playbackStatus)
-    // {
-    //   "didJustFinish": false,
-    //   "durationMillis": 5819,
-    //   "isBUffering": false,
-    //   "isLoaded": true,
-    //   "isLooping": false,
-    //   "isMuted": false,
-    //   "isPlaying": false,
-    //   "playableDurationMillis": 5819,
-    //   "positionMillis": 2108,
-    //   "progressUpdateIntervalMillis": 500,
-    //   "rate": 1,
-    //   "shouldCorrectPitch": false,
-    //   "shouldPlay": false,
-    //   "uri": "/.../.../....mp3",
-    //   "volume": 1
-    // }
-    if(playbackStatus.isLoaded && playbackStatus.isPlaying) {
-      this.context.updateState(
-        this.context,
-        {
-          playbackPosition: playbackStatus.positionMillis,
-          playbackDuration: playbackStatus.durationMillis
-        }
-      )
-    }
-  }
+  startInterval = (playbackObj) => {
+    this.interval = setInterval(async () => {
+      const playbackStatus = await playbackObj.getStatusAsync();
+      //  do your logic here with the status object
+      if(playbackStatus.durationMillis - playbackStatus.positionMillis < 500) {
+        console.log('stop now')
+        clearInterval(this.interval)
+      }
+      if(playbackStatus.isLoaded && playbackStatus.isPlaying && playbackStatus.positionMillis) {
+        console.log(playbackStatus)
+        this.context.updateState(
+          this.context,
+          {
+            playbackPosition: playbackStatus.positionMillis,
+            playbackDuration: playbackStatus.durationMillis
+          }
+        )
+      }
+      console.log("i'm running")
+    }, 500);
+  };
 
   handleAudioPress = async (audio) => {
     const {audioFiles, soundObj, playbackObj, currentAudio, updateState, currentAudioIndex} = this.context
     // console.log(audio)
     if(soundObj === null) { // no audio is playing now
+      if(this.interval) {
+        clearInterval(this.interval)
+        this.interval = null
+      }
       const playbackObj = new Audio.Sound()
       const status = await play(playbackObj, audio.uri)
       // const playbackObj = new Audio.Sound();
@@ -87,7 +84,8 @@ export class AudioList extends Component {
           currentAudioIndex: index
         }
       )
-      return playbackObj.setOnPlaybackStatusUpdate(this.onPlaybackStatusUpdate)
+      // playbackObj.setOnPlaybackStatusUpdate(this._onPlaybackStatusUpdate);  
+      return this.startInterval(playbackObj)
     }
     
     // pause audio
@@ -101,10 +99,18 @@ export class AudioList extends Component {
           isPlaying: false
         }
       )
+      if(this.interval) {
+        clearInterval(this.interval)
+        this.interval = null
+      }
     }
 
     //resume audio
     if(soundObj.isLoaded && !soundObj.isPlaying && currentAudio.id === audio.id) {
+      if(this.interval) {
+        clearInterval(this.interval)
+        this.interval = null
+      }
       const status = await resume(playbackObj)
       // console.log(status)
       updateState(
@@ -114,9 +120,14 @@ export class AudioList extends Component {
           isPlaying: true
         }
       )
+      return this.startInterval(playbackObj)
     }
     // select another audio
     if(soundObj.isLoaded && currentAudio.id !== audio.id) {
+      if(this.interval) {
+        clearInterval(this.interval)
+        this.interval = null
+      }
       const status = await playNext(playbackObj, audio.uri)
       const index = audioFiles.indexOf(audio)
       updateState(
@@ -128,6 +139,7 @@ export class AudioList extends Component {
           currentAudioIndex: index
         }
       )
+      return this.startInterval(playbackObj)
     }
   }
 

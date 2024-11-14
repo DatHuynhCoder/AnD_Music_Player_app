@@ -2,7 +2,7 @@
 export const play = async (playbackObj, uri) => {
   try {
     const status = await playbackObj.loadAsync(
-      {uri: uri}, 
+      {uri: uri},
       {shouldPlay: true}
     )
     return status
