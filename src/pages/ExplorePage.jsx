@@ -149,6 +149,46 @@ const ExplorePage = () => {
       authorURL: require('../../assets/img/temp_playlist_pic.jpg')
     },
   ]
+
+  const musicArea = [
+    {
+      id: 1,
+      musicType:'Electronic&Dance',
+      areaName: 'US-UK',
+      areaColor: 'blue'
+    },
+    {
+      id: 2,
+      musicType: 'Nhạc đỏ',
+      areaName: 'Việt Nam',
+      areaColor: 'red'
+    },
+    {
+      id: 3,
+      musicType: 'Traditional music',
+      areaName: 'China',
+      areaColor: 'grey'
+    },
+    {
+      id: 4,
+      musicType: 'K-POP',
+      areaName: 'Korea',
+      areaColor: 'pink'
+    },
+    {
+      id: 5,
+      musicType: 'Country',
+      areaName: 'US-UK',
+      areaColor: '#966614'
+    },
+    {
+      id: 6,
+      musicType: 'RAP&Underground',
+      areaName: 'US-UK',
+      areaColor: 'purple'
+    },
+  ]
+  
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredSongs, setFilteredSongs] = useState([]); //Chứa các bài hát theo tên bài hát và tác giả
   const [filteredAuthor, setFilteredAuthor] = useState([]); // Chứa tên tác giả
