@@ -14,6 +14,7 @@ import { textSizes } from '../constants/demensions';
 import SongCard2 from '../components/SongCard2';
 import AuthorCard from '../components/AuthorCard';
 import AreaCard from '../components/AreaCard';
+import AlbumCard from '../components/AlbumCard';
 //icons
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
@@ -190,6 +191,39 @@ const ExplorePage = () => {
     },
   ]
 
+  const albumData = [
+    {
+      id: 1,
+      albumURL: require('../../assets/img/TheFatRat.jpg'),
+      albumName: 'PARALLAX',
+      albumAuthor: 'TheFatRat'
+    },
+    {
+      id: 2,
+      albumURL: require('../../assets/img/AHeadFullofDream.png'),
+      albumName: 'A Head Full of Dreams',
+      albumAuthor: 'Coldplay'
+    },
+    {
+      id: 3,
+      albumURL: require('../../assets/img/undertaleOst.png'),
+      albumName: 'Undertale',
+      albumAuthor: 'Tobyfox'
+    },
+    {
+      id: 4,
+      albumURL: require('../../assets/img/NightVisions.png'),
+      albumName: 'Night Visions',
+      albumAuthor: 'Imagine Dragons'
+    },
+    {
+      id: 5,
+      albumURL: require('../../assets/img/aviciiStories.png'),
+      albumName: 'Stories',
+      albumAuthor: 'AVICII'
+    },
+  ]
+
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredSongs, setFilteredSongs] = useState([]); //Chứa các bài hát theo tên bài hát và tác giả
   const [filteredAuthor, setFilteredAuthor] = useState([]); // Chứa tên tác giả
@@ -281,26 +315,45 @@ const ExplorePage = () => {
       {/* Man hinh goi y cua trang */}
       {
         searchQuery === '' &&
-        <FlatList
-          data={musicArea}
-          ListHeaderComponent={(
-            <View>
-              <Text style={styles.HeaderTxt}>Recommend for you</Text>
-            </View>
-          )}
-          numColumns={2}
-          renderItem={({ item }) => (
-            <AreaCard
-              key={item.id}
-              areaName={item.areaName}
-              areaURL={item.areaURL}
-              musicType={item.musicType}
-            />
-          )}
-          columnWrapperStyle={{ justifyContent: 'space-between' }}
-          ItemSeparatorComponent={() => <View style={{ height: 10 }} />} 
-          keyExtractor={(item) => item.id.toString()}
-        />
+        <>
+          <FlatList
+            data={musicArea}
+            ListHeaderComponent={(
+              <View>
+                <Text style={styles.HeaderTxt}>Recommend for you</Text>
+              </View>
+            )}
+            numColumns={2}
+            renderItem={({ item }) => (
+              <AreaCard
+                key={item.id}
+                areaName={item.areaName}
+                areaURL={item.areaURL}
+                musicType={item.musicType}
+              />
+            )}
+            columnWrapperStyle={{ justifyContent: 'space-between' }}
+            ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+            keyExtractor={(item) => item.id.toString()}
+          />
+
+          <Text style={styles.HeaderTxt}>Top Albums</Text>
+          <FlatList
+            data={albumData}
+            horizontal={true}
+            ItemSeparatorComponent={
+              <View style={{ marginHorizontal: 10 }}></View>
+            }
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <AlbumCard
+                albumURL={item.albumURL}
+                albumAuthor={item.albumAuthor}
+                albumName={item.albumName}
+              />
+            )}
+          />
+        </>
 
       }
     </View>
