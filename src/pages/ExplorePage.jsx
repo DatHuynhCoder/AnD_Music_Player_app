@@ -13,6 +13,7 @@ import { textSizes } from '../constants/demensions';
 //components
 import SongCard2 from '../components/SongCard2';
 import AuthorCard from '../components/AuthorCard';
+import AreaCard from '../components/AreaCard';
 //icons
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
@@ -153,42 +154,42 @@ const ExplorePage = () => {
   const musicArea = [
     {
       id: 1,
-      musicType:'Electronic&Dance',
+      musicType: 'Electronic&Dance',
       areaName: 'US-UK',
-      areaColor: 'blue'
+      areaURL: require('../../assets/img/edm.png')
     },
     {
       id: 2,
       musicType: 'Nhạc đỏ',
       areaName: 'Việt Nam',
-      areaColor: 'red'
+      areaURL: require('../../assets/img/edm.png')
     },
     {
       id: 3,
       musicType: 'Traditional music',
       areaName: 'China',
-      areaColor: 'grey'
+      areaURL: require('../../assets/img/edm.png')
     },
     {
       id: 4,
       musicType: 'K-POP',
       areaName: 'Korea',
-      areaColor: 'pink'
+      areaURL: require('../../assets/img/edm.png')
     },
     {
       id: 5,
       musicType: 'Country',
       areaName: 'US-UK',
-      areaColor: '#966614'
+      areaURL: require('../../assets/img/edm.png')
     },
     {
       id: 6,
       musicType: 'RAP&Underground',
       areaName: 'US-UK',
-      areaColor: 'purple'
+      areaURL: require('../../assets/img/edm.png')
     },
   ]
-  
+
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredSongs, setFilteredSongs] = useState([]); //Chứa các bài hát theo tên bài hát và tác giả
   const [filteredAuthor, setFilteredAuthor] = useState([]); // Chứa tên tác giả
@@ -278,7 +279,30 @@ const ExplorePage = () => {
       }
 
       {/* Man hinh goi y cua trang */}
+      {
+        searchQuery === '' &&
+        <FlatList
+          data={musicArea}
+          ListHeaderComponent={(
+            <View>
+              <Text style={styles.HeaderTxt}>Recommend for you</Text>
+            </View>
+          )}
+          numColumns={2}
+          renderItem={({ item }) => (
+            <AreaCard
+              key={item.id}
+              areaName={item.areaName}
+              areaURL={item.areaURL}
+              musicType={item.musicType}
+            />
+          )}
+          columnWrapperStyle={{ justifyContent: 'space-between' }}
+          ItemSeparatorComponent={() => <View style={{ height: 10 }} />} 
+          keyExtractor={(item) => item.id.toString()}
+        />
 
+      }
     </View>
   )
 }
