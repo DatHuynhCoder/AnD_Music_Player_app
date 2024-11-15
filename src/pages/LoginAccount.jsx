@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   googleLogin: {
     display: 'flex',
     flexDirection: 'row',
-    height: 50,
+    height: 60,
     width: 330,
     backgroundColor: '#242323',
     justifyContent: 'center',
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     width: 260,
     fontSize: textSizes.xm,
-    opacity: 0.3
+    opacity: 0.3,
   },
   password: {
     color: colors.textPrimary,
