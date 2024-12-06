@@ -2,13 +2,13 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity
+  TouchableOpacity,
+  FlatList
 } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import * as MediaLibrary from 'expo-media-library'
 //constants
 import { colors } from '../constants/color'
-import { FlatList } from 'react-native-gesture-handler'
 import { textSizes } from '../constants/demensions'
 
 const Library = () => {

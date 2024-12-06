@@ -10,8 +10,13 @@ import React, { useState } from 'react'
 //constants
 import { colors } from '../constants/color'
 import { textSizes } from '../constants/demensions';
+//components
 import SongCard2 from '../components/SongCard2';
 import AuthorCard from '../components/AuthorCard';
+import AreaCard from '../components/AreaCard';
+import AlbumCard from '../components/AlbumCard';
+//icons
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
 const ExplorePage = () => {
   const musicData = [
@@ -146,6 +151,79 @@ const ExplorePage = () => {
       authorURL: require('../../assets/img/temp_playlist_pic.jpg')
     },
   ]
+
+  const musicArea = [
+    {
+      id: 1,
+      musicType: 'Electronic&Dance',
+      areaName: 'US-UK',
+      areaURL: require('../../assets/img/edm.png')
+    },
+    {
+      id: 2,
+      musicType: 'Nhạc đỏ',
+      areaName: 'Việt Nam',
+      areaURL: require('../../assets/img/edm.png')
+    },
+    {
+      id: 3,
+      musicType: 'Traditional music',
+      areaName: 'China',
+      areaURL: require('../../assets/img/edm.png')
+    },
+    {
+      id: 4,
+      musicType: 'K-POP',
+      areaName: 'Korea',
+      areaURL: require('../../assets/img/edm.png')
+    },
+    {
+      id: 5,
+      musicType: 'Country',
+      areaName: 'US-UK',
+      areaURL: require('../../assets/img/edm.png')
+    },
+    {
+      id: 6,
+      musicType: 'RAP&Underground',
+      areaName: 'US-UK',
+      areaURL: require('../../assets/img/edm.png')
+    },
+  ]
+
+  const albumData = [
+    {
+      id: 1,
+      albumURL: require('../../assets/img/TheFatRat.jpg'),
+      albumName: 'PARALLAX',
+      albumAuthor: 'TheFatRat'
+    },
+    {
+      id: 2,
+      albumURL: require('../../assets/img/AHeadFullofDream.png'),
+      albumName: 'A Head Full of Dreams',
+      albumAuthor: 'Coldplay'
+    },
+    {
+      id: 3,
+      albumURL: require('../../assets/img/undertaleOst.png'),
+      albumName: 'Undertale',
+      albumAuthor: 'Tobyfox'
+    },
+    {
+      id: 4,
+      albumURL: require('../../assets/img/NightVisions.png'),
+      albumName: 'Night Visions',
+      albumAuthor: 'Imagine Dragons'
+    },
+    {
+      id: 5,
+      albumURL: require('../../assets/img/aviciiStories.png'),
+      albumName: 'Stories',
+      albumAuthor: 'AVICII'
+    },
+  ]
+
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredSongs, setFilteredSongs] = useState([]); //Chứa các bài hát theo tên bài hát và tác giả
   const [filteredAuthor, setFilteredAuthor] = useState([]); // Chứa tên tác giả
@@ -165,12 +243,15 @@ const ExplorePage = () => {
 
   return (
     <View style={styles.container}>
-      <TextInput
-        placeholder='Enter songs or artists...'
-        value={searchQuery}
-        style={styles.searchBar}
-        onChangeText={(queryData) => handleSearch(queryData)}
-      />
+      <View style={styles.searchContainer}>
+        <MaterialIcons name="search" size={20} color="#888" style={styles.searchIcon} />
+        <TextInput
+          placeholder='Enter songs or artists...'
+          value={searchQuery}
+          style={styles.searchBar}
+          onChangeText={(queryData) => handleSearch(queryData)}
+        />
+      </View>
 
       {/* Author list */}
       {filteredAuthor.length > 0 && searchQuery !== '' &&
@@ -218,9 +299,63 @@ const ExplorePage = () => {
         />
       }
 
-      {/* Man hinh goi y cua trang */}
-      
+      {/* Khong tim thay ket qua */}
+      {filteredAuthor.length === 0 && filteredSongs.length === 0 && searchQuery !== '' &&
+        <View style={styles.noResultContainer}>
+          <MaterialIcons
+            name='search-off'
+            color={colors.iconPrimary}
+            size={60}
+          />
+          <Text style={styles.noResultTxt}>No result for <Text style={styles.noResultTxtEnter}>{searchQuery}</Text></Text>
+          <Text style={styles.noResultSubTxt}>Try different keywords</Text>
+        </View>
+      }
 
+      {/* Man hinh goi y cua trang */}
+      {
+        searchQuery === '' &&
+        <>
+          <FlatList
+            data={musicArea}
+            ListHeaderComponent={(
+              <View>
+                <Text style={styles.HeaderTxt}>Recommend for you</Text>
+              </View>
+            )}
+            numColumns={2}
+            renderItem={({ item }) => (
+              <AreaCard
+                key={item.id}
+                areaName={item.areaName}
+                areaURL={item.areaURL}
+                musicType={item.musicType}
+              />
+            )}
+            columnWrapperStyle={{ justifyContent: 'space-between' }}
+            ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+            keyExtractor={(item) => item.id.toString()}
+          />
+
+          <Text style={styles.HeaderTxt}>Top Albums</Text>
+          <FlatList
+            data={albumData}
+            horizontal={true}
+            ItemSeparatorComponent={
+              <View style={{ marginHorizontal: 10 }}></View>
+            }
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <AlbumCard
+                albumURL={item.albumURL}
+                albumAuthor={item.albumAuthor}
+                albumName={item.albumName}
+              />
+            )}
+          />
+        </>
+
+      }
     </View>
   )
 }
@@ -231,18 +366,43 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10
   },
-  searchBar: {
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#fff',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
     borderRadius: 20,
-    marginVertical: 15
+    paddingHorizontal: 10,
+    marginVertical: 15,
+  },
+  searchIcon: {
+    marginRight: 5,
+  },
+  searchBar: {
+    flex: 1,
+    paddingVertical: 5,
   },
   HeaderTxt: {
     fontSize: textSizes.sm,
     color: colors.textPrimary,
     fontWeight: '600',
     marginVertical: 15
+  },
+  // No result style
+  noResultContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noResultTxt: {
+    color: colors.textPrimary,
+    fontSize: textSizes.sm
+  },
+  noResultTxtEnter: {
+    fontWeight: 'bold'
+  },
+  noResultSubTxt: {
+    color: colors.textSecondary,
+    fontSize: textSizes.xm
   }
 })
 
