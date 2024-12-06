@@ -5,7 +5,7 @@ import { misc_colors } from '../constants/color';
 
 const PlayerButton = (props) => {
   const {onPress, iconType, size = 40, color = misc_colors.FONT, otherProps} = props
-  const getIconName = (type) => {
+  const getIconName = (type) => { 
     switch(type) {
       case 'PLAY':
         return 'pausecircle'

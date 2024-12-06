@@ -21,7 +21,7 @@ export class AudioProvider extends Component {
       soundObj: null, // for control playing audio
       currentAudio: {},
       isPlaying: false, // is any audio playing
-      currentAudioIndex: null,
+      currentAudioIndex: null, // index of current audio in current list
       playbackPosition: null, // current audio position 
       playbackDuration: null // current audio duration
     }

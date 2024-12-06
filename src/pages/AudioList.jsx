@@ -33,36 +33,44 @@ export class AudioList extends Component {
     }
   })
 
-  startInterval = (playbackObj) => {
-    this.interval = setInterval(async () => {
-      const playbackStatus = await playbackObj.getStatusAsync();
-      //  do your logic here with the status object
-      if(playbackStatus.durationMillis - playbackStatus.positionMillis < 500) {
-        console.log('stop now')
-        clearInterval(this.interval)
-      }
-      if(playbackStatus.isLoaded && playbackStatus.isPlaying && playbackStatus.positionMillis) {
-        console.log(playbackStatus)
-        this.context.updateState(
-          this.context,
-          {
-            playbackPosition: playbackStatus.positionMillis,
-            playbackDuration: playbackStatus.durationMillis
-          }
-        )
-      }
-      console.log("i'm running")
-    }, 500);
-  };
+  _onPlaybackStatusUpdate = (playbackStatus) => {
+    // console.log(playbackStatus)
+    /*
+    {
+      "androidImplementation": "SimpleExoPlayer", 
+      "audioPan": 0, 
+      "didJustFinish": false, 
+      "durationMillis": 252839, 
+      "isBuffering": false, 
+      "isLoaded": true, 
+      "isLooping": false, 
+      "isMuted": false, 
+      "isPlaying": false, 
+      "playableDurationMillis": 64783, 
+      "positionMillis": 4834, 
+      "progressUpdateIntervalMillis": 500, 
+      "rate": 1, 
+      "shouldCorrectPitch": false, 
+      "shouldPlay": true, 
+      "uri": "/storage/emulated/0/Download/Zalo/ThuyenQuyen.mp3", 
+      "volume": 1
+    }
+      */
+    if(playbackStatus.isLoaded && playbackStatus.isPlaying) {
+      this.context.updateState(
+        this.context, 
+        {
+          playbackPosition: playbackStatus.positionMillis,
+          playbackDuration: playbackStatus.durationMillis
+        }
+      )
+    }
+  }
 
   handleAudioPress = async (audio) => {
     const {audioFiles, soundObj, playbackObj, currentAudio, updateState, currentAudioIndex} = this.context
-    // console.log(audio)
+    console.log('audio filename: ', audio.filename)
     if(soundObj === null) { // no audio is playing now
-      if(this.interval) {
-        clearInterval(this.interval)
-        this.interval = null
-      }
       const playbackObj = new Audio.Sound()
       const status = await play(playbackObj, audio.uri)
       // const playbackObj = new Audio.Sound();
@@ -73,7 +81,8 @@ export class AudioList extends Component {
       //   console.log(error);
       // }
       const index = audioFiles.indexOf(audio)
-      // console.log(status)
+      console.log("check status:", status)
+      console.log('check audio name: ', audio.filename)
       updateState(
         this.context,
         {
@@ -84,53 +93,39 @@ export class AudioList extends Component {
           currentAudioIndex: index
         }
       )
-      // playbackObj.setOnPlaybackStatusUpdate(this._onPlaybackStatusUpdate);  
-      return this.startInterval(playbackObj)
+      return playbackObj.setOnPlaybackStatusUpdate(this._onPlaybackStatusUpdate);
     }
     
     // pause audio
     if(soundObj.isLoaded && soundObj.isPlaying && currentAudio.id === audio.id) { 
       const status = await pause(playbackObj)
       // console.log(status)
-      updateState(
+      return updateState(
         this.context,
         {
-          soundObj: status,  
+          soundObj: status,
           isPlaying: false
         }
       )
-      if(this.interval) {
-        clearInterval(this.interval)
-        this.interval = null
-      }
     }
 
     //resume audio
     if(soundObj.isLoaded && !soundObj.isPlaying && currentAudio.id === audio.id) {
-      if(this.interval) {
-        clearInterval(this.interval)
-        this.interval = null
-      }
       const status = await resume(playbackObj)
       // console.log(status)
-      updateState(
+      return updateState(
         this.context,
         {
           soundObj: status,
           isPlaying: true
         }
       )
-      return this.startInterval(playbackObj)
     }
     // select another audio
     if(soundObj.isLoaded && currentAudio.id !== audio.id) {
-      if(this.interval) {
-        clearInterval(this.interval)
-        this.interval = null
-      }
       const status = await playNext(playbackObj, audio.uri)
       const index = audioFiles.indexOf(audio)
-      updateState(
+      return updateState(
         this.context,
         {
           currentAudio: audio,
@@ -139,7 +134,6 @@ export class AudioList extends Component {
           currentAudioIndex: index
         }
       )
-      return this.startInterval(playbackObj)
     }
   }
 
@@ -166,8 +160,8 @@ export class AudioList extends Component {
         {({dataProvider, isPlaying}) => {
           return <View style={{flex: 1}}>
             <RecyclerListView 
-              dataProvider={dataProvider} 
-              layoutProvider={this.layoutProvider} 
+              dataProvider={dataProvider}
+              layoutProvider={this.layoutProvider}
               rowRenderer={this.rowRenderer}
               extendedState={{isPlaying}}
             >
