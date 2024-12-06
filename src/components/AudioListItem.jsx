@@ -99,7 +99,6 @@ const styles = StyleSheet.create({
   thumbnail: {
     height: 50,
     flexBasis: 50,
-    // backgroundColor: misc_colors.FONT_LIGHT,
     backgroundColor: colors.emphasis,
     justifyContent: 'center',
     alignItems: 'center',

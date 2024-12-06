@@ -1,4 +1,4 @@
-import './gesture-handler';
+
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -9,41 +9,23 @@ import Signup from './src/pages/Signup';
 import MainBottom from './src/pages/MainBottom';
 
 import { AudioProvider } from './src/context/AudioProvider';
+import { NewAudioContextProvider } from './src/context/NewAudioContextProvider';
 
 const Stack = createStackNavigator();
 
 const App = () => {
   return (
-    <AudioProvider>
+    <NewAudioContextProvider>
       <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName='LaunchScreen'
-        >
-          <Stack.Screen
-            name='LaunchScreen'
-            component={LaunchScreen}
-          />
-          <Stack.Screen 
-            name='Login'
-            component={Login}
-            options={{headerShown: false}}
-          />
-          <Stack.Screen 
-            name='LoginAccount'
-            component={LoginAccount}
-            options={{headerShown: false}}
-          />
-          <Stack.Screen 
-            name='Signup'
-            component={Signup}
-          />
-          <Stack.Screen 
-            name='MainBottom'
-            component={MainBottom}
-          />
+        <Stack.Navigator initialRouteName='LaunchScreen' screenOptions={{headerShown: false}}>
+          <Stack.Screen name='LaunchScreen' component={LaunchScreen}/>
+          <Stack.Screen name='Login' component={Login} options={{headerShown: false}}/>
+          <Stack.Screen name='LoginAccount' component={LoginAccount} options={{headerShown: false}}/>
+          <Stack.Screen name='Signup' component={Signup}/>
+          <Stack.Screen name='MainBottom' component={MainBottom}/>
         </Stack.Navigator>
       </NavigationContainer>
-    </AudioProvider>
+    </NewAudioContextProvider>
   );
 }
 

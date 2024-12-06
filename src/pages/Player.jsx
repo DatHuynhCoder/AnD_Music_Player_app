@@ -15,7 +15,7 @@ const Player = () => {
 
   const {playbackPosition, playbackDuration} = context
 
-  let calculateSeekbar = () => {
+  const calculateSeekbar = () => {
     if(playbackPosition !== null && playbackDuration !== null) {
       return playbackPosition / playbackDuration
     }
@@ -37,7 +37,7 @@ const Player = () => {
         </View>
         <View style={styles.audioPlayerContainer}>
           <Text numberOfLines={1} style={styles.audioTitle}>
-            {context.currentAudio.filename} - {playbackDuration} - {playbackPosition}
+            {context.currentAudio.filename}
           </Text>
           <Slider
             style={{width: width, height: 40}}

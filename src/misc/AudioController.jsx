@@ -1,3 +1,7 @@
+// load audio
+
+
+
 // play audio
 export const play = async (playbackObj, uri) => {
   try {
@@ -16,7 +20,7 @@ export const play = async (playbackObj, uri) => {
 
 export const pause = async (playbackObj) => {
   try {
-    const status = await playbackObj.setStatusAsync({shouldPlay: false})
+    const status = await playbackObj.pauseAsync()
     return status
   }
   catch(error) {
