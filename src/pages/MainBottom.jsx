@@ -87,27 +87,27 @@ const MainBottom = () => {
           title: 'Library'
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name='AudioList'
         component={AudioList}
         options={{
           title: 'AudioList',
           headerShown: false
         }}
-      />
-      <Tab.Screen
+      /> */}
+      {/* <Tab.Screen
         name='Player'
         component={Player}
         options={{
           title: 'Player',
           headerShown: false
         }}
-      />
+      /> */}
       <Tab.Screen
         name='NewAudioPlay'
         component={NewAudioPlay}
         options={{
-          title: 'NewAudioPlay',
+          title: 'Player',
           headerShown: false
         }}
       />

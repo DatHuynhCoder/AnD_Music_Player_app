@@ -244,31 +244,50 @@ export default function App() {
     }
   }
 
-  function handlePressPrevious() {
+  async function handlePressPrevious() {
     console.log('you press on previous')
     if(currentAudioIndex !== 0) {
-      console.log('do something')
-      pauseSound()
-      setCurrentAudioIndex(prev => prev - 1)
-      setCurrentName(songs[currentAudioIndex].name)
-      loadSound(songs[currentAudioIndex].uri)
+      console.log('click on an previous when other is playing')
+      await playback.stopAsync()
+      await playback.unloadAsync()
+      await playback.loadAsync(songs[currentAudioIndex - 1].uri)
+      const status = await playback.playAsync()
+      setStatus(status)
+      console.log('Status after load a new audio: ', status)
+      setPlaybackPosition(status.positionMillis)
+      setPlaybackDuration(status.durationMillis)
+      setCurrentName(songs[currentAudioIndex - 1].name)
+      setCurrentAudioIndex(currentAudioIndex - 1)
+      playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
     }
     else {
       console.log('there are no previous song')
     }
   }
-  function handlePressNext() {
-    console.log('you press on next')
+  async function handlePressNext() {
+    console.log('you press on next with currentAudioIndex: ', currentAudioIndex)
     if(currentAudioIndex === songs.length - 1) {
       console.log('you are in the last audio in current list')
     }
     else {
-      console.log('do something')
-      pauseSound()
-      console.log('current index: ', currentAudioIndex)
-      setCurrentAudioIndex(prev => prev + 1)
-      setCurrentName(songs[currentAudioIndex].name)
-      loadSound(songs[currentAudioIndex].uri)
+      // console.log('do something')
+      // await pauseSound()
+      // console.log('current index: ', currentAudioIndex)
+      // setCurrentAudioIndex(prev => prev + 1)
+      // setCurrentName(songs[currentAudioIndex].name)
+      // await loadSound(songs[currentAudioIndex].uri)
+      console.log('click on next when other is playing')
+      await playback.stopAsync()
+      await playback.unloadAsync()
+      await playback.loadAsync(songs[currentAudioIndex + 1].uri)
+      const status = await playback.playAsync()
+      setStatus(status)
+      console.log('Status after load a new audio: ', status)
+      setPlaybackPosition(status.positionMillis)
+      setPlaybackDuration(status.durationMillis)
+      setCurrentName(songs[currentAudioIndex + 1].name)
+      setCurrentAudioIndex(currentAudioIndex + 1)
+      playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
     }
   }
   async function handlePressReplay() {
