@@ -8,7 +8,7 @@ import Entypo from '@expo/vector-icons/Entypo';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 import AntDesign from '@expo/vector-icons/AntDesign';
-import FloatingPlayer from '../components/FloatingPlayer';
+import axios from 'axios';
 
 import { AudioContext } from '../context/NewAudioContextProvider';
 import PlayerButton from '../components/PlayerButton';
@@ -89,6 +89,8 @@ export default function App() {
     sliderPosition, setSliderPosition,
     intervalId, setIntervalId
   } = useContext(AudioContext)
+
+  const [authors, setAuthors] = useState([])
 
   const convertTime = milis => {
     let second = milis % 60
@@ -270,12 +272,6 @@ export default function App() {
       console.log('you are in the last audio in current list')
     }
     else {
-      // console.log('do something')
-      // await pauseSound()
-      // console.log('current index: ', currentAudioIndex)
-      // setCurrentAudioIndex(prev => prev + 1)
-      // setCurrentName(songs[currentAudioIndex].name)
-      // await loadSound(songs[currentAudioIndex].uri)
       console.log('click on next when other is playing')
       await playback.stopAsync()
       await playback.unloadAsync()
@@ -305,6 +301,15 @@ export default function App() {
     setPlaybackPosition(sliderPosition)
     await playback.setPositionAsync(playbackPosition)
   }
+  useEffect(() => {
+    console.log("let's get all author")
+    async function getAllAuthor () {
+      await axios.get("http://192.168.137.1:3177/get-all-author").then(res => { // đổi thành địa chỉ ip máy thay vì localhost
+        setAuthors(res.data)
+      }).catch(err => console.log(err))
+    }
+    getAllAuthor()
+  }, [])
   return (
     <>
     <View style={styles.container}>
@@ -328,6 +333,15 @@ export default function App() {
           />
         })
       }
+      <View>
+        {
+          authors.map((author) => {
+            return <Text key={author.authorid}>
+              {author.authorid} - {author.authorname}
+            </Text>
+          })
+        }
+      </View>
       <View style={{display:'flex', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 30}}>
         <Text>{currentName !== '' ? currentName : 'Không có dữ liệu'}</Text>
         <Text style={{marginLeft: 1}}>
