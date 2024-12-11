@@ -304,7 +304,7 @@ export default function App() {
   useEffect(() => {
     console.log("let's get all author")
     async function getAllAuthor () {
-      await axios.get("http://192.168.137.1:3177/get-all-author").then(res => { // đổi thành địa chỉ ip máy thay vì localhost
+      await axios.get("http://172.30.182.211:3177/get-all-author").then(res => { // đổi thành địa chỉ ip máy thay vì localhost
         setAuthors(res.data)
       }).catch(err => console.log(err))
     }
