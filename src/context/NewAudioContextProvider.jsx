@@ -8,7 +8,10 @@ const AudioContext = createContext()
 const NewAudioContextProvider = ({children}) => {
   const [deviceAudioFiles, setDeviceAudioFiles] = useState([])
   const [permissionError, setPermissionError] = useState(false)
+  const [currentList, setCurrentList] = useState([{}, {}, {}])
+  const [listLength, setListLength] = useState(0)
   const [currentName, setCurrentName] = useState('')
+  const [currentSinger, setCurrentSinger] = useState('')
   const [playback, setPlayback] = useState(new Audio.Sound())
   const [status, setStatus] = useState({isLoaded: false, isPlaying: false, positionMillis: 0, durationMillis: 0})
   const [sound, setSound] = useState()
@@ -24,7 +27,10 @@ const NewAudioContextProvider = ({children}) => {
       value={{
         deviceAudioFiles, setDeviceAudioFiles,
         permissionError, setPermissionError,
+        currentList, setCurrentList,
+        listLength, setListLength,
         currentName, setCurrentName,
+        currentSinger, setCurrentSinger,
         playback, setPlayback,
         status, setStatus,
         sound, setSound,

@@ -7,6 +7,7 @@ import Library from './Library';
 import AudioList from './AudioList';
 import Player from './Player';
 import NewAudioPlay from './NewAudioPlay'
+import PlayerPage from './PlayerPage';
 //contanst
 import { colors } from '../constants/color'
 //icons
@@ -106,6 +107,14 @@ const MainBottom = () => {
       <Tab.Screen
         name='NewAudioPlay'
         component={NewAudioPlay}
+        options={{
+          title: 'Player',
+          headerShown: false
+        }}
+      />
+      <Tab.Screen
+        name='PlayerPage'
+        component={PlayerPage}
         options={{
           title: 'Player',
           headerShown: false

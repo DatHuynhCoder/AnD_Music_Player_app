@@ -5,6 +5,7 @@ import { iconSizes } from '../constants/demensions'
 import UserAvatar from '../../assets/img/user_avatar.png'
 import { AudioContext } from '../context/NewAudioContextProvider'
 import { Audio } from 'expo-av';
+import { useNavigation } from '@react-navigation/native';
 
 const context = {
   "isLoad": false,
@@ -17,6 +18,7 @@ const FloatingPlayer = () => {
     currentName, setCurrentName,
     isPlaying, setIsPlaying,
   } = useContext(AudioContext)
+  const navigation = useNavigation();
   function _onPlaybackStatusUpdate(status) {
     if(status.didJustFinish === true) {
       finish()
@@ -83,7 +85,9 @@ const FloatingPlayer = () => {
     }
   }
   return (
-    <TouchableOpacity style={{borderRadius: 20, position: 'absolute', left: 30, right: 30, bottom: 90, flexDirection: 'row', backgroundColor: 'rgba(0,0,0,0.8)'}}>
+    <TouchableOpacity style={{borderRadius: 20, position: 'absolute', left: 30, right: 30, bottom: 90, flexDirection: 'row', backgroundColor: 'rgba(0,0,0,0.8)'}}
+      onPress={() => navigation.navigate('PlayerPage')}
+    >
       <>
         <Image
           source={UserAvatar}
