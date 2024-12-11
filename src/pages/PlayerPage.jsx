@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { Text, View, StyleSheet, Button, TouchableOpacity, Dimensions, TouchableWithoutFeedback } from 'react-native';
+import { Text, View, StyleSheet, Button, TouchableOpacity, Dimensions, TouchableWithoutFeedback, Modal, Animated, Easing } from 'react-native';
 import { Audio } from 'expo-av';
 import Slider from '@react-native-community/slider';
 import { colors, misc_colors } from '../constants/color';
@@ -7,8 +7,10 @@ import { ipAddress } from '../constants/ipAddress';
 
 import Entypo from '@expo/vector-icons/Entypo';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import AntDesign from '@expo/vector-icons/AntDesign';
+
 import axios from 'axios';
 
 import { AudioContext } from '../context/NewAudioContextProvider';
@@ -19,65 +21,7 @@ const {width} = Dimensions.get('window')
 const map = new Map()
 map['ThuyenQuyen'] = '../../assets/ThuyenQuyen.mp3'
 
-const songs = [
-  {
-    author: 'Diệu Kiên',
-    genre: '',
-    name: 'Thuyền Quyên remix',
-    uri: require('../../assets/ThuyenQuyen.mp3'),
-    duration: 252, //second
-  },
-  {
-    author: 'Datkaa',
-    genre: '',
-    name: 'Có sao cũng đành',
-    uri: require('../../assets/CoSaoCungDanh-DatKaa.mp3'),
-    duration: 236,//second
-  },
-  {
-    author: 'Châu Khải Phong',
-    genre: '',
-    name: 'Nụ cười không vui remix',
-    uri: require('../../assets/NuCuoiKhongVui-ChauKhaiPhong.mp3'),
-    duration: 227,//second
-  }
-]
-
-const SongItem = ({title, isPlaying, duration, onOptionPress, onSongPress, isActive}) => {
-  return (
-    <>
-      <View style={{flexDirection: 'row',alignSelf: 'center',width: width - 80,}}>
-        <TouchableWithoutFeedback onPress={() => onSongPress()}>
-          <View style={{flexDirection: 'row',alignItems: 'center', width: 263,}}>
-            <View style={{height: 50,flexBasis: 50,backgroundColor: colors.emphasis,justifyContent: 'center',alignItems: 'center',borderRadius: 25,}}>
-              <Text style={{fontSize: 22,fontWeight: 'bold',color: misc_colors.FONT}}>
-                {title[0]}
-              </Text>
-            </View>
-            <View style={{width: width - 180,paddingLeft: 10,}}>
-              <Text numberOfLines={1} style={{fontSize: 16,color: misc_colors.FONT}}>{title}</Text>
-              <Text style={{fontSize: 14,color: misc_colors.FONT_LIGHT}}>
-                {duration}
-              </Text>
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-        <View style={{flexBasis: 50,height: 50,alignItems: 'center',justifyContent: 'center',}}>
-          <Entypo 
-            name="dots-three-vertical" 
-            size={20} 
-            color={misc_colors.FONT_MEDIUM}
-            onPress={onOptionPress}
-            style={{padding: 10}}
-          />
-        </View>
-      </View>
-      <View style={{width: width - 80,backgroundColor: '#333',opacity: 0.3,height: 0.5,alignSelf: 'center',marginTop: 10,marginBottom: 10}}></View>
-    </>
-  )
-}
-
-export default function App() {
+export default function PlayerPage({navigation}) {
   const {
     currentList, setCurrentList,
     listLength, setListLength,
@@ -93,9 +37,23 @@ export default function App() {
     sliderPosition, setSliderPosition,
     intervalId, setIntervalId
   } = useContext(AudioContext)
-  setListLength(songs.length)
-  setCurrentList(songs)
-  const [authors, setAuthors] = useState([])
+
+  const [modalVisible, setModalVisible] = useState(false)
+  const spinValue = new Animated.Value(0)
+  const rotate = spinValue.interpolate({
+    inputRange: [0,1],
+    outputRange: ['0deg', '360deg']
+  })
+  const spin = () => {
+    spinValue.setValue(0)
+    Animated.timing(spinValue, {
+      toValue: 1,
+      duration: 1500,
+      easing: Easing.linear,
+      useNativeDriver: true
+    })
+    .start(() => spin())
+  }
 
   const convertTime = milis => {
     let second = milis % 60
@@ -133,7 +91,7 @@ export default function App() {
     }
     if(status.isLoaded === true && status.isPlaying === true) {
       setPlaybackPosition(status.positionMillis)
-      setPlaybackDuration(status.durationMillis) 
+      setPlaybackDuration(status.durationMillis)
     }
   }
 
@@ -186,8 +144,8 @@ export default function App() {
       try {
         console.log('play function goes now !!!!')
         // const status = await playback.loadAsync(require('../../assets/ThuyenQuyen.mp3'))
-        // const status = await playback.loadAsync({uri: songs[0].uri}) with songs[0].uri = 'https://example.com/ThuyenQuyen.mp3'
-        // const status = await playback.loadAsync(songs[0].uri)
+        // const status = await playback.loadAsync({uri: currentList[0].uri}) with currentList[0].uri = 'https://example.com/ThuyenQuyen.mp3'
+        // const status = await playback.loadAsync(currentList[0].uri)
         const status = await playback.playAsync()
         console.log('status after play: ', status)
         setStatus(status)
@@ -257,13 +215,13 @@ export default function App() {
       console.log('click on an previous when other is playing')
       await playback.stopAsync()
       await playback.unloadAsync()
-      await playback.loadAsync(songs[currentAudioIndex - 1].uri)
+      await playback.loadAsync(currentList[currentAudioIndex - 1].uri)
       const status = await playback.playAsync()
       setStatus(status)
       console.log('Status after load a new audio: ', status)
       setPlaybackPosition(status.positionMillis)
       setPlaybackDuration(status.durationMillis)
-      setCurrentName(songs[currentAudioIndex - 1].name)
+      setCurrentName(currentList[currentAudioIndex - 1].name)
       setCurrentAudioIndex(currentAudioIndex - 1)
       playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
     }
@@ -273,20 +231,20 @@ export default function App() {
   }
   async function handlePressNext() {
     console.log('you press on next with currentAudioIndex: ', currentAudioIndex)
-    if(currentAudioIndex === songs.length - 1) {
+    if(currentAudioIndex === listLength - 1) {
       console.log('you are in the last audio in current list')
     }
     else {
       console.log('click on next when other is playing')
       await playback.stopAsync()
       await playback.unloadAsync()
-      await playback.loadAsync(songs[currentAudioIndex + 1].uri)
+      await playback.loadAsync(currentList[currentAudioIndex + 1].uri)
       const status = await playback.playAsync()
       setStatus(status)
       console.log('Status after load a new audio: ', status)
       setPlaybackPosition(status.positionMillis)
       setPlaybackDuration(status.durationMillis)
-      setCurrentName(songs[currentAudioIndex + 1].name)
+      setCurrentName(currentList[currentAudioIndex + 1].name)
       setCurrentAudioIndex(currentAudioIndex + 1)
       playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
     }
@@ -306,94 +264,138 @@ export default function App() {
     setPlaybackPosition(sliderPosition)
     await playback.setPositionAsync(playbackPosition)
   }
-  useEffect(() => {
-    console.log("let's get all author")
-    async function getAllAuthor () {
-      await axios.get("http://" + ipAddress + ":3177" + "/get-all-author").then(res => { // đổi thành địa chỉ ip máy thay vì localhost
-        setAuthors(res.data)
-      }).catch(err => console.log(err))
-    }
-    getAllAuthor()
-  }, [])
   return (
     <>
-    <View style={styles.container}>
-      {
-        songs.map((song, index) => {
-          // title = 'Thuyen Quyen', isPlaying = false, duration = 1000, onOptionPress = () => console.log('option pressed'), onSongPress = () => console.log('song pressed'), isActive = false}
-          return <SongItem 
-            key={index}
-            title={song.name} 
-            isPlaying={false} 
-            duration={convertTime(song.duration)}
-            onOptionPress={() => console.log('option pressed')}
-            onSongPress={() => {
-              setCurrentName(song.name)
-              setCurrentSinger(song.author)
-              console.log('current index: ', currentAudioIndex)
-              setCurrentAudioIndex(index)
-              console.log('current index name: ', songs[currentAudioIndex].name)
-              loadSound(song.uri)
-            }}
-            isActive={false}
-          />
-        })
-      }
-      <View>
-        {
-          authors.map((author) => {
-            return <Text key={author.authorid}>
-              {author.authorid} - {author.authorname}
-            </Text>
-          })
-        }
+    <Modal transparent visible={modalVisible} animationType='slide'>
+      <View style={{
+        position: 'absolute',
+        bottom: 0,
+        right: 0,
+        left: 0,
+        backgroundColor: "#fff",
+        borderTopRightRadius: 20,
+        borderTopLeftRadius: 20,
+        zIndex: 1000
+      }}>
+        <Text style={{
+          fontSize: 18,
+          fontWeight: 'bold',
+          padding: 20,
+          paddingBottom: 0,
+        }} numberOfLines={2}>{currentName}</Text>
+        <View style={{padding: 20}}>
+          <TouchableWithoutFeedback onPress={() => {}}>
+            <Text style={{
+              fontSize: 16,
+              fontWeight: 'bold',
+              paddingVertical: 10,
+              letterSpacing: 1
+            }}>Play</Text>
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback onPress={() => console.log('Add this to playlist')}>
+            <Text style={{
+              fontSize: 16,
+              fontWeight: 'bold',
+              paddingVertical: 10,
+              letterSpacing: 1
+            }}>Add to Playlist</Text>
+          </TouchableWithoutFeedback>
+        </View>
       </View>
-      <View style={{display:'flex', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 30}}>
-        <Text>{currentName !== '' ? currentName : 'Không có dữ liệu'}</Text>
-        <Text style={{marginLeft: 1}}>
-          {convertTime(Math.floor(playbackPosition/1000))} 
-          / 
-          {convertTime(Math.floor(playbackDuration/1000))}
-        </Text>
-      </View>
-      <TouchableWithoutFeedback onPress={() => handlePressSlider()}>
-        <Slider
-          style={{width: 393, height: 40}}
-          minimumValue={0}
-          maximumValue={1}
-          value={playbackPosition/playbackDuration}
-          onValueChange={setSliderPosition}
-          minimumTrackTintColor='black'
-          maximumTrackTintColor='blue'
-        >
-        </Slider>
+      <TouchableWithoutFeedback onPress={() => {
+        setModalVisible(!modalVisible)
+      }}>
+        <View style={{
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          left: 0,
+          bottom: 0,
+          backgroundColor: "rgba(0, 0, 0, 0.2)"
+        }}></View>
       </TouchableWithoutFeedback>
-      <View style={{height: 50, borderWidth: 1, width: width, justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
+    </Modal>
+    <View style={styles.container}>
+      <View style={{borderWidth: 1, padding: 10, flexDirection: 'row', justifyContent: 'space-between'}}>
+        <MaterialCommunityIcons 
+          name="arrow-left-circle-outline" 
+          size={40} 
+          color="white" 
+          onPress={() => navigation.goBack()}
+          style={{borderWidth: 1, borderColor: '#121111'}}
+        />
+        <Entypo name="dots-three-vertical" size={40} color="white" 
+          onPress={() => setModalVisible(true)}
+        />
+      </View>
+      <View style={{justifyContent: 'center', alignItems: 'center'}}>
+        <Animated.View style={{transform: [{rotate}]}}>
+          <MaterialCommunityIcons name="music-circle" size={300} color="#00C2CB"/>
+        </Animated.View>
+        <View style={{flexDirection: 'row', marginVertical: 30}}>
+          <View>
+            <FontAwesome5 name="share-square" size={24} color="white"/>
+          </View>
+          <View style={{alignItems: 'center', marginHorizontal: 80}}>
+            <Text style={{fontSize: 16, color: 'white'}}>{currentName !== '' ? currentName : 'Không có dữ liệu'}</Text>
+            <Text style={{opacity: 0.6, color: 'white'}}>{currentSinger !== '' ? currentSinger : '...'}</Text>
+          </View>
+          <View>
+            <AntDesign name="hearto" size={24} color="white" />
+          </View>
+        </View>
+      </View>
+      <View style={{marginVertical: 10}}>
+        <TouchableWithoutFeedback onPress={() => handlePressSlider()}>
+          <Slider
+            style={{width: 393, height: 40}}
+            minimumValue={0}
+            maximumValue={1}
+            value={playbackPosition/playbackDuration}
+            onValueChange={setSliderPosition}
+            minimumTrackTintColor='#00C2CB'
+            maximumTrackTintColor='white'
+          >
+          </Slider>
+        </TouchableWithoutFeedback>
+        <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 30}}>
+          <Text style={{color: 'white'}}>{convertTime(Math.floor(playbackPosition/1000))} </Text>
+          <Text style={{marginLeft: 1, color: 'white'}}>
+            {convertTime(Math.floor(playbackDuration/1000))}
+          </Text>
+        </View>
+      </View>
+      <View style={{padding: 5, width: width, justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
         <View style={{alignItems: 'center', flexDirection: 'row'}}>
           <MaterialIcons 
-            name="replay-10" size={24} color="black" style={{margin: 10}}
+            name="replay-10" size={24} color="white" style={{margin: 10}}
             onPress={() => handlePressReplay()}
             />
           <PlayerButton 
-            iconType='PREVIOUS' size={25} color={'black'} 
+            iconType='PREVIOUS' size={25} color={'white'} 
             onPress={() => handlePressPrevious()}
           />
           <TouchableOpacity onPress={() => handlePressOnIcon()} style={{border: 1, justifyContent: 'center', alignItems: 'center', marginHorizontal: 20}}>
           {
             status.isPlaying === true ?
-              <AntDesign name="pausecircleo" size={37} color="black" />
+              <AntDesign name="pausecircleo" size={57} color="white" />
               :
-              <AntDesign name="playcircleo" size={37} color="black" />
+              <AntDesign name="playcircleo" size={57} color="white" />
           }
           </TouchableOpacity>
           <PlayerButton 
-            iconType='NEXT' size={25} color={'black'}
+            iconType='NEXT' size={25} color={'white'}
             onPress={() => handlePressNext()}
           />
           <MaterialIcons 
-            name="forward-10" size={25} color="black" style={{margin: 10}}
+            name="forward-10" size={25} color="white" style={{margin: 10}}
             onPress={() => handlePressForward()}
             />
+        </View>
+      </View>
+      <View style={{justifyContent: 'center', alignItems: 'center', paddingTop: 30}}>
+        <View style={{borderRadius: 10, paddingHorizontal: 5, backgroundColor: 'grey', opacity: 0.7}}>
+          <Text style={{fontWeight: '600', color: 'white'}}>128 Kbps</Text>
         </View>
       </View>
     </View>
@@ -403,7 +405,7 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 40,
-    backgroundColor: '#ecf0f1',
+    backgroundColor: '#121111',
+    flex: 1,
   },
 });
