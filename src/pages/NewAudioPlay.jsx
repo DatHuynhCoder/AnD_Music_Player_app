@@ -43,7 +43,7 @@ const songs = [
   }
 ]
 
-const SongItem = ({title, isPlaying, duration, onOptionPress, onSongPress, isActive}) => {
+const SongItem = ({title = '', isPlaying = false, duration = 0, onOptionPress, onSongPress, isActive = false}) => {
   return (
     <>
       <View style={{flexDirection: 'row',alignSelf: 'center',width: width - 80,}}>
@@ -93,8 +93,7 @@ export default function App() {
     sliderPosition, setSliderPosition,
     intervalId, setIntervalId
   } = useContext(AudioContext)
-  setListLength(songs.length)
-  setCurrentList(songs)
+  
   const [authors, setAuthors] = useState([])
 
   const convertTime = milis => {
@@ -257,13 +256,14 @@ export default function App() {
       console.log('click on an previous when other is playing')
       await playback.stopAsync()
       await playback.unloadAsync()
-      await playback.loadAsync(songs[currentAudioIndex - 1].uri)
+      // await playback.loadAsync(currentList[currentAudioIndex - 1].uri)
+      await playback.loadAsync({uri: "http://" + ipAddress + ":3177" + currentList[currentAudioIndex - 1].songuri})
       const status = await playback.playAsync()
       setStatus(status)
       console.log('Status after load a new audio: ', status)
       setPlaybackPosition(status.positionMillis)
       setPlaybackDuration(status.durationMillis)
-      setCurrentName(songs[currentAudioIndex - 1].name)
+      setCurrentName(currentList[currentAudioIndex - 1].songname)
       setCurrentAudioIndex(currentAudioIndex - 1)
       playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
     }
@@ -273,20 +273,21 @@ export default function App() {
   }
   async function handlePressNext() {
     console.log('you press on next with currentAudioIndex: ', currentAudioIndex)
-    if(currentAudioIndex === songs.length - 1) {
+    if(currentAudioIndex === currentList.length - 1) {
       console.log('you are in the last audio in current list')
     }
     else {
       console.log('click on next when other is playing')
       await playback.stopAsync()
       await playback.unloadAsync()
-      await playback.loadAsync(songs[currentAudioIndex + 1].uri)
+      // await playback.loadAsync(currentList[currentAudioIndex + 1].uri)
+      await playback.loadAsync({uri: "http://" + ipAddress + ":3177" + currentList[currentAudioIndex + 1].songuri})
       const status = await playback.playAsync()
       setStatus(status)
       console.log('Status after load a new audio: ', status)
       setPlaybackPosition(status.positionMillis)
       setPlaybackDuration(status.durationMillis)
-      setCurrentName(songs[currentAudioIndex + 1].name)
+      setCurrentName(currentList[currentAudioIndex + 1].songname)
       setCurrentAudioIndex(currentAudioIndex + 1)
       playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
     }
@@ -314,31 +315,62 @@ export default function App() {
       }).catch(err => console.log(err))
     }
     getAllAuthor()
+    console.log("let's get all song")
+    async function getAllSongs () {
+      await axios.get("http://" + ipAddress + ":3177" + "/get-all-songs").then(res => { // đổi thành địa chỉ ip máy thay vì localhost
+        setCurrentList(res.data)
+        setListLength(res.data.length)
+      }).catch(err => console.log(err))
+    }    
+    getAllSongs()
   }, [])
   return (
     <>
     <View style={styles.container}>
       {
-        songs.map((song, index) => {
+        currentList.map((song, index) => {
+          // return <Text>
+          //   {song.songname} - {song.songduration} - {song.authorname} - {song.songuri}
+          // </Text>
+          return <SongItem
+            key={index}
+            title={song.songname}
+            isPlaying={false}
+            duration={convertTime(song.songduration)}
+            onOptionPress={() => console.log('option pressed')}
+            onSongPress={() => {
+              console.log('hello')
+              setCurrentName(song.songname)
+              setCurrentSinger(song.authorname)
+              console.log('current index: ', currentAudioIndex)
+              setCurrentAudioIndex(index)
+              loadSound({uri: "http://" + ipAddress + ":3177" + song.songuri})
+            }}>
+
+          </SongItem>
+        })
+      }
+      {/* {
+        currentList.map((song, index) => {
           // title = 'Thuyen Quyen', isPlaying = false, duration = 1000, onOptionPress = () => console.log('option pressed'), onSongPress = () => console.log('song pressed'), isActive = false}
           return <SongItem 
             key={index}
-            title={song.name} 
+            title={song.songname} 
             isPlaying={false} 
-            duration={convertTime(song.duration)}
+            duration={convertTime(song.songduration)}
             onOptionPress={() => console.log('option pressed')}
             onSongPress={() => {
-              setCurrentName(song.name)
-              setCurrentSinger(song.author)
+              setCurrentName(song.songname)
+              setCurrentSinger(song.authorname)
               console.log('current index: ', currentAudioIndex)
               setCurrentAudioIndex(index)
-              console.log('current index name: ', songs[currentAudioIndex].name)
-              loadSound(song.uri)
+              console.log('current index name: ', currentList[currentAudioIndex].songname)
+              loadSound(song.songuri)
             }}
             isActive={false}
           />
         })
-      }
+      } */}
       <View>
         {
           authors.map((author) => {
