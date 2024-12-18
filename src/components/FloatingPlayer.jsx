@@ -13,10 +13,19 @@ const context = {
 
 const FloatingPlayer = () => {
   const {
+    currentList, setCurrentList,
+    listLength, setListLength,
+    currentName, setCurrentName,
+    currentSinger, setCurrentSinger,
     playback, setPlayback,
     status, setStatus,
-    currentName, setCurrentName,
+    sound, setSound,
+    currentAudioIndex, setCurrentAudioIndex,
     isPlaying, setIsPlaying,
+    playbackPosition, setPlaybackPosition,
+    playbackDuration, setPlaybackDuration,
+    sliderPosition, setSliderPosition,
+    intervalId, setIntervalId
   } = useContext(AudioContext)
   const navigation = useNavigation();
   function _onPlaybackStatusUpdate(status) {
@@ -84,6 +93,46 @@ const FloatingPlayer = () => {
       resumeSound() 
     }
   }
+  async function handlePressPrevious() {
+    console.log('you press on previous')
+    if(currentAudioIndex !== 0) {
+      console.log('click on an previous when other is playing')
+      await playback.stopAsync()
+      await playback.unloadAsync()
+      await playback.loadAsync(currentList[currentAudioIndex - 1].uri)
+      const status = await playback.playAsync()
+      setStatus(status)
+      console.log('Status after load a new audio: ', status)
+      setPlaybackPosition(status.positionMillis)
+      setPlaybackDuration(status.durationMillis)
+      setCurrentName(currentList[currentAudioIndex - 1].name)
+      setCurrentAudioIndex(currentAudioIndex - 1)
+      playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
+    }
+    else {
+      console.log('there are no previous song')
+    }
+  }
+  async function handlePressNext() {
+    console.log('you press on next with currentAudioIndex: ', currentAudioIndex)
+    if(currentAudioIndex === listLength - 1) {
+      console.log('you are in the last audio in current list')
+    }
+    else {
+      console.log('click on next when other is playing')
+      await playback.stopAsync()
+      await playback.unloadAsync()
+      await playback.loadAsync(currentList[currentAudioIndex + 1].uri)
+      const status = await playback.playAsync()
+      setStatus(status)
+      console.log('Status after load a new audio: ', status)
+      setPlaybackPosition(status.positionMillis)
+      setPlaybackDuration(status.durationMillis)
+      setCurrentName(currentList[currentAudioIndex + 1].name)
+      setCurrentAudioIndex(currentAudioIndex + 1)
+      playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
+    }
+  }
   return (
     <TouchableOpacity style={{borderRadius: 20, position: 'absolute', left: 30, right: 30, bottom: 90, flexDirection: 'row', backgroundColor: 'rgba(0,0,0,0.8)'}}
       onPress={() => navigation.navigate('PlayerPage')}
@@ -99,7 +148,7 @@ const FloatingPlayer = () => {
           </Text>
         </View>
         <View style={{flexDirection: 'row', alignItems: 'center', columnGap: 20, marginRight: 16, paddingLeft: 16, paddingVertical: 5}}>
-          <PlayerButton iconType='PREVIOUS' size={25} color={'white'}/>
+          <PlayerButton iconType='PREVIOUS' size={25} color={'white'} onPress={()=> handlePressPrevious()}/>
           
           <PlayerButton 
             onPress={() => handlePressOnIcon()}
@@ -108,7 +157,7 @@ const FloatingPlayer = () => {
             size={40}
             color={'white'}
           />
-          <PlayerButton iconType='NEXT' size={25} color={'white'}/>
+          <PlayerButton iconType='NEXT' size={25} color={'white'} onPress={() => handlePressNext()}/>
         </View>
       </>
     </TouchableOpacity>
