@@ -215,13 +215,14 @@ export default function PlayerPage({navigation}) {
       console.log('click on an previous when other is playing')
       await playback.stopAsync()
       await playback.unloadAsync()
-      await playback.loadAsync(currentList[currentAudioIndex - 1].uri)
+      // await playback.loadAsync(currentList[currentAudioIndex - 1].uri)
+      await playback.loadAsync({uri: "http://" + ipAddress + ":3177" + currentList[currentAudioIndex - 1].songuri})
       const status = await playback.playAsync()
       setStatus(status)
       console.log('Status after load a new audio: ', status)
       setPlaybackPosition(status.positionMillis)
       setPlaybackDuration(status.durationMillis)
-      setCurrentName(currentList[currentAudioIndex - 1].name)
+      setCurrentName(currentList[currentAudioIndex - 1].songname)
       setCurrentAudioIndex(currentAudioIndex - 1)
       playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
     }
@@ -238,13 +239,14 @@ export default function PlayerPage({navigation}) {
       console.log('click on next when other is playing')
       await playback.stopAsync()
       await playback.unloadAsync()
-      await playback.loadAsync(currentList[currentAudioIndex + 1].uri)
+      // await playback.loadAsync(currentList[currentAudioIndex + 1].uri)
+      await playback.loadAsync({uri: "http://" + ipAddress + ":3177" + currentList[currentAudioIndex + 1].songuri})
       const status = await playback.playAsync()
       setStatus(status)
       console.log('Status after load a new audio: ', status)
       setPlaybackPosition(status.positionMillis)
       setPlaybackDuration(status.durationMillis)
-      setCurrentName(currentList[currentAudioIndex + 1].name)
+      setCurrentName(currentList[currentAudioIndex + 1].songname)
       setCurrentAudioIndex(currentAudioIndex + 1)
       playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
     }

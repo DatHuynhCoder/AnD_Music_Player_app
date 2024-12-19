@@ -10,6 +10,7 @@ const NewAudioContextProvider = ({children}) => {
   const [permissionError, setPermissionError] = useState(false)
   const [currentList, setCurrentList] = useState([{}, {}, {}])
   const [listLength, setListLength] = useState(0)
+  const [currentSongid, setCurrentSongid] = useState(0)
   const [currentName, setCurrentName] = useState('')
   const [currentSinger, setCurrentSinger] = useState('')
   const [playback, setPlayback] = useState(new Audio.Sound())
@@ -22,6 +23,7 @@ const NewAudioContextProvider = ({children}) => {
   const [playbackDuration, setPlaybackDuration] = useState(null)
   const [sliderPosition, setSliderPosition] = useState()
   const [intervalId, setIntervalId] = useState(0)
+
   function _onPlaybackStatusUpdate(status) {
     if(status.didJustFinish === true) {
       finish()
@@ -29,10 +31,10 @@ const NewAudioContextProvider = ({children}) => {
     }
     if(status.isLoaded === true && status.isPlaying === true) {
       setPlaybackPosition(status.positionMillis)
-      setPlaybackDuration(status.durationMillis) 
+      setPlaybackDuration(status.durationMillis)
     }
   }
-  
+
   async function loadSound(uri) {
     if(status.isLoaded === false) {
       try {
@@ -76,13 +78,14 @@ const NewAudioContextProvider = ({children}) => {
       playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
     }
   }
+  
   async function playSound() {
     if(isLoaded === true && isPlaying === false) // no audio playing now
       try {
         console.log('play function goes now !!!!')
         // const status = await playback.loadAsync(require('../../assets/ThuyenQuyen.mp3'))
-        // const status = await playback.loadAsync({uri: songs[0].uri}) with songs[0].uri = 'https://example.com/ThuyenQuyen.mp3'
-        // const status = await playback.loadAsync(songs[0].uri)
+        // const status = await playback.loadAsync({uri: currentList[0].uri}) with currentList[0].uri = 'https://example.com/ThuyenQuyen.mp3'
+        // const status = await playback.loadAsync(currentList[0].uri)
         const status = await playback.playAsync()
         console.log('status after play: ', status)
         setStatus(status)
@@ -93,6 +96,7 @@ const NewAudioContextProvider = ({children}) => {
         console.log('error when trying to play an audio: ', err);
       }
   }
+
   async function pauseSound() {
     try {
       const status = await playback.pauseAsync()
@@ -105,6 +109,7 @@ const NewAudioContextProvider = ({children}) => {
       console.log('error when trying to pause audio: ', err); 
     }
   }
+  
   async function resumeSound() {
     try {
       const status = await playback.playAsync()
@@ -116,6 +121,7 @@ const NewAudioContextProvider = ({children}) => {
       console.log("error when trying to resume audio: ", err)
     }
   }
+
   async function finish() {
     try {
       await playback.unloadAsync()
@@ -128,6 +134,7 @@ const NewAudioContextProvider = ({children}) => {
       console.log('error when trying to unload audio: ', err);
     }
   }
+
   function handlePressOnIcon() {
     console.log('===>> check status after click on icon: ', status)
     if(status === null && playback === null) {
@@ -141,44 +148,69 @@ const NewAudioContextProvider = ({children}) => {
       resumeSound()
     }
   }
+
+  // async function handlePressPrevious() {
+  //   console.log('you press on previous')
+  //   if(currentAudioIndex !== 0) {
+  //     console.log('click on an previous when other is playing')
+  //     await playback.stopAsync()
+  //     await playback.unloadAsync()
+  //     // await playback.loadAsync(currentList[currentAudioIndex - 1].uri)
+  //     await playback.loadAsync({uri: "http://" + ipAddress + ":3177" + currentList[currentAudioIndex - 1].songuri})
+  //     const status = await playback.playAsync()
+  //     setStatus(status)
+  //     console.log('Status after load a new audio: ', status)
+  //     setPlaybackPosition(status.positionMillis)
+  //     setPlaybackDuration(status.durationMillis)
+  //     setCurrentName(currentList[currentAudioIndex - 1].songname)
+  //     setCurrentAudioIndex(currentAudioIndex - 1)
+  //     playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
+  //   }
+  //   else {
+  //     console.log('there are no previous song')
+  //   }
+  // }
   async function handlePressPrevious() {
-    console.log('you press on previous')
-    if(currentAudioIndex !== 0) {
-      console.log('click on an previous when other is playing')
-      await playback.stopAsync()
-      await playback.unloadAsync()
-      await playback.loadAsync(songs[currentAudioIndex - 1].uri)
-      const status = await playback.playAsync()
-      setStatus(status)
-      console.log('Status after load a new audio: ', status)
-      setPlaybackPosition(status.positionMillis)
-      setPlaybackDuration(status.durationMillis)
-      setCurrentName(songs[currentAudioIndex - 1].name)
+    if(currentAudioIndex > 0) {
+      loadSound({uri: "http://" + ipAddress + ":3177" + currentList[currentAudioIndex - 1].songuri})
+      setCurrentName(currentList[currentAudioIndex - 1].songname)
+      setCurrentSinger(currentList[currentAudioIndex - 1].authorname)
       setCurrentAudioIndex(currentAudioIndex - 1)
-      playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
     }
     else {
-      console.log('there are no previous song')
+      alert('Bạn đang ở bài hát đầu tiên của danh sách hiện tại')
     }
   }
+  // async function handlePressNext() {
+  //   console.log('you press on next with currentAudioIndex: ', currentAudioIndex)
+  //   if(currentAudioIndex === listLength - 1) {
+  //     console.log('you are in the last audio in current list')
+  //   }
+  //   else {
+  //     console.log('click on next when other is playing')
+  //     await playback.stopAsync()
+  //     await playback.unloadAsync()
+  //     // await playback.loadAsync(currentList[currentAudioIndex + 1].uri)
+  //     await playback.loadAsync({uri: "http://" + ipAddress + ":3177" + currentList[currentAudioIndex + 1].songuri})
+  //     const status = await playback.playAsync()
+  //     setStatus(status)
+  //     console.log('Status after load a new audio: ', status)
+  //     setPlaybackPosition(status.positionMillis)
+  //     setPlaybackDuration(status.durationMillis)
+  //     setCurrentName(currentList[currentAudioIndex + 1].songname)
+  //     setCurrentAudioIndex(currentAudioIndex + 1)
+  //     playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
+  //   }
+  // }
   async function handlePressNext() {
-    console.log('you press on next with currentAudioIndex: ', currentAudioIndex)
-    if(currentAudioIndex === songs.length - 1) {
-      console.log('you are in the last audio in current list')
+    if(currentAudioIndex < currentList.length - 1) {
+      loadSound({uri: "http://" + ipAddress + ":3177" + currentList[currentAudioIndex + 1].songuri})
+      setCurrentName(currentList[currentAudioIndex + 1].songname)
+      setCurrentSinger(currentList[currentAudioIndex + 1].authorname)
+      setCurrentAudioIndex(currentAudioIndex + 1)
     }
     else {
-      console.log('click on next when other is playing')
-      await playback.stopAsync()
-      await playback.unloadAsync()
-      await playback.loadAsync(songs[currentAudioIndex + 1].uri)
-      const status = await playback.playAsync()
-      setStatus(status)
-      console.log('Status after load a new audio: ', status)
-      setPlaybackPosition(status.positionMillis)
-      setPlaybackDuration(status.durationMillis)
-      setCurrentName(songs[currentAudioIndex + 1].name)
-      setCurrentAudioIndex(currentAudioIndex + 1)
-      playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
+      alert('Bạn đang ở bài hát cuối cùng của danh sách hiện tại')
     }
   }
   async function handlePressReplay() {
@@ -196,6 +228,7 @@ const NewAudioContextProvider = ({children}) => {
     setPlaybackPosition(sliderPosition)
     await playback.setPositionAsync(playbackPosition)
   }
+  
   return (
     <AudioContext.Provider
       value={{
@@ -203,6 +236,7 @@ const NewAudioContextProvider = ({children}) => {
         permissionError, setPermissionError,
         currentList, setCurrentList,
         listLength, setListLength,
+        currentSongid, setCurrentSongid,
         currentName, setCurrentName,
         currentSinger, setCurrentSinger,
         playback, setPlayback,
@@ -214,7 +248,13 @@ const NewAudioContextProvider = ({children}) => {
         playbackPosition, setPlaybackPosition,
         playbackDuration, setPlaybackDuration,
         sliderPosition, setSliderPosition,
-        intervalId, setIntervalId
+        intervalId, setIntervalId,
+        handlePressOnIcon,
+        handlePressPrevious,
+        handlePressNext,
+        handlePressReplay,
+        handlePressForward,
+        loadSound
       }}
     >
       {children}
