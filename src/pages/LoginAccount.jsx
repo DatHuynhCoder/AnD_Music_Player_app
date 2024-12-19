@@ -1,18 +1,61 @@
-import { View, Text, Button,StyleSheet, Image, TouchableOpacity,TextInput } from 'react-native'
+import {
+  View,
+  Text,
+  Button,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  TextInput,
+  Alert
+} from 'react-native'
 import React, { useState } from 'react'
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import AppAvatar from '../../assets/img/AnD_logo.png'
 //colors
 import { colors } from '../constants/color'
-import {textSizes} from '../constants/demensions'
+import { textSizes } from '../constants/demensions'
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { ipAddress } from '../constants/ipAddress';
+import axios from 'axios';
 
 const LoginAccount = ({ navigation }) => {
   const [isShow, setIsShow] = useState(false)
   const [isChecked, setIsChecked] = useState(false)
+  const [email, setEmail] = useState('');
+  const [pass, setPassword] = useState('');
+
+  const handleLogin = () => {
+    if (email === '' || pass === '') {
+      Alert.alert('Please fill in all the required information!')
+    }
+    else {
+      const info = {
+        email: email,
+        pass : pass
+      }
+
+      const loginUser = async () => {
+        try {
+          const response = await axios.post("http://" + ipAddress + ":3177" + "/login", info);
+          if (response.data.Status === 'Success') {
+            Alert.alert("Account login successful, have fun listening to our music!");
+            navigation.navigate('MainBottom');
+          }
+          else {
+            Alert.alert(response.data.Error);
+          }
+        } catch (error) {
+          console.log('Loi trong qua trinh dang nhap tai khoan')
+        }
+      }
+
+      loginUser();
+    }
+  }
+
   return (
     <View style={styles.container}>
       <Image
@@ -22,17 +65,20 @@ const LoginAccount = ({ navigation }) => {
       <Text style={styles.appTxt}>Login to your account</Text>
       <View style={styles.googleLogin}>
         <Fontisto name="email" size={24} color="#3b3a3a" />
-        <TextInput 
-          placeholder='Email' 
+        <TextInput
+          placeholder='Email'
+          keyboardType='email-address'
           placeholderTextColor={colors.textPrimary}
+          onChangeText={setEmail}
           style={styles.email}>
         </TextInput>
       </View>
       <View style={styles.googleLogin}>
         <AntDesign name="lock1" size={24} color="#3b3a3a" />
-        <TextInput 
-          placeholder='Password' 
+        <TextInput
+          placeholder='Password'
           placeholderTextColor={colors.textPrimary}
+          onChangeText={setPassword}
           style={styles.password}
           secureTextEntry={isShow === false ? true : false}>
         </TextInput>
@@ -53,36 +99,34 @@ const LoginAccount = ({ navigation }) => {
         text="Remember me"
         iconStyle={{ borderColor: colors.emphasis }}
         innerIconStyle={{ borderWidth: 2 }}
-        textStyle={{fontSize: textSizes.xxm, fontWeight: 'bold'}}
-        onPress={() => {setIsChecked(isChecked => !isChecked)}}
-        style={{width: 330, padding: 15}}
+        textStyle={{ fontSize: textSizes.xxm, fontWeight: 'bold' }}
+        onPress={() => { setIsChecked(isChecked => !isChecked) }}
+        style={{ width: 330, padding: 15 }}
       />
-      <TouchableOpacity 
-        onPress={() => {
-          navigation.navigate('MainBottom')
-        }}
+      <TouchableOpacity
+        onPress={handleLogin}
         activeOpacity={0.1}
-        style={{marginTop: 10, marginBottom: 15}}
+        style={{ marginTop: 10, marginBottom: 15 }}
       >
         <View style={styles.btn}>
-          <Text style={{color: colors.textPrimary}}>Log in</Text>
+          <Text style={{ color: colors.textPrimary }}>Log in</Text>
         </View>
       </TouchableOpacity>
-      <Text style={{color: colors.emphasis}}>Forgot the password?</Text>
+      <Text style={{ color: colors.emphasis }}>Forgot the password?</Text>
       <Text style={styles.or}>
         ___________ or continue with ___________
       </Text>
-      <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: 150, marginBottom: 20}}>
-        <AntDesign name="google" size={34} color="red" style={{padding: 3}}/>
-        <FontAwesome5 name="facebook" size={34} color="blue" style={{padding: 3}} />
+      <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: 150, marginBottom: 20 }}>
+        <AntDesign name="google" size={34} color="red" style={{ padding: 3 }} />
+        <FontAwesome5 name="facebook" size={34} color="blue" style={{ padding: 3 }} />
       </View>
-      <Text style={{color: colors.textPrimary}}>
+      <Text style={{ color: colors.textPrimary }}>
         Don't have an account? &nbsp;
-        <Text 
+        <Text
           onPress={() => {
             navigation.navigate('Signup')
           }}
-          style={{color: colors.emphasis}}
+          style={{ color: colors.emphasis }}
         >
           Sign up
         </Text>
@@ -98,8 +142,8 @@ const styles = StyleSheet.create({
     paddingTop: 100
   },
   appLogo: {
-    height: 150,
-    width: 150,
+    height: 100,
+    width: 100,
     borderRadius: 30,
     marginBottom: 50
   },
@@ -148,10 +192,10 @@ const styles = StyleSheet.create({
   btn: {
     justifyContent: 'center',
     alignItems: 'center',
-    height:50, 
+    height: 50,
     width: 330,
-    borderWidth:0, 
-    borderRadius:50,
+    borderWidth: 0,
+    borderRadius: 50,
     shadowColor: colors.emphasis,
     shadowRadius: 5,
     elevation: 3,
