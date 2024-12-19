@@ -6,6 +6,7 @@ import UserAvatar from '../../assets/img/user_avatar.png'
 import { AudioContext } from '../context/NewAudioContextProvider'
 import { Audio } from 'expo-av';
 import { useNavigation } from '@react-navigation/native';
+import { ipAddress } from '../constants/ipAddress';
 
 const context = {
   "isLoad": false,
@@ -15,6 +16,7 @@ const FloatingPlayer = () => {
   const {
     currentList, setCurrentList,
     listLength, setListLength,
+    currentSongid, setCurrentSongid,
     currentName, setCurrentName,
     currentSinger, setCurrentSinger,
     playback, setPlayback,
@@ -25,9 +27,14 @@ const FloatingPlayer = () => {
     playbackPosition, setPlaybackPosition,
     playbackDuration, setPlaybackDuration,
     sliderPosition, setSliderPosition,
-    intervalId, setIntervalId
+    intervalId, setIntervalId,
+    // handlePressOnIcon,
+    // handlePressPrevious,
+    // handlePressNext,
+    // loadSound
   } = useContext(AudioContext)
   const navigation = useNavigation();
+
   function _onPlaybackStatusUpdate(status) {
     if(status.didJustFinish === true) {
       finish()
@@ -38,6 +45,49 @@ const FloatingPlayer = () => {
       setPlaybackDuration(status.durationMillis) 
     }
   } 
+  async function loadSound(uri) {
+    if(status.isLoaded === false) {
+      try {
+        // const playback = new Audio.Sound()
+        // setPlayback(playback)
+        // const status = await playback.loadAsync(uri)
+        await playback.loadAsync(uri)
+        const status = await playback.playAsync()
+        setStatus(status)
+        console.log('Audio loaded !!! with status: ', status)
+        setPlaybackPosition(status.positionMillis)
+        setPlaybackDuration(status.durationMillis)
+        playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
+      }
+      catch (err) {
+        console.log('error when trying to load an audio', err)
+      }
+    }
+    else if(status.isLoaded === true && status.isPlaying === true) {
+      console.log('click on an audio when other is playing')
+      await playback.stopAsync()
+      await playback.unloadAsync()
+      await playback.loadAsync(uri)
+      const status = await playback.playAsync()
+      setStatus(status)
+      console.log('Status after load a new audio: ', status)
+      setPlaybackPosition(status.positionMillis)
+      setPlaybackDuration(status.durationMillis)
+      playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
+    }
+    else if(status.isLoaded === true && status.isPlaying === false) {
+      console.log('click on an audio while pause other audio')
+      await playback.stopAsync()
+      await playback.unloadAsync()
+      await playback.loadAsync(uri)
+      const status = await playback.playAsync()
+      setStatus(status)
+      console.log('Status after load a new audio: ', status)
+      setPlaybackPosition(status.positionMillis)
+      setPlaybackDuration(status.durationMillis)
+      playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
+    }
+  }
   async function playSound() {
     if(isLoaded === true && isPlaying === false) // no audio playing now
       try {
@@ -55,7 +105,6 @@ const FloatingPlayer = () => {
         console.log('error when trying to play an audio: ', err);
       }
   }
-
   async function pauseSound() {
     try {
       const status = await playback.pauseAsync()
@@ -67,8 +116,7 @@ const FloatingPlayer = () => {
     catch(err) {
       console.log('error when trying to pause audio: ', err); 
     }
-  }
-  
+  } 
   async function resumeSound() {
     try {
       const status = await playback.playAsync()
@@ -99,13 +147,14 @@ const FloatingPlayer = () => {
       console.log('click on an previous when other is playing')
       await playback.stopAsync()
       await playback.unloadAsync()
-      await playback.loadAsync(currentList[currentAudioIndex - 1].uri)
+      // await playback.loadAsync(currentList[currentAudioIndex - 1].uri)
+      await playback.loadAsync({uri: "http://" + ipAddress + ":3177" + currentList[currentAudioIndex - 1].songuri})
       const status = await playback.playAsync()
       setStatus(status)
       console.log('Status after load a new audio: ', status)
       setPlaybackPosition(status.positionMillis)
       setPlaybackDuration(status.durationMillis)
-      setCurrentName(currentList[currentAudioIndex - 1].name)
+      setCurrentName(currentList[currentAudioIndex - 1].songname)
       setCurrentAudioIndex(currentAudioIndex - 1)
       playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
     }
@@ -122,13 +171,14 @@ const FloatingPlayer = () => {
       console.log('click on next when other is playing')
       await playback.stopAsync()
       await playback.unloadAsync()
-      await playback.loadAsync(currentList[currentAudioIndex + 1].uri)
+      // await playback.loadAsync(currentList[currentAudioIndex + 1].uri)
+      await playback.loadAsync({uri: "http://" + ipAddress + ":3177" + currentList[currentAudioIndex + 1].songuri})
       const status = await playback.playAsync()
       setStatus(status)
       console.log('Status after load a new audio: ', status)
       setPlaybackPosition(status.positionMillis)
       setPlaybackDuration(status.durationMillis)
-      setCurrentName(currentList[currentAudioIndex + 1].name)
+      setCurrentName(currentList[currentAudioIndex + 1].songname)
       setCurrentAudioIndex(currentAudioIndex + 1)
       playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
     }
@@ -148,7 +198,17 @@ const FloatingPlayer = () => {
           </Text>
         </View>
         <View style={{flexDirection: 'row', alignItems: 'center', columnGap: 20, marginRight: 16, paddingLeft: 16, paddingVertical: 5}}>
-          <PlayerButton iconType='PREVIOUS' size={25} color={'white'} onPress={()=> handlePressPrevious()}/>
+          <PlayerButton iconType='PREVIOUS' size={25} color={'white'} onPress={()=> {
+            if(currentAudioIndex > 0) {
+              loadSound({uri: "http://" + ipAddress + ":3177" + currentList[currentAudioIndex - 1].songuri})
+              setCurrentName(currentList[currentAudioIndex - 1].songname)
+              setCurrentSinger(currentList[currentAudioIndex - 1].authorname)
+              setCurrentAudioIndex(currentAudioIndex - 1)
+            }
+            else {
+              alert('Bạn đang ở bài hát đầu tiên của danh sách hiện tại')
+            }
+          }}/>
           
           <PlayerButton 
             onPress={() => handlePressOnIcon()}
@@ -157,7 +217,17 @@ const FloatingPlayer = () => {
             size={40}
             color={'white'}
           />
-          <PlayerButton iconType='NEXT' size={25} color={'white'} onPress={() => handlePressNext()}/>
+          <PlayerButton iconType='NEXT' size={25} color={'white'} onPress={() => {
+            if(currentAudioIndex < currentList.length - 1) {
+              loadSound({uri: "http://" + ipAddress + ":3177" + currentList[currentAudioIndex + 1].songuri})
+              setCurrentName(currentList[currentAudioIndex + 1].songname)
+              setCurrentSinger(currentList[currentAudioIndex + 1].authorname)
+              setCurrentAudioIndex(currentAudioIndex + 1)
+            }
+            else {
+              alert('Bạn đang ở bài hát cuối cùng của danh sách hiện tại')
+            }
+          }}/>
         </View>
       </>
     </TouchableOpacity>
