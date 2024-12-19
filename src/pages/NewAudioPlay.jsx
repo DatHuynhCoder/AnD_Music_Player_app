@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { Text, View, StyleSheet, Button, TouchableOpacity, Dimensions, TouchableWithoutFeedback, ScrollView } from 'react-native';
+import { Text, View, StyleSheet, Button, TouchableOpacity, Dimensions, TouchableWithoutFeedback, ScrollView,ImageBackground } from 'react-native';
 import { Audio } from 'expo-av';
 import Slider from '@react-native-community/slider';
 import { colors, misc_colors } from '../constants/color';
@@ -13,6 +13,7 @@ import axios from 'axios';
 
 import { AudioContext } from '../context/NewAudioContextProvider';
 import PlayerButton from '../components/PlayerButton';
+import albumIMG from '../../assets/albumIMG.jpeg'
 
 const {width} = Dimensions.get('window')
 
@@ -55,7 +56,7 @@ const SongItem = ({title = '', isPlaying = false, duration = 0, onOptionPress, o
               </Text>
             </View>
             <View style={{width: width - 180,paddingLeft: 10,}}>
-              <Text numberOfLines={1} style={{fontSize: 16,color: misc_colors.FONT}}>{title}</Text>
+              <Text numberOfLines={1} style={{fontSize: 16,color: colors.textPrimary}}>{title}</Text>
               <Text style={{fontSize: 14,color: misc_colors.FONT_LIGHT}}>
                 {duration}
               </Text>
@@ -130,280 +131,98 @@ export default function App() {
     }
   }
 
-  function _onPlaybackStatusUpdate(status) {
-    if(status.didJustFinish === true) {
-      finish()
-      return
-    }
-    if(status.isLoaded === true && status.isPlaying === true) {
-      setPlaybackPosition(status.positionMillis)
-      setPlaybackDuration(status.durationMillis) 
-    }
-  }
-
-  // async function loadSound(uri) {
-  //   if(status.isLoaded === false) {
-  //     try {
-  //       // const playback = new Audio.Sound()
-  //       // setPlayback(playback)
-  //       // const status = await playback.loadAsync(uri)
-  //       await playback.loadAsync(uri)
-  //       const status = await playback.playAsync()
-  //       setStatus(status)
-  //       console.log('Audio loaded !!! with status: ', status)
-  //       setPlaybackPosition(status.positionMillis)
-  //       setPlaybackDuration(status.durationMillis)
-  //       playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
-  //     }
-  //     catch (err) {
-  //       console.log('error when trying to load an audio', err)
-  //     }
+  // function _onPlaybackStatusUpdate(status) {
+  //   if(status.didJustFinish === true) {
+  //     finish()
+  //     return
   //   }
-  //   else if(status.isLoaded === true && status.isPlaying === true) {
-  //     console.log('click on an audio when other is playing')
-  //     await playback.stopAsync()
-  //     await playback.unloadAsync()
-  //     await playback.loadAsync(uri)
-  //     const status = await playback.playAsync()
-  //     setStatus(status)
-  //     console.log('Status after load a new audio: ', status)
+  //   if(status.isLoaded === true && status.isPlaying === true) {
   //     setPlaybackPosition(status.positionMillis)
-  //     setPlaybackDuration(status.durationMillis)
-  //     playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
-  //   }
-  //   else if(status.isLoaded === true && status.isPlaying === false) {
-  //     console.log('click on an audio while pause other audio')
-  //     await playback.stopAsync()
-  //     await playback.unloadAsync()
-  //     await playback.loadAsync(uri)
-  //     const status = await playback.playAsync()
-  //     setStatus(status)
-  //     console.log('Status after load a new audio: ', status)
-  //     setPlaybackPosition(status.positionMillis)
-  //     setPlaybackDuration(status.durationMillis)
-  //     playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
-  //   }
-  // }
-  
-  // async function playSound() {
-  //   if(isLoaded === true && isPlaying === false) // no audio playing now
-  //     try {
-  //       console.log('play function goes now !!!!')
-  //       // const status = await playback.loadAsync(require('../../assets/ThuyenQuyen.mp3'))
-  //       // const status = await playback.loadAsync({uri: songs[0].uri}) with songs[0].uri = 'https://example.com/ThuyenQuyen.mp3'
-  //       // const status = await playback.loadAsync(songs[0].uri)
-  //       const status = await playback.playAsync()
-  //       console.log('status after play: ', status)
-  //       setStatus(status)
-  //       setIsPlaying(true)
-  //       playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
-  //     }
-  //     catch(err) {
-  //       console.log('error when trying to play an audio: ', err);
-  //     }
-  // }
-
-  // async function pauseSound() {
-  //   try {
-  //     const status = await playback.pauseAsync()
-  //     console.log('status after pause: ', status)
-  //     setPlayback(playback)
-  //     setStatus(status)
-  //     setIsPlaying(false)
-  //   }
-  //   catch(err) {
-  //     console.log('error when trying to pause audio: ', err); 
-  //   }
-  // }
-  
-  // async function resumeSound() {
-  //   try {
-  //     const status = await playback.playAsync()
-  //     console.log('status after resume: ', status)
-  //     setPlayback(playback)
-  //     setStatus(status)
-  //     setIsPlaying(true)
-  //   } catch(err) {
-  //     console.log("error when trying to resume audio: ", err)
+  //     setPlaybackDuration(status.durationMillis) 
   //   }
   // }
 
-  // async function finish() {
-  //   try {
-  //     // await playback.unloadAsync()
-  //     // setIsPlaying(false)
-  //     // setPlaybackPosition(0)
-  //     // setPlaybackDuration(0)
-  //     console.log('Finished');
-  //     handlePressNext()
-  //   }
-  //   catch(err) {
-  //     console.log('error when trying to unload audio: ', err);
-  //   }
-  // }
-
-  // function handlePressOnIcon() {
-  //   console.log('===>> check status after click on icon: ', status)
-  //   if(status === null && playback === null) {
-  //   // if(status.isLoaded === true && isPlaying === false && status.didJustFinish === false && status.positionMillis === 0) {
-  //     playSound()
-  //   }
-  //   else if(status.isLoaded === true && status.isPlaying === true && status.didJustFinish === false) {
-  //     pauseSound()
-  //   }
-  //   else if(status.isLoaded === true && status.isPlaying === false && status.didJustFinish === false) {
-  //     resumeSound()
-  //   }
-  // }
-
-  // async function handlePressPrevious() {
-  //   console.log('you press on previous')
-  //   if(currentAudioIndex !== 0) {
-  //     console.log('click on an previous when other is playing')
-  //     await playback.stopAsync()
-  //     await playback.unloadAsync()
-  //     // await playback.loadAsync(currentList[currentAudioIndex - 1].uri)
-  //     await playback.loadAsync({uri: "http://" + ipAddress + ":3177" + currentList[currentAudioIndex - 1].songuri})
-  //     const status = await playback.playAsync()
-  //     setStatus(status)
-  //     console.log('Status after load a new audio: ', status)
-  //     setPlaybackPosition(status.positionMillis)
-  //     setPlaybackDuration(status.durationMillis)
-  //     setCurrentName(currentList[currentAudioIndex - 1].songname)
-  //     setCurrentAudioIndex(currentAudioIndex - 1)
-  //     playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
-  //   }
-  //   else {
-  //     console.log('there are no previous song')
-  //   }
-  // }
-  // async function handlePressNext() {
-  //   console.log('you press on next with currentAudioIndex: ', currentAudioIndex)
-  //   if(currentAudioIndex === currentList.length - 1) {
-  //     console.log('you are in the last audio in current list')
-  //   }
-  //   else {
-  //     console.log('click on next when other is playing')
-  //     await playback.stopAsync()
-  //     await playback.unloadAsync()
-  //     // await playback.loadAsync(currentList[currentAudioIndex + 1].uri)
-  //     await playback.loadAsync({uri: "http://" + ipAddress + ":3177" + currentList[currentAudioIndex + 1].songuri})
-  //     const status = await playback.playAsync()
-  //     setStatus(status)
-  //     console.log('Status after load a new audio: ', status)
-  //     setPlaybackPosition(status.positionMillis)
-  //     setPlaybackDuration(status.durationMillis)
-  //     setCurrentName(currentList[currentAudioIndex + 1].songname)
-  //     setCurrentAudioIndex(currentAudioIndex + 1)
-  //     playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
-  //     // loadSound({uri: "http://" + ipAddress + ":3177" + currentList[currentAudioIndex + 1].songuri})
-  //   }
-  // }
-  // async function handlePressReplay() {
-  //   console.log('replay 10s')
-  //   setPlaybackPosition(playbackPosition - 10000)
-  //   await playback.setPositionAsync(playbackPosition - 10000)
-  // }
-  // async function handlePressForward() {
-  //   console.log('forward 10s')
-  //   setPlaybackPosition(playbackPosition + 10000)
-  //   await playback.setPositionAsync(playbackPosition + 10000)
-  // }
-  // async function handlePressSlider() {
-  //   console.log(sliderPosition)
-  //   setPlaybackPosition(sliderPosition)
-  //   await playback.setPositionAsync(playbackPosition)
-  // }
-  useEffect(() => {
-    console.log("let's get all author")
-    console.log("let's get all song")
-    async function getAllSongs () {
-      await axios.get("http://" + ipAddress + ":3177" + "/get-all-songs").then(res => { // đổi thành địa chỉ ip máy thay vì localhost
-        setCurrentList(res.data)
-        setListLength(res.data.length)
-      }).catch(err => console.log(err))
-    }    
-    getAllSongs()
-  }, [])
+  // useEffect(() => {
+  //   console.log("let's get all author")
+  //   console.log("let's get all song")
+  //   async function getAllSongs () {
+  //     await axios.get("http://" + ipAddress + ":3177" + "/get-all-songs").then(res => { // đổi thành địa chỉ ip máy thay vì localhost
+  //       setCurrentList(res.data)
+  //       setListLength(res.data.length)
+  //     }).catch(err => console.log(err))
+  //   }    
+  //   getAllSongs()
+  // }, [])
   return (
-    <ScrollView>
-    <View style={styles.container}>
-      {
-        currentList.map((song, index) => {
-          return <SongItem
-            key={index}
-            title={song.songname}
-            isPlaying={false}
-            duration={convertTime(song.songduration)}
-            onOptionPress={() => console.log('option pressed')}
-            onSongPress={() => {
-              console.log('hello')
-              setCurrentName(song.songname)
-              setCurrentSinger(song.authorname)
-              console.log('current index: ', currentAudioIndex)
-              setCurrentAudioIndex(index)
-              loadSound({uri: "http://" + ipAddress + ":3177" + song.songuri})
-            }}>
-
-          </SongItem>
-        })
-      }
-      <View style={{display:'flex', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 30}}>
-        <Text>{currentName !== '' ? currentName : 'Không có dữ liệu'}</Text>
-        <Text style={{marginLeft: 1}}>
-          {convertTime(Math.floor(playbackPosition/1000))} 
-          / 
-          {convertTime(Math.floor(playbackDuration/1000))}
-        </Text>
-      </View>
-      <TouchableWithoutFeedback onPress={() => handlePressSlider()}>
-        <Slider
-          style={{width: 393, height: 40}}
-          minimumValue={0}
-          maximumValue={1}
-          value={playbackPosition/playbackDuration}
-          onValueChange={setSliderPosition}
-          minimumTrackTintColor='black'
-          maximumTrackTintColor='blue'
-        >
-        </Slider>
-      </TouchableWithoutFeedback>
-      <View style={{height: 50, borderWidth: 1, width: width, justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
-        <View style={{alignItems: 'center', flexDirection: 'row'}}>
-          <MaterialIcons 
-            name="replay-10" size={24} color="black" style={{margin: 10}}
-            onPress={() => handlePressReplay()}
-            />
-          <PlayerButton 
-            iconType='PREVIOUS' size={25} color={'black'} 
-            onPress={() => handlePressPrevious()}
-          />
-          <TouchableOpacity onPress={() => handlePressOnIcon()} style={{border: 1, justifyContent: 'center', alignItems: 'center', marginHorizontal: 20}}>
-          {
-            status.isPlaying === true ?
-              <AntDesign name="pausecircleo" size={37} color="black" />
-              :
-              <AntDesign name="playcircleo" size={37} color="black" />
-          }
-          </TouchableOpacity>
-          <PlayerButton 
-            iconType='NEXT' size={25} color={'black'}
-            onPress={() => handlePressNext()}
-          />
-          <MaterialIcons 
-            name="forward-10" size={25} color="black" style={{margin: 10}}
-            onPress={() => handlePressForward()}
-            />
+    <View style={{backgroundColor: colors.background, flex: 1, paddingBottom: 130}}>
+    <View style={{backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center', paddingTop: 30}}>
+      <View 
+        style={{borderWidth: 1,
+          borderColor: '#ccc',
+          borderRadius: 100,
+          overflow: 'hidden',
+          height: 200,
+          width: 200,
+          margin: 20
+        }}
+      >
+        <View style={{
+          flex: 1,
+          borderRadius: 15,
+          overflow: 'hidden',
+        }}>
+          <ImageBackground
+            source={albumIMG}
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          ></ImageBackground>
         </View>
       </View>
+      <View>
+        <Text style={{color: colors.textPrimary}}>Album Name</Text>
+      </View>
     </View>
-    </ScrollView>
+    {/* <View style={{style: styles.container}}> */}
+      <ScrollView style={styles.scroller}>
+        {
+          currentList.map((song, index) => {
+            return <SongItem
+              key={index}
+              title={song.songname}
+              isPlaying={false}
+              duration={convertTime(song.songduration)}
+              onOptionPress={() => console.log('option pressed')}
+              onSongPress={() => {
+                console.log('hello')
+                setCurrentName(song.songname)
+                setCurrentSinger(song.authorname)
+                setCurrentSongid(song.songid)
+                console.log('current index: ', currentAudioIndex)
+                setCurrentAudioIndex(index)
+                loadSound({uri: "http://" + ipAddress + ":3177" + song.songuri})
+              }}>
+
+            </SongItem>
+          })
+        }
+      </ScrollView>
+    {/* </View> */}
+    
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     paddingTop: 40,
-    backgroundColor: '#ecf0f1',
+    backgroundColor: colors.background,
+    margin: 10
   },
+  scroller: {
+    backgroundColor: colors.background,
+    // paddingBottom: 130,
+  }
 });

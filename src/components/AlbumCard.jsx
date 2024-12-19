@@ -5,14 +5,22 @@ import {
   TouchableOpacity,
   ImageBackground
 } from 'react-native'
-import React from 'react'
+import React, {useContext} from 'react'
 //constants
 import { colors } from '../constants/color'
 import { textSizes } from '../constants/demensions';
+import { ipAddress } from '../constants/ipAddress';
+import axios from 'axios';
+import { AudioContext } from '../context/NewAudioContextProvider';
 
-const AlbumCard = ({ albumName, albumURL, albumAuthor }) => {
+const AlbumCard = ({ albumId, albumName, albumURL, albumAuthor }) => {
+  const { setCurrentList } = useContext(AudioContext)
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={() => {
+      axios.get('http://' + ipAddress + ':3177/get-listsongs-by-albumid?albumid=' + albumId).then(res => {
+        setCurrentList(res.data)
+      })
+    }}>
       <ImageBackground
         source={albumURL}
         style={styles.ImgBackground}
