@@ -6,17 +6,20 @@ import {
   StyleSheet,
   FlatList
 } from 'react-native'
-import React, { useState } from 'react'
+import React, { use, useState, useEffect } from 'react'
 //constants
 import { colors } from '../constants/color'
 import { textSizes } from '../constants/demensions';
+import { ipAddress } from '../constants/ipAddress.js';
 //components
 import SongCard2 from '../components/SongCard2';
 import AuthorCard from '../components/AuthorCard';
 import AreaCard from '../components/AreaCard';
 import AlbumCard from '../components/AlbumCard';
+import albumURL from '../../assets/img/TheFatRat.jpg'
 //icons
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import axios from 'axios';
 
 const ExplorePage = () => {
   const musicData = [
@@ -191,38 +194,33 @@ const ExplorePage = () => {
     },
   ]
 
-  const albumData = [
+  const [albumData, setAlbumData] = useState([
     {
-      id: 1,
-      albumURL: require('../../assets/img/TheFatRat.jpg'),
-      albumName: 'PARALLAX',
-      albumAuthor: 'TheFatRat'
+      albumid: 1,
+      albumname: 'PARALLAX',
+      authorname: 'TheFatRat'
     },
     {
-      id: 2,
-      albumURL: require('../../assets/img/AHeadFullofDream.png'),
-      albumName: 'A Head Full of Dreams',
-      albumAuthor: 'Coldplay'
+      albumid: 1,
+      albumname: 'PARALLAX',
+      authorname: 'TheFatRat'
     },
     {
-      id: 3,
-      albumURL: require('../../assets/img/undertaleOst.png'),
-      albumName: 'Undertale',
-      albumAuthor: 'Tobyfox'
+      albumid: 1,
+      albumname: 'PARALLAX',
+      authorname: 'TheFatRat'
     },
     {
-      id: 4,
-      albumURL: require('../../assets/img/NightVisions.png'),
-      albumName: 'Night Visions',
-      albumAuthor: 'Imagine Dragons'
+      albumid: 1,
+      albumname: 'PARALLAX',
+      authorname: 'TheFatRat'
     },
     {
-      id: 5,
-      albumURL: require('../../assets/img/aviciiStories.png'),
-      albumName: 'Stories',
-      albumAuthor: 'AVICII'
+      albumid: 1,
+      albumname: 'PARALLAX',
+      authorname: 'TheFatRat'
     },
-  ]
+  ])
 
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredSongs, setFilteredSongs] = useState([]); //Chứa các bài hát theo tên bài hát và tác giả
@@ -240,6 +238,12 @@ const ExplorePage = () => {
     setFilteredSongs(tempfilteredSongs);
     setFilteredAuthor(tempfilterAuthors);
   }
+
+  useEffect(() => {
+    axios.get('http://' + ipAddress + ':3177/get-top-albums').then(res => {
+      setAlbumData(res.data)
+    })
+  }, [])
 
   return (
     <View style={styles.container}>
@@ -336,7 +340,7 @@ const ExplorePage = () => {
             ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
             keyExtractor={(item) => item.id.toString()}
           />
-
+          {/* Top Albums */}
           <Text style={styles.HeaderTxt}>Top Albums</Text>
           <FlatList
             data={albumData}
@@ -347,9 +351,11 @@ const ExplorePage = () => {
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <AlbumCard
-                albumURL={item.albumURL}
-                albumAuthor={item.albumAuthor}
-                albumName={item.albumName}
+                key={item.albumid}
+                albumURL={albumURL}
+                albumId={item.albumid}
+                albumAuthor={item.authorname}
+                albumName={item.albumname}
               />
             )}
           />

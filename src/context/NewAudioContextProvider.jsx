@@ -2,6 +2,7 @@ import { View, Text } from 'react-native'
 import { createContext, useState } from 'react'
 import React from 'react'
 import { Audio } from 'expo-av';
+import { ipAddress } from '../constants/ipAddress';
 
 const AudioContext = createContext()
 
@@ -124,10 +125,12 @@ const NewAudioContextProvider = ({children}) => {
 
   async function finish() {
     try {
-      await playback.unloadAsync()
-      setIsPlaying(false)
-      setPlaybackPosition(0)
-      setPlaybackDuration(0)
+      if(currentAudioIndex < currentList.length - 1) {
+        loadSound({uri: "http://" + ipAddress + ":3177" + currentList[currentAudioIndex + 1].songuri})
+        setCurrentName(currentList[currentAudioIndex + 1].songname)
+        setCurrentSinger(currentList[currentAudioIndex + 1].authorname)
+        setCurrentAudioIndex(currentAudioIndex + 1)
+      }
       console.log('Finished');
     }
     catch(err) {
@@ -175,6 +178,7 @@ const NewAudioContextProvider = ({children}) => {
       loadSound({uri: "http://" + ipAddress + ":3177" + currentList[currentAudioIndex - 1].songuri})
       setCurrentName(currentList[currentAudioIndex - 1].songname)
       setCurrentSinger(currentList[currentAudioIndex - 1].authorname)
+      setCurrentSongid(currentList[currentAudioIndex - 1].songid)
       setCurrentAudioIndex(currentAudioIndex - 1)
     }
     else {
@@ -203,10 +207,12 @@ const NewAudioContextProvider = ({children}) => {
   //   }
   // }
   async function handlePressNext() {
+    console.log('call me handlePressNext')
     if(currentAudioIndex < currentList.length - 1) {
       loadSound({uri: "http://" + ipAddress + ":3177" + currentList[currentAudioIndex + 1].songuri})
       setCurrentName(currentList[currentAudioIndex + 1].songname)
       setCurrentSinger(currentList[currentAudioIndex + 1].authorname)
+      setCurrentSongid(currentList[currentAudioIndex + 1].songid)
       setCurrentAudioIndex(currentAudioIndex + 1)
     }
     else {
