@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native'
-import React, {useContext, useEffect} from 'react'
+import React, {useContext} from 'react'
 import PlayerButton from './PlayerButton'
 import { iconSizes } from '../constants/demensions'
 import UserAvatar from '../../assets/img/user_avatar.png'
