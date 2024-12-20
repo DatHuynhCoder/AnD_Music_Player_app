@@ -301,7 +301,9 @@ export default function PlayerPage({navigation}) {
               letterSpacing: 1
             }}>Play</Text>
           </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={() => console.log('Add this to playlist')}>
+          <TouchableWithoutFeedback onPress={() => {
+            console.log('Add this to playlist')
+          }}>
             <Text style={{
               fontSize: 16,
               fontWeight: 'bold',
