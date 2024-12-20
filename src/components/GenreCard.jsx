@@ -3,12 +3,15 @@ import { View, Text, StyleSheet, Image } from 'react-native'
 import React from 'react'
 import { colors } from '../constants/color'
 import { textSizes } from '../constants/demensions'
+import { ipAddress } from '../constants/ipAddress'
+import {Defaultimg} from '../../assets/img/AnD_logo.png'
 
 const GenreCard = ({ genreName, genreUrl }) => {
   return (
     <View style={styles.container}>
       <Image
-        source={genreUrl}
+        // source={{uri: 'http://' + ipAddress+ ':3177' + genreUrl}}
+        source={Defaultimg}
         style={styles.genreImg}
       />
       <Text

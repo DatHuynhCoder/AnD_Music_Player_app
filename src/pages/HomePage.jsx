@@ -23,8 +23,10 @@ import { AudioContext } from '../context/NewAudioContextProvider'
 
 const HomePage = () => {
   const [musicData, setMusicData] = useState([])
+  const [genreList, setGenreList] = useState([]);
   const {
-    currentList, setCurrentList,
+    currentList,
+    setCurrentList,
     setCurrentSongid,
     setCurrentName,
     setCurrentSinger,
@@ -40,7 +42,20 @@ const HomePage = () => {
         setMusicData(res.data)
       })
     }
-    getAllSongs()
+
+    const getAllGenre = async () => {
+      try {
+        const response = await axios.get('http://' + ipAddress + ':3177' + "/get-all-genres");
+        if(response.data) {
+          console.log('Lay genre thang cong');
+          setGenreList(response.data);
+        }
+      } catch (error) {
+        console.log('Error when get genre: ' + error)
+      }
+    }
+    getAllSongs();
+    getAllGenre();
   }, [])
   // const musicData = [
   //   {
@@ -262,9 +277,9 @@ const HomePage = () => {
         <View>
           <Text style={styles.genreTxt}>Genres you may love</Text>
           <View style={styles.genreCardContainer}>
-            {genreData.map((item, index) => (
-              <View style={styles.cardWrapper} key={item.id}>
-                <GenreCard genreName={item.genreName} genreUrl={item.genreUrl} />
+            {genreList.map((item, index) => (
+              <View style={styles.cardWrapper} key={item.genreid}>
+                <GenreCard genreName={item.genrename} genreUrl={item.genreimg} />
               </View>
             ))}
           </View>
@@ -286,7 +301,7 @@ const HomePage = () => {
                     musicURL={song.songimg}
                     musicAuthor={song.authorname}
                     onSongPressed={() => {
-                      setCurrentList([song])
+                      setCurrentList([song]);
                       setCurrentName(song.songname);
                       setCurrentSinger(song.authorname);
                       setCurrentSongid(song.songid);
@@ -299,6 +314,7 @@ const HomePage = () => {
             )}
           />
         </View>
+      <View style={{height: 100, }}></View>
       </ScrollView>
     </View>
 
@@ -309,7 +325,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.background,
     flex: 1,
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
   },
   headerContainer: {
     flexDirection: 'row',
