@@ -28,6 +28,7 @@ const HomePage = () => {
     currentList,
     setCurrentList,
     setCurrentSongid,
+    setCurrentSongimg,
     setCurrentName,
     setCurrentSinger,
     currentAudioIndex,
@@ -302,9 +303,10 @@ const HomePage = () => {
                     musicAuthor={song.authorname}
                     onSongPressed={() => {
                       setCurrentList([song]);
+                      setCurrentSongid(song.songid);
+                      setCurrentSongimg(song.songimg)
                       setCurrentName(song.songname);
                       setCurrentSinger(song.authorname);
-                      setCurrentSongid(song.songid);
                       setCurrentAudioIndex(0);
                       loadSound({uri: "http://" + ipAddress + ":3177" + song.songuri})
                     }}
