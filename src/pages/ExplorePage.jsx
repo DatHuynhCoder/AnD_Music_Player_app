@@ -252,7 +252,7 @@ const ExplorePage = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView>
+      <ScrollView nestedScrollEnabled={true}>
         <View style={styles.searchContainer}>
           <MaterialIcons name="search" size={20} color="#888" style={styles.searchIcon} />
           <TextInput

@@ -13,9 +13,11 @@ import { iconSizes, textSizes } from '../constants/demensions'
 //icons
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
-const SongCard = ({ musicName, musicURL, musicAuthor }) => {
+const SongCard = ({ musicName, musicURL, musicAuthor, onSongPressed}) => {
   return (
-    <TouchableOpacity style={styles.songContainer}>
+    <TouchableOpacity 
+    onPress={() => onSongPressed()}
+    style={styles.songContainer}>
       <View style={styles.extraContainer}>
         <Image source={musicURL} style={styles.songImg} />
         <View style={styles.songTxtContainer}>
