@@ -4,7 +4,7 @@ import { Audio } from 'expo-av';
 import Slider from '@react-native-community/slider';
 import { colors, misc_colors } from '../constants/color';
 import { ipAddress } from '../constants/ipAddress';
-
+import { useNavigation } from '@react-navigation/native';
 import Entypo from '@expo/vector-icons/Entypo';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -16,12 +16,71 @@ import axios from 'axios';
 import { AudioContext } from '../context/NewAudioContextProvider';
 import PlayerButton from '../components/PlayerButton';
 
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+
 const {width} = Dimensions.get('window')
+const Tab = createMaterialTopTabNavigator();
 
 const map = new Map()
 map['ThuyenQuyen'] = '../../assets/ThuyenQuyen.mp3'
 
-export default function PlayerPage({navigation}) {
+function LyricScreen() {
+  const {
+    currentList, setCurrentList,
+    listLength, setListLength,
+    currentSongid, setCurrentSongid,
+    currentName, setCurrentName,
+    currentSinger, setCurrentSinger,
+    playback, setPlayback,
+    status, setStatus,
+    sound, setSound,
+    currentAudioIndex, setCurrentAudioIndex,
+    isPlaying, setIsPlaying,
+    playbackPosition, setPlaybackPosition,
+    playbackDuration, setPlaybackDuration,
+    sliderPosition, setSliderPosition,
+    intervalId, setIntervalId,
+    handlePressOnIcon,
+    handlePressPrevious,
+    handlePressNext,
+    handlePressReplay,
+    handlePressForward,
+    loadSound
+  } = useContext(AudioContext)
+  const navigation = useNavigation();
+
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.background }}>
+      <Text style={{color: colors.textPrimary}}>
+        {currentList[currentAudioIndex].songlyric}
+      </Text>
+    </View>
+  );
+}
+
+export default function MyTabs() {
+  const navigation = useNavigation()
+  return (
+    <Tab.Navigator 
+      tabBar={() => <View>
+        <MaterialCommunityIcons 
+          name="arrow-left-circle-outline" 
+          size={40} 
+          color="white" 
+          onPress={() => navigation.goBack()}
+          style={{borderWidth: 1, borderColor: '#121111'}}
+        />
+      </View>}
+      initialRouteName='Player'
+    >
+      <Tab.Screen name="Lyric" component={LyricScreen}/>
+      <Tab.Screen name="Player" component={PlayerPage} />
+    </Tab.Navigator>
+  );
+}
+
+// export default function PlayerPage({navigation}) {
+function PlayerPage({navigation}) {
   const {
     currentList, setCurrentList,
     listLength, setListLength,
@@ -91,188 +150,6 @@ export default function PlayerPage({navigation}) {
     }
   }
 
-  // function _onPlaybackStatusUpdate(status) {
-  //   if(status.didJustFinish === true) {
-  //     finish()
-  //     return
-  //   }
-  //   if(status.isLoaded === true && status.isPlaying === true) {
-  //     setPlaybackPosition(status.positionMillis)
-  //     setPlaybackDuration(status.durationMillis)
-  //   }
-  // }
-
-  // async function loadSound(uri) {
-  //   if(status.isLoaded === false) {
-  //     try {
-  //       // const playback = new Audio.Sound()
-  //       // setPlayback(playback)
-  //       // const status = await playback.loadAsync(uri)
-  //       await playback.loadAsync(uri)
-  //       const status = await playback.playAsync()
-  //       setStatus(status)
-  //       console.log('Audio loaded !!! with status: ', status)
-  //       setPlaybackPosition(status.positionMillis)
-  //       setPlaybackDuration(status.durationMillis)
-  //       playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
-  //     }
-  //     catch (err) {
-  //       console.log('error when trying to load an audio', err)
-  //     }
-  //   }
-  //   else if(status.isLoaded === true && status.isPlaying === true) {
-  //     console.log('click on an audio when other is playing')
-  //     await playback.stopAsync()
-  //     await playback.unloadAsync()
-  //     await playback.loadAsync(uri)
-  //     const status = await playback.playAsync()
-  //     setStatus(status)
-  //     console.log('Status after load a new audio: ', status)
-  //     setPlaybackPosition(status.positionMillis)
-  //     setPlaybackDuration(status.durationMillis)
-  //     playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
-  //   }
-  //   else if(status.isLoaded === true && status.isPlaying === false) {
-  //     console.log('click on an audio while pause other audio')
-  //     await playback.stopAsync()
-  //     await playback.unloadAsync()
-  //     await playback.loadAsync(uri)
-  //     const status = await playback.playAsync()
-  //     setStatus(status)
-  //     console.log('Status after load a new audio: ', status)
-  //     setPlaybackPosition(status.positionMillis)
-  //     setPlaybackDuration(status.durationMillis)
-  //     playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
-  //   }
-  // }
-  
-  // async function playSound() {
-  //   if(isLoaded === true && isPlaying === false) // no audio playing now
-  //     try {
-  //       console.log('play function goes now !!!!')
-  //       // const status = await playback.loadAsync(require('../../assets/ThuyenQuyen.mp3'))
-  //       // const status = await playback.loadAsync({uri: currentList[0].uri}) with currentList[0].uri = 'https://example.com/ThuyenQuyen.mp3'
-  //       // const status = await playback.loadAsync(currentList[0].uri)
-  //       const status = await playback.playAsync()
-  //       console.log('status after play: ', status)
-  //       setStatus(status)
-  //       setIsPlaying(true)
-  //       playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
-  //     }
-  //     catch(err) {
-  //       console.log('error when trying to play an audio: ', err);
-  //     }
-  // }
-
-  // async function pauseSound() {
-  //   try {
-  //     const status = await playback.pauseAsync()
-  //     console.log('status after pause: ', status)
-  //     setPlayback(playback)
-  //     setStatus(status)
-  //     setIsPlaying(false)
-  //   }
-  //   catch(err) {
-  //     console.log('error when trying to pause audio: ', err); 
-  //   }
-  // }
-  
-  // async function resumeSound() {
-  //   try {
-  //     const status = await playback.playAsync()
-  //     console.log('status after resume: ', status)
-  //     setPlayback(playback)
-  //     setStatus(status)
-  //     setIsPlaying(true)
-  //   } catch(err) {
-  //     console.log("error when trying to resume audio: ", err)
-  //   }
-  // }
-
-  // async function finish() {
-  //   try {
-  //     await playback.unloadAsync()
-  //     setIsPlaying(false)
-  //     setPlaybackPosition(0)
-  //     setPlaybackDuration(0)
-  //     console.log('Finished');
-  //   }
-  //   catch(err) {
-  //     console.log('error when trying to unload audio: ', err);
-  //   }
-  // }
-
-  // function handlePressOnIcon() {
-  //   console.log('===>> check status after click on icon: ', status)
-  //   if(status === null && playback === null) {
-  //   // if(status.isLoaded === true && isPlaying === false && status.didJustFinish === false && status.positionMillis === 0) {
-  //     playSound()
-  //   }
-  //   else if(status.isLoaded === true && status.isPlaying === true && status.didJustFinish === false) {
-  //     pauseSound()
-  //   }
-  //   else if(status.isLoaded === true && status.isPlaying === false && status.didJustFinish === false) {
-  //     resumeSound()
-  //   }
-  // }
-
-  // async function handlePressPrevious() {
-  //   console.log('you press on previous')
-  //   if(currentAudioIndex !== 0) {
-  //     console.log('click on an previous when other is playing')
-  //     await playback.stopAsync()
-  //     await playback.unloadAsync()
-  //     // await playback.loadAsync(currentList[currentAudioIndex - 1].uri)
-  //     await playback.loadAsync({uri: "http://" + ipAddress + ":3177" + currentList[currentAudioIndex - 1].songuri})
-  //     const status = await playback.playAsync()
-  //     setStatus(status)
-  //     console.log('Status after load a new audio: ', status)
-  //     setPlaybackPosition(status.positionMillis)
-  //     setPlaybackDuration(status.durationMillis)
-  //     setCurrentName(currentList[currentAudioIndex - 1].songname)
-  //     setCurrentAudioIndex(currentAudioIndex - 1)
-  //     playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
-  //   }
-  //   else {
-  //     console.log('there are no previous song')
-  //   }
-  // }
-  // async function handlePressNext() {
-  //   console.log('you press on next with currentAudioIndex: ', currentAudioIndex)
-  //   if(currentAudioIndex === listLength - 1) {
-  //     console.log('you are in the last audio in current list')
-  //   }
-  //   else {
-  //     console.log('click on next when other is playing')
-  //     await playback.stopAsync()
-  //     await playback.unloadAsync()
-  //     // await playback.loadAsync(currentList[currentAudioIndex + 1].uri)
-  //     await playback.loadAsync({uri: "http://" + ipAddress + ":3177" + currentList[currentAudioIndex + 1].songuri})
-  //     const status = await playback.playAsync()
-  //     setStatus(status)
-  //     console.log('Status after load a new audio: ', status)
-  //     setPlaybackPosition(status.positionMillis)
-  //     setPlaybackDuration(status.durationMillis)
-  //     setCurrentName(currentList[currentAudioIndex + 1].songname)
-  //     setCurrentAudioIndex(currentAudioIndex + 1)
-  //     playback.setOnPlaybackStatusUpdate(_onPlaybackStatusUpdate);
-  //   }
-  // }
-  // async function handlePressReplay() {
-  //   console.log('replay 10s')
-  //   setPlaybackPosition(playbackPosition - 10000)
-  //   await playback.setPositionAsync(playbackPosition - 10000)
-  // }
-  // async function handlePressForward() {
-  //   console.log('forward 10s')
-  //   setPlaybackPosition(playbackPosition + 10000)
-  //   await playback.setPositionAsync(playbackPosition + 10000)
-  // }
-  // async function handlePressSlider() {
-  //   console.log(sliderPosition)
-  //   setPlaybackPosition(sliderPosition)
-  //   await playback.setPositionAsync(playbackPosition)
-  // }
   return (
     <>
     <Modal transparent visible={modalVisible} animationType='slide'>
