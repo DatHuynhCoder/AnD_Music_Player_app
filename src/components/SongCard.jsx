@@ -12,6 +12,7 @@ import { colors } from '../constants/color'
 import { iconSizes, textSizes } from '../constants/demensions'
 //icons
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { ipAddress } from '../constants/ipAddress'
 
 const SongCard = ({ musicName, musicURL, musicAuthor, onSongPressed}) => {
   return (
@@ -19,7 +20,7 @@ const SongCard = ({ musicName, musicURL, musicAuthor, onSongPressed}) => {
     onPress={() => onSongPressed()}
     style={styles.songContainer}>
       <View style={styles.extraContainer}>
-        <Image source={musicURL} style={styles.songImg} />
+        <Image source={{uri: 'http://' + ipAddress + ':3177' + musicURL}} style={styles.songImg} />
         <View style={styles.songTxtContainer}>
           <Text
             numberOfLines={1}

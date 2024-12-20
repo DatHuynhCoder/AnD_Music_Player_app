@@ -298,7 +298,7 @@ const HomePage = () => {
                   <SongCard
                     key={song.songid}
                     musicName={song.songname}
-                    musicURL={song.songuri}
+                    musicURL={song.songimg}
                     musicAuthor={song.authorname}
                     onSongPressed={() => {
                       setCurrentList([song]);
@@ -314,6 +314,7 @@ const HomePage = () => {
             )}
           />
         </View>
+      <View style={{height: 100, }}></View>
       </ScrollView>
     </View>
 
@@ -324,7 +325,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.background,
     flex: 1,
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
   },
   headerContainer: {
     flexDirection: 'row',
