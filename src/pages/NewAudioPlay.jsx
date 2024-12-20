@@ -107,8 +107,8 @@ export default function NewAudioPlay({route}) {
     loadSound
   } = useContext(AudioContext)
 
-  const albumURL = route?.params?.albumURL
-  const albumName = route?.params?.albumName
+  const songColectionURL = route?.params?.songColectionURL
+  const songColectionName = route?.params?.songColectionName
   const convertTime = milis => {
     let second = milis % 60
     let minute = Math.floor(milis / 60)
@@ -180,7 +180,7 @@ export default function NewAudioPlay({route}) {
         }}>
           <ImageBackground
             // source={albumIMG}
-            source={albumURL !== undefined ? {uri: albumURL} : albumIMG}
+            source={songColectionURL !== undefined ? {uri: songColectionURL} : albumIMG}
             style={{
               flex: 1,
               justifyContent: 'center',
@@ -190,7 +190,7 @@ export default function NewAudioPlay({route}) {
         </View>
       </View>
       <View style={{marginBottom: 30}}>
-        <Text style={{color: colors.textPrimary, fontSize: textSizes.md, fontWeight: 'bold'}}>{albumName === undefined ? 'No album is loaded' : albumName}</Text>
+        <Text style={{color: colors.textPrimary, fontSize: textSizes.md, fontWeight: 'bold'}}>{songColectionName === undefined ? 'No album is loaded' : songColectionName}</Text>
       </View>
     </View>
     {/* <View style={{style: styles.container}}> */}
