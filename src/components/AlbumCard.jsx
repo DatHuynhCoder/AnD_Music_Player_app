@@ -23,7 +23,7 @@ const AlbumCard = ({ albumId, albumName, albumURL, albumAuthor }) => {
     <TouchableOpacity style={styles.container} onPress={() => {
       axios.get('http://' + ipAddress + ':3177/get-listsongs-by-albumid?albumid=' + albumId).then(res => {
         setCurrentList(res.data)
-        navigation.navigate('NewAudioPlay', {albumURL: albumURL})
+        navigation.navigate('NewAudioPlay', {albumURL: albumURL, albumName: albumName})
       })
     }}>
       <ImageBackground
