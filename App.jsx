@@ -12,8 +12,8 @@ import Signup from './src/pages/Signup';
 import MainBottom from './src/pages/MainBottom';
 import FloatingPlayer from './src/components/FloatingPlayer';
 import PlayerPage from './src/pages/PlayerPage';
+import NewAudioPlay from './src/pages/NewAudioPlay'
 
-import { AudioProvider } from './src/context/AudioProvider';
 import { NewAudioContextProvider } from './src/context/NewAudioContextProvider';
 import { UserContextProvider } from './src/context/UserContext';
 
@@ -36,6 +36,7 @@ const App = ({ navigation }) => {
                 headerShown: false,
               }}
             />
+            {/* <Stack.Screen name='NewAudioPlay' component={NewAudioPlay} options={{headerShown: false}}/> */}
           </Stack.Navigator>
         </NavigationContainer>
       </NewAudioContextProvider>

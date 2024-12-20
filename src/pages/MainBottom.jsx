@@ -4,7 +4,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import HomePage from './HomePage';
 import ExplorePage from './ExplorePage';
 import Library from './Library';
-import AudioList from './AudioList';
 // import Player from './Player';
 import NewAudioPlay from './NewAudioPlay'
 import PlayerPage from './PlayerPage';
@@ -89,32 +88,23 @@ const MainBottom = () => {
           title: 'Library'
         }}
       />
-      {/* <Tab.Screen
-        name='AudioList'
-        component={AudioList}
-        options={{
-          title: 'AudioList',
-          headerShown: false
-        }}
-      /> */}
       <Tab.Screen
         name='NewAudioPlay'
         component={NewAudioPlay}
         options={{
-          title: 'Player',
+          title: 'List',
           headerShown: false
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name='PlayerPage'
         component={PlayerPage}
         options={{
           title: 'Player',
           headerShown: false
         }}
-      />
+      /> */}
     </Tab.Navigator>
-    
     </>
   )
 }

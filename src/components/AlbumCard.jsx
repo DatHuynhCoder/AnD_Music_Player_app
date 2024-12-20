@@ -12,13 +12,18 @@ import { textSizes } from '../constants/demensions';
 import { ipAddress } from '../constants/ipAddress';
 import axios from 'axios';
 import { AudioContext } from '../context/NewAudioContextProvider';
+import {
+  useNavigation
+} from '@react-navigation/native';
 
 const AlbumCard = ({ albumId, albumName, albumURL, albumAuthor }) => {
+  const navigation = useNavigation();
   const { setCurrentList } = useContext(AudioContext)
   return (
     <TouchableOpacity style={styles.container} onPress={() => {
       axios.get('http://' + ipAddress + ':3177/get-listsongs-by-albumid?albumid=' + albumId).then(res => {
         setCurrentList(res.data)
+        navigation.navigate('NewAudioPlay', {albumURL: albumURL})
       })
     }}>
       <ImageBackground

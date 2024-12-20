@@ -78,7 +78,7 @@ const SongItem = ({title = '', isPlaying = false, duration = 0, onOptionPress, o
   )
 }
 
-export default function App() {
+export default function NewAudioPlay({route}) {
   const {
     currentList, setCurrentList,
     listLength, setListLength,
@@ -101,6 +101,8 @@ export default function App() {
     handlePressForward,
     loadSound
   } = useContext(AudioContext)
+
+  const {albumURL} = route.params
 
   const convertTime = milis => {
     let second = milis % 60
@@ -172,7 +174,8 @@ export default function App() {
           overflow: 'hidden',
         }}>
           <ImageBackground
-            source={albumIMG}
+            // source={albumIMG}
+            source={albumURL ? {uri: albumURL} : albumIMG}
             style={{
               flex: 1,
               justifyContent: 'center',
