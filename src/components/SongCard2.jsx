@@ -10,6 +10,7 @@ import React from 'react'
 //constants
 import { colors } from '../constants/color'
 import { iconSizes, textSizes } from '../constants/demensions'
+import { ipAddress } from '../constants/ipAddress'
 //icons
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
@@ -17,7 +18,7 @@ const SongCard = ({ musicName, musicURL, musicAuthor }) => {
   return (
     <TouchableOpacity style={styles.songContainer}>
       <View style={styles.extraContainer}>
-        <Image source={musicURL} style={styles.songImg} />
+        <Image source={{uri: 'http://'+ ipAddress + ':3177' + musicURL}} style={styles.songImg} />
         <View style={styles.songTxtContainer}>
           <Text
             numberOfLines={1}

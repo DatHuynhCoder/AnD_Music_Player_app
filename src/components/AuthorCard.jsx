@@ -6,85 +6,14 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import { colors } from '../constants/color'
 import { iconSizes, textSizes } from '../constants/demensions'
 import SongCard2 from './SongCard2'
+import { ipAddress } from '../constants/ipAddress'
+import {DefaultAvatar} from '../../assets/img/temp_playlist_pic.jpg'
 
-const AuthorCard = ({ authorName, authorURL }) => {
-  const musicData = [
-    {
-      id: 1,
-      musicName: 'Let Love Win',
-      musicAuthor: 'TheFatRat',
-      musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 2,
-      musicName: 'Blood, Sweet & Tear',
-      musicAuthor: 'Riot games',
-      musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 3,
-      musicName: 'The Legend',
-      musicAuthor: 'TobyFox',
-      musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 4,
-      musicName: 'Mang tiền về cho mẹ',
-      musicAuthor: 'Đen Vâu',
-      musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 5,
-      musicName: 'Superheroes',
-      musicAuthor: 'The Scripts',
-      musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 6,
-      musicName: 'Memory reboot',
-      musicAuthor: 'Narvent',
-      musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 7,
-      musicName: '7 Years',
-      musicAuthor: 'Lukas graham',
-      musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 8,
-      musicName: 'Beautiful now',
-      musicAuthor: 'Zedd',
-      musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 9,
-      musicName: 'ĐAM MÊ | Double2T x Cao Thanh Thảo My ft Thảo Đan (Prod. HảiMa) - Official Music Video',
-      musicAuthor: 'Gia đình lớn',
-      musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 10,
-      musicName: 'Dandadan openning',
-      musicAuthor: 'The Creepy nuts',
-      musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 11,
-      musicName: 'Waiting for love',
-      musicAuthor: 'Acvicii',
-      musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 12,
-      musicName: 'Rises',
-      musicAuthor: 'Riot games',
-      musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-  ];
+
+const AuthorCard = ({ authorName, authorURL, musicData }) => {
 
   const filteredSongOfAuthor = musicData.filter((item) => {
-    return item.musicAuthor === authorName;
+    return item.authorname === authorName;
   }) // Chứa những bài hát của 1 tác giả nào đấy
 
   return (
@@ -92,7 +21,7 @@ const AuthorCard = ({ authorName, authorURL }) => {
       <View style={styles.container}>
         <View style={styles.authorContainer}>
           <Image
-            source={authorURL}
+            source={{uri: 'http://' + ipAddress + ':3177' + authorURL}}
             style={styles.authorAvatar}
           />
 
@@ -110,7 +39,7 @@ const AuthorCard = ({ authorName, authorURL }) => {
       <View style={styles.authorSongsContainer}>
         {filteredSongOfAuthor.map((item, index) => (
           <View style={styles.cardWrapper} key={item.id}>
-            <SongCard2 musicName={item.musicName} musicURL={item.musicURL} musicAuthor={item.musicAuthor}/>
+            <SongCard2 musicName={item.songname} musicURL={item.songimg} musicAuthor={item.authorname}/>
           </View>
         ))}
       </View>
