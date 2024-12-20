@@ -13,10 +13,17 @@ import { ipAddress } from '../constants/ipAddress'
 import { colors } from '../constants/color'
 import { textSizes } from '../constants/demensions'
 import { UserContext } from '../context/UserContext'
+import { AudioContext } from '../context/NewAudioContextProvider'
 import axios from 'axios'
+import {
+  useNavigation
+} from '@react-navigation/native';
 
 const Library = () => {
   const { userid, setUserid } = useContext(UserContext)
+  const {setCurrentList} = useContext(AudioContext)
+  const navigation = useNavigation();
+
   const getPermission = async () => {
     const permission = await MediaLibrary.getPermissionsAsync()
     console.log(permission);
@@ -100,7 +107,14 @@ const Library = () => {
         <FlatList
           data={listPlaylist}
           renderItem={({ item }) => (
-            <TouchableOpacity style={styles.playlist_item}>
+            <TouchableOpacity style={styles.playlist_item}
+              onPress={() => {
+                axios.get('http://' + ipAddress + ':3177/get-listsongs-by-playlistid?playlistid=' + item.playlistid).then(res => {
+                  setCurrentList(res.data)
+                  navigation.navigate('NewAudioPlay', { songColectionURL: 'http://' + ipAddress + ':3177' + item.playlistimg, songColectionName: item.playlistname })
+                })
+              }}
+            >
               <Image
                 source={{ uri: 'http://' + ipAddress + ':3177' + item.playlistimg }}
                 style={styles.playlist_img}
@@ -111,7 +125,7 @@ const Library = () => {
               </View>
             </TouchableOpacity>
           )}
-          keyExtractor={item => item.id}
+          keyExtractor={item => item.playlistid}
         />
       </View>
     </View>

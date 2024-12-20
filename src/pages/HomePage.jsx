@@ -20,10 +20,17 @@ import SongCard from '../components/SongCard'
 import axios from 'axios'
 import { ipAddress } from '../constants/ipAddress';
 import { AudioContext } from '../context/NewAudioContextProvider'
+import { UserContext } from '../context/UserContext'
+import {
+  useNavigation
+} from '@react-navigation/native';
 
 const HomePage = () => {
+  const navigation = useNavigation();
   const [musicData, setMusicData] = useState([])
   const [genreList, setGenreList] = useState([]);
+  const [listPlaylist, setListPlaylist] = useState([]);
+
   const {
     currentList,
     setCurrentList,
@@ -36,6 +43,8 @@ const HomePage = () => {
     loadSound
   } = useContext(AudioContext)
 
+  const { userid } = useContext(UserContext)
+
   useEffect(() => {
     console.log("let's get all songs")
     async function getAllSongs() {
@@ -44,10 +53,26 @@ const HomePage = () => {
       })
     }
 
+    const getPlaylist = async () => {
+      console.log(userid);
+      try {
+        const response = await axios.get("http://" + ipAddress + ":3177" + "/get-playlist-by-userid?userid=" + userid)
+        if (response.data.Status === 'Success') {
+          console.log('Lay playlist thanh cong!');
+          setListPlaylist(response.data.Result);
+        }
+        else {
+          console.log('Lay playlist that bai')
+        }
+      } catch (error) {
+        console.log('Khong the lay playlist ' + error)
+      }
+    }
+
     const getAllGenre = async () => {
       try {
         const response = await axios.get('http://' + ipAddress + ':3177' + "/get-all-genres");
-        if(response.data) {
+        if (response.data) {
           console.log('Lay genre thang cong');
           setGenreList(response.data);
         }
@@ -55,6 +80,8 @@ const HomePage = () => {
         console.log('Error when get genre: ' + error)
       }
     }
+
+    getPlaylist();
     getAllSongs();
     getAllGenre();
   }, [])
@@ -200,16 +227,26 @@ const HomePage = () => {
 
 
   const renderPlayListItem = ({ item }) => (
-    <TouchableOpacity style={styles.itemContainer}>
+    <TouchableOpacity
+      style={styles.itemContainer}
+      onPress={() => {
+        axios.get('http://' + ipAddress + ':3177/get-listsongs-by-playlistid?playlistid=' + item.playlistid).then(res => {
+          setCurrentList(res.data)
+          navigation.navigate('NewAudioPlay', { songColectionURL: 'http://'+ ipAddress+ ':3177' + item.playlistimg, songColectionName: item.playlistname })
+        })
+      }}
+    >
       <Image
-        source={item.playlistUrl}
+        source={{ uri: 'http://' + ipAddress + ':3177' + item.playlistimg }}
         style={styles.playlistImg}
       />
       <Text
         numberOfLines={1}
         ellipsizeMode='tail'
         style={styles.playlistName}
-      >{item.playlistName}</Text>
+      >{item.playlistname}</Text>
+      <Text style={styles.playlist_subinfo}>Number of songs: {item.numsongs}</Text>
+
     </TouchableOpacity>
   )
 
@@ -264,9 +301,9 @@ const HomePage = () => {
         <View style={styles.playListContainer}>
           <Text style={styles.playListTxt}>From your Library</Text>
           <FlatList
-            data={playListData}
+            data={listPlaylist}
             renderItem={renderPlayListItem}
-            keyExtractor={item => item.id}
+            keyExtractor={item => item.playlistid}
             horizontal={true}
             ItemSeparatorComponent={
               <View style={{ marginHorizontal: 10 }} />
@@ -295,7 +332,7 @@ const HomePage = () => {
             horizontal={true}
             renderItem={({ item }) => (
               <View style={styles.rowSong}>
-                {item.map((song,index) => (
+                {item.map((song, index) => (
                   <SongCard
                     key={song.songid}
                     musicName={song.songname}
@@ -308,7 +345,7 @@ const HomePage = () => {
                       setCurrentName(song.songname);
                       setCurrentSinger(song.authorname);
                       setCurrentAudioIndex(0);
-                      loadSound({uri: "http://" + ipAddress + ":3177" + song.songuri})
+                      loadSound({ uri: "http://" + ipAddress + ":3177" + song.songuri })
                     }}
                   />
                 ))}
@@ -316,7 +353,7 @@ const HomePage = () => {
             )}
           />
         </View>
-        <View style={{height: 100, }}></View>
+        <View style={{ height: 100, }}></View>
       </ScrollView>
     </View>
 
@@ -381,6 +418,10 @@ const styles = StyleSheet.create({
   playlistName: {
     width: 150,
     color: colors.textPrimary
+  },
+  playlist_subinfo: {
+    fontSize: textSizes.xxm,
+    color: colors.textSecondary
   },
 
   //Choose your genre
