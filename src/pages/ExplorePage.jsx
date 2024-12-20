@@ -22,138 +22,138 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import axios from 'axios';
 
 const ExplorePage = () => {
-  const musicData = [
-    {
-      id: 1,
-      musicName: 'Let Love Win',
-      musicAuthor: 'TheFatRat',
-      musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 2,
-      musicName: 'Blood, Sweet & Tear',
-      musicAuthor: 'Riot games',
-      musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 3,
-      musicName: 'The Legend',
-      musicAuthor: 'TobyFox',
-      musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 4,
-      musicName: 'Mang tiền về cho mẹ',
-      musicAuthor: 'Đen Vâu',
-      musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 5,
-      musicName: 'Superheroes',
-      musicAuthor: 'The Scripts',
-      musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 6,
-      musicName: 'Memory reboot',
-      musicAuthor: 'Narvent',
-      musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 7,
-      musicName: '7 Years',
-      musicAuthor: 'Lukas graham',
-      musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 8,
-      musicName: 'Beautiful now',
-      musicAuthor: 'Zedd',
-      musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 9,
-      musicName: 'ĐAM MÊ | Double2T x Cao Thanh Thảo My ft Thảo Đan (Prod. HảiMa) - Official Music Video',
-      musicAuthor: 'Gia đình lớn',
-      musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 10,
-      musicName: 'Dandadan openning',
-      musicAuthor: 'The Creepy nuts',
-      musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 11,
-      musicName: 'Waiting for love',
-      musicAuthor: 'Acvicii',
-      musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 12,
-      musicName: 'Rises',
-      musicAuthor: 'Riot games',
-      musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-  ];
+  // const musicData = [
+  //   {
+  //     id: 1,
+  //     musicName: 'Let Love Win',
+  //     musicAuthor: 'TheFatRat',
+  //     musicURL: require('../../assets/img/temp_playlist_pic.jpg')
+  //   },
+  //   {
+  //     id: 2,
+  //     musicName: 'Blood, Sweet & Tear',
+  //     musicAuthor: 'Riot games',
+  //     musicURL: require('../../assets/img/temp_playlist_pic.jpg')
+  //   },
+  //   {
+  //     id: 3,
+  //     musicName: 'The Legend',
+  //     musicAuthor: 'TobyFox',
+  //     musicURL: require('../../assets/img/temp_playlist_pic.jpg')
+  //   },
+  //   {
+  //     id: 4,
+  //     musicName: 'Mang tiền về cho mẹ',
+  //     musicAuthor: 'Đen Vâu',
+  //     musicURL: require('../../assets/img/temp_playlist_pic.jpg')
+  //   },
+  //   {
+  //     id: 5,
+  //     musicName: 'Superheroes',
+  //     musicAuthor: 'The Scripts',
+  //     musicURL: require('../../assets/img/temp_playlist_pic.jpg')
+  //   },
+  //   {
+  //     id: 6,
+  //     musicName: 'Memory reboot',
+  //     musicAuthor: 'Narvent',
+  //     musicURL: require('../../assets/img/temp_playlist_pic.jpg')
+  //   },
+  //   {
+  //     id: 7,
+  //     musicName: '7 Years',
+  //     musicAuthor: 'Lukas graham',
+  //     musicURL: require('../../assets/img/temp_playlist_pic.jpg')
+  //   },
+  //   {
+  //     id: 8,
+  //     musicName: 'Beautiful now',
+  //     musicAuthor: 'Zedd',
+  //     musicURL: require('../../assets/img/temp_playlist_pic.jpg')
+  //   },
+  //   {
+  //     id: 9,
+  //     musicName: 'ĐAM MÊ | Double2T x Cao Thanh Thảo My ft Thảo Đan (Prod. HảiMa) - Official Music Video',
+  //     musicAuthor: 'Gia đình lớn',
+  //     musicURL: require('../../assets/img/temp_playlist_pic.jpg')
+  //   },
+  //   {
+  //     id: 10,
+  //     musicName: 'Dandadan openning',
+  //     musicAuthor: 'The Creepy nuts',
+  //     musicURL: require('../../assets/img/temp_playlist_pic.jpg')
+  //   },
+  //   {
+  //     id: 11,
+  //     musicName: 'Waiting for love',
+  //     musicAuthor: 'Acvicii',
+  //     musicURL: require('../../assets/img/temp_playlist_pic.jpg')
+  //   },
+  //   {
+  //     id: 12,
+  //     musicName: 'Rises',
+  //     musicAuthor: 'Riot games',
+  //     musicURL: require('../../assets/img/temp_playlist_pic.jpg')
+  //   },
+  // ];
 
-  const authorData = [
-    {
-      id: 1,
-      authorName: 'Riot games',
-      authorURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 2,
-      authorName: 'TheFatRat',
-      authorURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 3,
-      authorName: 'TobyFox',
-      authorURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 4,
-      authorName: 'Đen Vâu',
-      authorURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 5,
-      authorName: 'The Scripts',
-      authorURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 6,
-      authorName: 'Narvent',
-      authorURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 7,
-      authorName: 'Lukas graham',
-      authorURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 8,
-      authorName: 'Zedd',
-      authorURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 9,
-      authorName: 'Gia đình lớn',
-      authorURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 10,
-      authorName: 'The Creepy nuts',
-      authorURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 11,
-      authorName: 'Acvicii',
-      authorURL: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-  ]
+  // const authorData = [
+  //   {
+  //     id: 1,
+  //     authorName: 'Riot games',
+  //     authorURL: require('../../assets/img/temp_playlist_pic.jpg')
+  //   },
+  //   {
+  //     id: 2,
+  //     authorName: 'TheFatRat',
+  //     authorURL: require('../../assets/img/temp_playlist_pic.jpg')
+  //   },
+  //   {
+  //     id: 3,
+  //     authorName: 'TobyFox',
+  //     authorURL: require('../../assets/img/temp_playlist_pic.jpg')
+  //   },
+  //   {
+  //     id: 4,
+  //     authorName: 'Đen Vâu',
+  //     authorURL: require('../../assets/img/temp_playlist_pic.jpg')
+  //   },
+  //   {
+  //     id: 5,
+  //     authorName: 'The Scripts',
+  //     authorURL: require('../../assets/img/temp_playlist_pic.jpg')
+  //   },
+  //   {
+  //     id: 6,
+  //     authorName: 'Narvent',
+  //     authorURL: require('../../assets/img/temp_playlist_pic.jpg')
+  //   },
+  //   {
+  //     id: 7,
+  //     authorName: 'Lukas graham',
+  //     authorURL: require('../../assets/img/temp_playlist_pic.jpg')
+  //   },
+  //   {
+  //     id: 8,
+  //     authorName: 'Zedd',
+  //     authorURL: require('../../assets/img/temp_playlist_pic.jpg')
+  //   },
+  //   {
+  //     id: 9,
+  //     authorName: 'Gia đình lớn',
+  //     authorURL: require('../../assets/img/temp_playlist_pic.jpg')
+  //   },
+  //   {
+  //     id: 10,
+  //     authorName: 'The Creepy nuts',
+  //     authorURL: require('../../assets/img/temp_playlist_pic.jpg')
+  //   },
+  //   {
+  //     id: 11,
+  //     authorName: 'Acvicii',
+  //     authorURL: require('../../assets/img/temp_playlist_pic.jpg')
+  //   },
+  // ]
 
   const musicArea = [
     {
@@ -227,6 +227,8 @@ const ExplorePage = () => {
     },
   ])
 
+  const [authorData,setAuthorData] = useState([]);
+  const [musicData,setMusicData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredSongs, setFilteredSongs] = useState([]); //Chứa các bài hát theo tên bài hát và tác giả
   const [filteredAuthor, setFilteredAuthor] = useState([]); // Chứa tên tác giả
@@ -234,11 +236,11 @@ const ExplorePage = () => {
   const handleSearch = (queryData) => {
     setSearchQuery(queryData);
     const tempfilteredSongs = musicData.filter(item =>
-      item.musicName.toLowerCase().includes(queryData.toLowerCase()) ||
-      item.musicAuthor.toLowerCase().includes(queryData.toLowerCase())
+      item.songname.toLowerCase().includes(queryData.toLowerCase()) ||
+      item.authorname.toLowerCase().includes(queryData.toLowerCase())
     )
     const tempfilterAuthors = authorData.filter(item =>
-      item.authorName.toLowerCase().includes(queryData.toLowerCase())
+      item.authorname.toLowerCase().includes(queryData.toLowerCase())
     )
     setFilteredSongs(tempfilteredSongs);
     setFilteredAuthor(tempfilterAuthors);
@@ -248,6 +250,37 @@ const ExplorePage = () => {
     axios.get('http://' + ipAddress + ':3177/get-top-albums').then(res => {
       setAlbumData(res.data)
     })
+
+    const getAllSongsWithAuthorAndGenre = async () => {
+      try {
+        const response = await axios.get('http://' + ipAddress + ':3177/get-all-songs-with-author-and-genre');
+        if(response.data){
+          setMusicData(response.data)
+        }
+        else {
+          console.log('Lay bai hat that bai');
+        }
+      } catch (error) {
+        console.log('Khong the lay bai hat: ' + error)
+      }
+    }
+
+    const getAllAuthor = async () => {
+      try {
+        const response = await axios.get('http://' + ipAddress + ':3177/get-all-author');
+        if(response.data){
+          setAuthorData(response.data)
+        }
+        else {
+          console.log('Lay nhac si that bai');
+        }
+      } catch (error) {
+        console.log('Khong the lay nhac si: ' + error)
+      }
+    }
+
+    getAllAuthor();
+    getAllSongsWithAuthorAndGenre();
   }, [])
 
   return (
@@ -277,8 +310,9 @@ const ExplorePage = () => {
               renderItem={({ item }) =>
                 <AuthorCard
                   key={item.id}
-                  authorName={item.authorName}
-                  authorURL={item.authorURL}
+                  authorName={item.authorname}
+                  authorURL={item.authoravatar}
+                  musicData={musicData}
                 />
               }
               ItemSeparatorComponent={
@@ -301,10 +335,10 @@ const ExplorePage = () => {
               data={filteredSongs}
               renderItem={({ item }) =>
                 <SongCard2
-                  key={item.id}
-                  musicName={item.musicName}
-                  musicURL={item.musicURL}
-                  musicAuthor={item.musicAuthor}
+                  key={item.songid}
+                  musicName={item.songname}
+                  musicURL={item.songimg}
+                  musicAuthor={item.authorname}
                 />
               }
               keyExtractor={(item, index) => index.toString()}
