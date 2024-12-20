@@ -283,7 +283,24 @@ function PlayerPage({navigation}) {
           </Text>
         </View>
       </View>
-      <View style={{padding: 5, width: width, justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
+      <View style={{padding: 5, width: width, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row'}}>
+        <View>
+          <Entypo name="shuffle" size={24} color={status.isLooping === false ? "white" : colors.emphasis} style={{marginLeft: 10}}
+            onPress={() => {
+              async function setShuffle() {
+                if(status.isLooping === false) {
+                  const status = await playback.setIsLoopingAsync(true)
+                  setStatus(status)
+                }  
+                else {
+                  const status = await playback.setIsLoopingAsync(false)
+                  setStatus(status)
+                }
+              }
+              setShuffle()
+            }}
+          />
+        </View>
         <View style={{alignItems: 'center', flexDirection: 'row'}}>
           <MaterialIcons 
             name="replay-10" size={24} color="white" style={{margin: 10}}
@@ -313,6 +330,23 @@ function PlayerPage({navigation}) {
             name="forward-10" size={25} color="white" style={{margin: 10}}
             onPress={() => handlePressForward()}
             />
+        </View>
+        <View>
+          <MaterialCommunityIcons name="play-speed" size={24} color={status.rate === 1 ? "white" : colors.emphasis} style={{marginRight: 10}}
+            onPress={() => {
+              async function setSpeed() {
+                if(status.rate === 1) {
+                  const status = await playback.setRateAsync(2)
+                  setStatus(status)
+                }  
+                else {
+                  const status = await playback.setRateAsync(1)
+                  setStatus(status)
+                }
+              }
+              setSpeed()
+            }}
+          />
         </View>
       </View>
       <View style={{justifyContent: 'center', alignItems: 'center', paddingTop: 30, bottom: 0}}>
