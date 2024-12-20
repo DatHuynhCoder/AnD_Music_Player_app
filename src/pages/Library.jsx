@@ -29,8 +29,9 @@ const Library = () => {
   const [listPlaylist, setListPlaylist] = useState([]);
 
   const getPlaylist = async () => {
+    console.log(userid);
     try {
-      const response = axios.get("http://" + ipAddress + "3177" + "/get-playlist-by-userid", userid)
+      const response = await axios.get("http://" + ipAddress + ":3177" + "/get-playlist-by-userid?userid=" + userid)
       if (response.data.Status === 'Success') {
         console.log('Lay playlist thanh cong!');
         setListPlaylist(response.data.Result);
@@ -39,7 +40,7 @@ const Library = () => {
         console.log('Lay playlist that bai')
       }
     } catch (error) {
-      console.log('Khong the lay playlist ')
+      console.log('Khong the lay playlist ' + error)
     }
   }
 
@@ -73,41 +74,46 @@ const Library = () => {
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={libraryOptionsData}
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={[
-              styles.libraryChoicesBtn,
-              selectedOption === item.id && styles.libraryChoiceOnPressed,
-            ]}
-            onPress={() => handleLibraryChoice(item.id)}>
-            <Text style={styles.libraryChoicesTxt}>{item.option}</Text>
-          </TouchableOpacity>
-        )}
-        horizontal={true}
-        keyExtractor={item => item.id}
-        ItemSeparatorComponent={
-          <View style={{ marginHorizontal: 5 }} />
-        }
-      />
+      <View style={styles.selected_type_container}>
+        <FlatList
+          data={libraryOptionsData}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={[
+                styles.libraryChoicesBtn,
+                selectedOption === item.id && styles.libraryChoiceOnPressed,
+              ]}
+              onPress={() => handleLibraryChoice(item.id)}>
+              <Text style={styles.libraryChoicesTxt}>{item.option}</Text>
+            </TouchableOpacity>
+          )}
+          horizontal={true}
+          keyExtractor={item => item.id}
+          ItemSeparatorComponent={
+            <View style={{ marginHorizontal: 5 }} />
+          }
+        />
 
-      <FlatList
-        data={listPlaylist}
-        renderItem={({item}) => (
-          <TouchableOpacity>
-            <Image 
-              source={{uri: 'http://' + ipAddress + ':3177' + item.playlistimg}}
-              style = {styles.playlist_img}
-            />
-            <View style>
-              <Text>{item.playlistname}</Text>
-              <Text>playlist.{item.lenght}</Text>
-            </View>
-          </TouchableOpacity>
-        )}
-        keyExtractor={item => item.id}
-      />
+      </View>
+
+      <View>
+        <FlatList
+          data={listPlaylist}
+          renderItem={({ item }) => (
+            <TouchableOpacity style={styles.playlist_item}>
+              <Image
+                source={{ uri: 'http://' + ipAddress + ':3177' + item.playlistimg }}
+                style={styles.playlist_img}
+              />
+              <View style={styles.playlist_info}>
+                <Text style={styles.playlist_name}>{item.playlistname}</Text>
+                <Text style={styles.playlist_subinfo}>PLAYLIST.Number of songs: {item.numsongs}</Text>
+              </View>
+            </TouchableOpacity>
+          )}
+          keyExtractor={item => item.id}
+        />
+      </View>
     </View>
   )
 }
@@ -118,6 +124,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     flexDirection: 'column',
     paddingHorizontal: 10
+  },
+  selected_type_container: {
+    marginVertical: 15
   },
   libraryChoicesBtn: {
     borderRadius: 15,
@@ -137,10 +146,29 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: textSizes.xm
   },
+  playlist_item: {
+    flexDirection: 'row',
+    marginVertical: 5
+  },
   playlist_img: {
-    height: 50,
-    width: 50,
-    borderRadius: 10
+    height: 60,
+    width: 60,
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
+  },
+  playlist_info: {
+    paddingLeft: 5,
+    flex: 1,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+  },
+  playlist_name: {
+    fontSize: textSizes.xm,
+    color: colors.textPrimary
+  },
+  playlist_subinfo: {
+    fontSize: textSizes.xxm,
+    color: colors.textSecondary
   }
 })
 

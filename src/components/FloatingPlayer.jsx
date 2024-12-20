@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native'
 import React, {useContext} from 'react'
 import PlayerButton from './PlayerButton'
 import { iconSizes } from '../constants/demensions'
@@ -8,7 +8,7 @@ import { Audio } from 'expo-av';
 import { useNavigation } from '@react-navigation/native';
 import { ipAddress } from '../constants/ipAddress';
 import { colors, misc_colors } from '../constants/color'
-
+const windowHeight = Dimensions.get('window').height;
 const context = {
   "isLoad": false,
 }
@@ -42,7 +42,7 @@ const FloatingPlayer = () => {
       left: 30, 
       right: 30, 
       // bottom: 70,
-      top: 725,
+      top: 725 * windowHeight / 850,
       flexDirection: 'row', 
       backgroundColor: 'rgba(0,0,0,0.8)', 
       position: 'absolute',
