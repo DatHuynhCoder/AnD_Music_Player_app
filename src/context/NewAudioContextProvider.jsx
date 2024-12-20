@@ -231,7 +231,8 @@ const NewAudioContextProvider = ({children}) => {
   }
   async function handlePressSlider() {
     console.log(sliderPosition)
-    setPlaybackPosition(sliderPosition)
+    await playback.pauseAsync()
+    setPlaybackPosition(Math.floor(sliderPosition * playbackDuration))
     await playback.setPositionAsync(playbackPosition)
   }
   
@@ -260,6 +261,7 @@ const NewAudioContextProvider = ({children}) => {
         handlePressNext,
         handlePressReplay,
         handlePressForward,
+        handlePressSlider,
         loadSound
       }}
     >
