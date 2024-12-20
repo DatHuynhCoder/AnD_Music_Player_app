@@ -314,7 +314,7 @@ const HomePage = () => {
             )}
           />
         </View>
-      <View style={{height: 100, }}></View>
+        <View style={{height: 100, }}></View>
       </ScrollView>
     </View>
 

@@ -10,8 +10,7 @@ const GenreCard = ({ genreName, genreUrl }) => {
   return (
     <View style={styles.container}>
       <Image
-        // source={{uri: 'http://' + ipAddress+ ':3177' + genreUrl}}
-        source={Defaultimg}
+        source={{uri: 'http://' + ipAddress+ ':3177' + genreUrl}}
         style={styles.genreImg}
       />
       <Text
