@@ -12,6 +12,7 @@ const NewAudioContextProvider = ({children}) => {
   const [currentList, setCurrentList] = useState([])
   const [listLength, setListLength] = useState(0)
   const [currentSongid, setCurrentSongid] = useState(0)
+  const [currentSongimg, setCurrentSongimg] = useState('')
   const [currentName, setCurrentName] = useState('')
   const [currentSinger, setCurrentSinger] = useState('')
   const [playback, setPlayback] = useState(new Audio.Sound())
@@ -176,6 +177,7 @@ const NewAudioContextProvider = ({children}) => {
   async function handlePressPrevious() {
     if(currentAudioIndex > 0) {
       loadSound({uri: "http://" + ipAddress + ":3177" + currentList[currentAudioIndex - 1].songuri})
+      setCurrentSongimg(currentList[currentAudioIndex - 1].songimg)
       setCurrentName(currentList[currentAudioIndex - 1].songname)
       setCurrentSinger(currentList[currentAudioIndex - 1].authorname)
       setCurrentSongid(currentList[currentAudioIndex - 1].songid)
@@ -210,6 +212,7 @@ const NewAudioContextProvider = ({children}) => {
     console.log('call me handlePressNext')
     if(currentAudioIndex < currentList.length - 1) {
       loadSound({uri: "http://" + ipAddress + ":3177" + currentList[currentAudioIndex + 1].songuri})
+      setCurrentSongimg(currentList[currentAudioIndex + 1].songimg)
       setCurrentName(currentList[currentAudioIndex + 1].songname)
       setCurrentSinger(currentList[currentAudioIndex + 1].authorname)
       setCurrentSongid(currentList[currentAudioIndex + 1].songid)
@@ -244,6 +247,7 @@ const NewAudioContextProvider = ({children}) => {
         currentList, setCurrentList,
         listLength, setListLength,
         currentSongid, setCurrentSongid,
+        currentSongimg, setCurrentSongimg,
         currentName, setCurrentName,
         currentSinger, setCurrentSinger,
         playback, setPlayback,

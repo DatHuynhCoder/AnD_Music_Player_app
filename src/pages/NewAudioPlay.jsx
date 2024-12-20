@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { Text, View, StyleSheet, Button, TouchableOpacity, Dimensions, TouchableWithoutFeedback, ScrollView,ImageBackground } from 'react-native';
+import { Text, View, StyleSheet, Button, TouchableOpacity, Dimensions, TouchableWithoutFeedback, ScrollView,ImageBackground, Image } from 'react-native';
 import { Audio } from 'expo-av';
 import Slider from '@react-native-community/slider';
 import { colors, misc_colors } from '../constants/color';
@@ -14,6 +14,7 @@ import axios from 'axios';
 import { AudioContext } from '../context/NewAudioContextProvider';
 import PlayerButton from '../components/PlayerButton';
 import albumIMG from '../../assets/albumIMG.jpeg'
+import { textSizes } from '../constants/demensions';
 
 const {width} = Dimensions.get('window')
 
@@ -44,17 +45,20 @@ const songs = [
   }
 ]
 
-const SongItem = ({title = '', isPlaying = false, duration = 0, onOptionPress, onSongPress, isActive = false}) => {
+const SongItem = ({img = '../../assets/albumIMG.jpeg', title = '', isPlaying = false, duration = 0, onOptionPress, onSongPress, isActive = false}) => {
   return (
     <>
       <View style={{flexDirection: 'row',alignSelf: 'center',width: width - 80,}}>
         <TouchableWithoutFeedback onPress={() => onSongPress()}>
           <View style={{flexDirection: 'row',alignItems: 'center', width: 263,}}>
-            <View style={{height: 50,flexBasis: 50,backgroundColor: colors.emphasis,justifyContent: 'center',alignItems: 'center',borderRadius: 25,}}>
+            <Image source={{uri: 'http://' + ipAddress + ':3177' + img}} style={{height: 50, width: 50, borderRadius: 25}}>
+
+            </Image>
+            {/* <View style={{height: 50,flexBasis: 50,backgroundColor: colors.emphasis,justifyContent: 'center',alignItems: 'center',borderRadius: 25,}}>
               <Text style={{fontSize: 22,fontWeight: 'bold',color: misc_colors.FONT}}>
                 {title[0]}
               </Text>
-            </View>
+            </View> */}
             <View style={{width: width - 180,paddingLeft: 10,}}>
               <Text numberOfLines={1} style={{fontSize: 16,color: colors.textPrimary}}>{title}</Text>
               <Text style={{fontSize: 14,color: misc_colors.FONT_LIGHT}}>
@@ -83,6 +87,7 @@ export default function NewAudioPlay({route}) {
     currentList, setCurrentList,
     listLength, setListLength,
     currentSongid, setCurrentSongid,
+    currentSongimg, setCurrentSongimg,
     currentName, setCurrentName,
     currentSinger, setCurrentSinger,
     playback, setPlayback,
@@ -184,8 +189,8 @@ export default function NewAudioPlay({route}) {
           ></ImageBackground>
         </View>
       </View>
-      <View>
-        <Text style={{color: colors.textPrimary}}>{albumName === undefined ? 'No album is loaded' : albumName}</Text>
+      <View style={{marginBottom: 30}}>
+        <Text style={{color: colors.textPrimary, fontSize: textSizes.md, fontWeight: 'bold'}}>{albumName === undefined ? 'No album is loaded' : albumName}</Text>
       </View>
     </View>
     {/* <View style={{style: styles.container}}> */}
@@ -194,15 +199,17 @@ export default function NewAudioPlay({route}) {
           currentList.map((song, index) => {
             return <SongItem
               key={index}
+              img={song.songimg}
               title={song.songname}
               isPlaying={false}
               duration={convertTime(song.songduration)}
               onOptionPress={() => console.log('option pressed')}
               onSongPress={() => {
                 console.log('hello')
+                setCurrentSongid(song.songid)
+                setCurrentSongimg(song.songimg)
                 setCurrentName(song.songname)
                 setCurrentSinger(song.authorname)
-                setCurrentSongid(song.songid)
                 console.log('current index: ', currentAudioIndex)
                 setCurrentAudioIndex(index)
                 loadSound({uri: "http://" + ipAddress + ":3177" + song.songuri})
