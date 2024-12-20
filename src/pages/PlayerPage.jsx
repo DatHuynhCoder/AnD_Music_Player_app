@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { Text, View, StyleSheet, Button, TouchableOpacity, Dimensions, TouchableWithoutFeedback, Modal, Animated, Easing } from 'react-native';
+import { Text, View, StyleSheet, Button, TouchableOpacity, Dimensions, TouchableWithoutFeedback, Modal, Animated, Easing, ScrollView } from 'react-native';
 import { Audio } from 'expo-av';
 import Slider from '@react-native-community/slider';
 import { colors, misc_colors } from '../constants/color';
@@ -48,21 +48,34 @@ function LyricScreen() {
     loadSound
   } = useContext(AudioContext)
   const navigation = useNavigation();
-
+  const [arrLyric, setArrLyric] = useState([])
+  useEffect(() => {
+    let lyric = currentList[currentAudioIndex].songlyric
+    let tempArr = lyric.split('\n')
+    setArrLyric(tempArr)
+  }, [currentAudioIndex])
+  
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.background }}>
-      <Text style={{color: colors.textPrimary}}>
-        {currentList[currentAudioIndex].songlyric}
-      </Text>
+      <ScrollView>
+        {arrLyric.map((item, index) => {
+          return <View style={{margin: 10, textAlign: 'center'}}>
+            <Text key={index} style={{color: colors.textPrimary, alignSelf: 'center'}}>
+              {item} 
+            </Text>
+          </View>
+        })}
+      </ScrollView>
     </View>
   );
 }
 
 export default function MyTabs() {
   const navigation = useNavigation()
+  
   return (
     <Tab.Navigator 
-      tabBar={() => <View>
+      tabBar={() => <View style={{backgroundColor: colors.background}}>
         <MaterialCommunityIcons 
           name="arrow-left-circle-outline" 
           size={40} 
@@ -101,6 +114,7 @@ function PlayerPage({navigation}) {
     handlePressNext,
     handlePressReplay,
     handlePressForward,
+    handlePressSlider,
     loadSound
   } = useContext(AudioContext)
 
@@ -208,7 +222,8 @@ function PlayerPage({navigation}) {
         <MaterialCommunityIcons 
           name="arrow-left-circle-outline" 
           size={40} 
-          color="white" 
+          // color="white" 
+          color={colors.background}
           onPress={() => navigation.goBack()}
           style={{borderWidth: 1, borderColor: '#121111'}}
         />

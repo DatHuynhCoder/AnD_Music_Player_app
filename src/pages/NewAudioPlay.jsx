@@ -103,7 +103,7 @@ export default function NewAudioPlay({route}) {
   } = useContext(AudioContext)
 
   const albumURL = route?.params?.albumURL
-
+  const albumName = route?.params?.albumName
   const convertTime = milis => {
     let second = milis % 60
     let minute = Math.floor(milis / 60)
@@ -185,7 +185,7 @@ export default function NewAudioPlay({route}) {
         </View>
       </View>
       <View>
-        <Text style={{color: colors.textPrimary}}>Album Name</Text>
+        <Text style={{color: colors.textPrimary}}>{albumName === undefined ? 'No album is loaded' : albumName}</Text>
       </View>
     </View>
     {/* <View style={{style: styles.container}}> */}
