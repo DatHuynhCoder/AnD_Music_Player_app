@@ -29,7 +29,6 @@ const NewAudioContextProvider = ({children}) => {
   function _onPlaybackStatusUpdate(status) {
     if(status.didJustFinish === true) {
       finish()
-      return
     }
     if(status.isLoaded === true && status.isPlaying === true) {
       setPlaybackPosition(status.positionMillis)
@@ -125,18 +124,15 @@ const NewAudioContextProvider = ({children}) => {
   }
 
   async function finish() {
-    try {
-      if(currentAudioIndex < currentList.length - 1) {
-        loadSound({uri: "http://" + ipAddress + ":3177" + currentList[currentAudioIndex + 1].songuri})
-        setCurrentName(currentList[currentAudioIndex + 1].songname)
-        setCurrentSinger(currentList[currentAudioIndex + 1].authorname)
-        setCurrentAudioIndex(currentAudioIndex + 1)
-      }
-      console.log('Finished');
+    if(currentAudioIndex < currentList.length - 1) {
+      loadSound({uri: "http://" + ipAddress + ":3177" + currentList[currentAudioIndex + 1].songuri})
+      setCurrentSongimg(currentList[currentAudioIndex + 1].songimg)
+      setCurrentName(currentList[currentAudioIndex + 1].songname)
+      setCurrentSinger(currentList[currentAudioIndex + 1].authorname)
+      setCurrentSongid(currentList[currentAudioIndex + 1].songid)
+      setCurrentAudioIndex(currentAudioIndex + 1)
     }
-    catch(err) {
-      console.log('error when trying to unload audio: ', err);
-    }
+    console.log('Finished');
   }
 
   function handlePressOnIcon() {
