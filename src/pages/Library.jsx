@@ -3,28 +3,50 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  FlatList
+  FlatList,
+  Image
 } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import * as MediaLibrary from 'expo-media-library'
 //constants
+import { ipAddress } from '../constants/ipAddress'
 import { colors } from '../constants/color'
 import { textSizes } from '../constants/demensions'
+import { UserContext } from '../context/UserContext'
+import axios from 'axios'
 
 const Library = () => {
+  const { userid, setUserid } = useContext(UserContext)
   const getPermission = async () => {
     const permission = await MediaLibrary.getPermissionsAsync()
     console.log(permission);
   }
-
-  useEffect(() => {
-    getPermission()
-  }, [])
-
   const [selectedOption, setSelectedOption] = useState(''); // To track the selected library button
   const handleLibraryChoice = (optionId) => {
     setSelectedOption(optionId);
   }
+
+  const [listPlaylist, setListPlaylist] = useState([]);
+
+  const getPlaylist = async () => {
+    try {
+      const response = axios.get("http://" + ipAddress + "3177" + "/get-playlist-by-userid", userid)
+      if (response.data.Status === 'Success') {
+        console.log('Lay playlist thanh cong!');
+        setListPlaylist(response.data.Result);
+      }
+      else {
+        console.log('Lay playlist that bai')
+      }
+    } catch (error) {
+      console.log('Khong the lay playlist ')
+    }
+  }
+
+  useEffect(() => {
+    getPermission();
+    getPlaylist();
+  }, [])
 
   const libraryOptionsData = [
     {
@@ -69,6 +91,23 @@ const Library = () => {
           <View style={{ marginHorizontal: 5 }} />
         }
       />
+
+      <FlatList
+        data={listPlaylist}
+        renderItem={({item}) => (
+          <TouchableOpacity>
+            <Image 
+              source={{uri: 'http://' + ipAddress + ':3177' + item.playlistimg}}
+              style = {styles.playlist_img}
+            />
+            <View style>
+              <Text>{item.playlistname}</Text>
+              <Text>playlist.{item.lenght}</Text>
+            </View>
+          </TouchableOpacity>
+        )}
+        keyExtractor={item => item.id}
+      />
     </View>
   )
 }
@@ -97,6 +136,11 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     fontWeight: '600',
     fontSize: textSizes.xm
+  },
+  playlist_img: {
+    height: 50,
+    width: 50,
+    borderRadius: 10
   }
 })
 

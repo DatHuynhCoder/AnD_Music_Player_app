@@ -8,7 +8,7 @@ import {
   TextInput,
   Alert
 } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import AppAvatar from '../../assets/img/AnD_logo.png'
 //colors
@@ -19,6 +19,7 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { ipAddress } from '../constants/ipAddress';
+import { UserContext } from '../context/UserContext';
 import axios from 'axios';
 
 const LoginAccount = ({ navigation }) => {
@@ -26,6 +27,8 @@ const LoginAccount = ({ navigation }) => {
   const [isChecked, setIsChecked] = useState(false)
   const [email, setEmail] = useState('');
   const [pass, setPassword] = useState('');
+
+  const {userid, setUserid} = useContext(UserContext);
 
   const handleLogin = () => {
     if (email === '' || pass === '') {
@@ -42,6 +45,7 @@ const LoginAccount = ({ navigation }) => {
           const response = await axios.post("http://" + ipAddress + ":3177" + "/login", info);
           if (response.data.Status === 'Success') {
             Alert.alert("Account login successful, have fun listening to our music!");
+            setUserid(response.data.userid);
             navigation.navigate('MainBottom');
           }
           else {

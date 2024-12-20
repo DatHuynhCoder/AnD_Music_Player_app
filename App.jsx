@@ -15,28 +15,31 @@ import PlayerPage from './src/pages/PlayerPage';
 
 import { AudioProvider } from './src/context/AudioProvider';
 import { NewAudioContextProvider } from './src/context/NewAudioContextProvider';
+import { UserContextProvider } from './src/context/UserContext';
 
 const Stack = createStackNavigator();
 
-const App = ({navigation}) => {
+const App = ({ navigation }) => {
   return (
-    <NewAudioContextProvider>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName='LaunchScreen' screenOptions={{headerShown: false}}>
-          <Stack.Screen name='LaunchScreen' component={LaunchScreen}/>
-          <Stack.Screen name='Login' component={Login} options={{headerShown: false}}/>
-          <Stack.Screen name='LoginAccount' component={LoginAccount} options={{headerShown: false}}/>
-          <Stack.Screen name='Signup' component={Signup}/>
-          <Stack.Screen name='MainBottom' component={MainBottom}/>
-          <Stack.Screen name='FloatingPlayer' component={FloatingPlayer}/>
-          <Stack.Screen name='PlayerPage' component={PlayerPage} 
-            options={{
-              headerShown: false, 
-            }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </NewAudioContextProvider>
+    <UserContextProvider>
+      <NewAudioContextProvider>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName='LaunchScreen' screenOptions={{ headerShown: false }}>
+            <Stack.Screen name='LaunchScreen' component={LaunchScreen} />
+            <Stack.Screen name='Login' component={Login} options={{ headerShown: false }} />
+            <Stack.Screen name='LoginAccount' component={LoginAccount} options={{ headerShown: false }} />
+            <Stack.Screen name='Signup' component={Signup} />
+            <Stack.Screen name='MainBottom' component={MainBottom} />
+            <Stack.Screen name='FloatingPlayer' component={FloatingPlayer} />
+            <Stack.Screen name='PlayerPage' component={PlayerPage}
+              options={{
+                headerShown: false,
+              }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </NewAudioContextProvider>
+    </UserContextProvider>
   );
 }
 

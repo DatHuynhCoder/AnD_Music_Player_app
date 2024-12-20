@@ -129,7 +129,7 @@ const SignUp = ({ navigation }) => {
       <View style={styles.input_container}>
         <AntDesign name="lock1" size={24} color="#3b3a3a" />
         <TextInput
-          placeholder='Password'
+          placeholder=' Comfirm password'
           placeholderTextColor={colors.textPrimary}
           onChangeText={setConfirmPassword}
           style={styles.password}
