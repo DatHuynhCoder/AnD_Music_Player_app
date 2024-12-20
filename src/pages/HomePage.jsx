@@ -106,7 +106,7 @@ const HomePage = () => {
   //   },
   // ];
   const tempUserData = {
-    userName: 'Coichung2hondaicuamay'
+    userName: 'hi'
   }
 
   const playListData = [
