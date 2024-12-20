@@ -5,7 +5,7 @@ import HomePage from './HomePage';
 import ExplorePage from './ExplorePage';
 import Library from './Library';
 import AudioList from './AudioList';
-import Player from './Player';
+// import Player from './Player';
 import NewAudioPlay from './NewAudioPlay'
 import PlayerPage from './PlayerPage';
 //contanst
@@ -21,6 +21,7 @@ const MainBottom = () => {
   return (
     <>
     <StatusBar/>
+    <FloatingPlayer/>
     <Tab.Navigator
       initialRouteName='HomePage'
       screenOptions={({ route }) => (
@@ -30,18 +31,18 @@ const MainBottom = () => {
           tabBarInactiveTintColor: 'white',
           tabBarHideOnKeyboard: true,
           tabBarStyle: {
-            backgroundColor: colors.background,
+            // backgroundColor: colors.background,
             borderTopWidth: 0, // Removes any border on top
             position: 'absolute',
-            marginVertical: 20,
+            // marginVertical: 20,
             marginHorizontal: 30,
             backgroundColor: 'grey',
             borderRadius: 20,
             paddingHorizontal: 10,
             backgroundColor: 'rgba(66, 66, 66, 0.8)',
             height: 65,
-            justifyContent: 'center',
-            alignItems: 'center',
+            // justifyContent: 'center',
+            // alignItems: 'center',
             paddingTop: 5
           },
           tabBarIcon: ({ focused, color, size }) => {
@@ -96,14 +97,6 @@ const MainBottom = () => {
           headerShown: false
         }}
       /> */}
-      {/* <Tab.Screen
-        name='Player'
-        component={Player}
-        options={{
-          title: 'Player',
-          headerShown: false
-        }}
-      /> */}
       <Tab.Screen
         name='NewAudioPlay'
         component={NewAudioPlay}
@@ -121,7 +114,7 @@ const MainBottom = () => {
         }}
       />
     </Tab.Navigator>
-    <FloatingPlayer/>
+    
     </>
   )
 }

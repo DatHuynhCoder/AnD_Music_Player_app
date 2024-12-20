@@ -22,7 +22,7 @@ const AlbumCard = ({ albumId, albumName, albumURL, albumAuthor }) => {
       })
     }}>
       <ImageBackground
-        source={albumURL}
+        source={{uri: albumURL}}
         style={styles.ImgBackground}
       >
         <View style={styles.discHole} />

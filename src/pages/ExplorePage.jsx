@@ -198,26 +198,31 @@ const ExplorePage = () => {
     {
       albumid: 1,
       albumname: 'PARALLAX',
+      albumimg: '',
       authorname: 'TheFatRat'
     },
     {
       albumid: 1,
       albumname: 'PARALLAX',
+      albumimg: '',
       authorname: 'TheFatRat'
     },
     {
       albumid: 1,
       albumname: 'PARALLAX',
+      albumimg: '',
       authorname: 'TheFatRat'
     },
     {
       albumid: 1,
       albumname: 'PARALLAX',
+      albumimg: '',
       authorname: 'TheFatRat'
     },
     {
       albumid: 1,
       albumname: 'PARALLAX',
+      albumimg: '',
       authorname: 'TheFatRat'
     },
   ])
@@ -352,7 +357,7 @@ const ExplorePage = () => {
             renderItem={({ item }) => (
               <AlbumCard
                 key={item.albumid}
-                albumURL={albumURL}
+                albumURL={'http://' + ipAddress + ':3177' + item.albumimg}
                 albumId={item.albumid}
                 albumAuthor={item.authorname}
                 albumName={item.albumname}
