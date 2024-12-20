@@ -24,7 +24,7 @@ import { AudioContext } from '../context/NewAudioContextProvider'
 const HomePage = () => {
   const [musicData, setMusicData] = useState([])
   const {
-    currentList,
+    currentList, setCurrentList,
     setCurrentSongid,
     setCurrentName,
     setCurrentSinger,
@@ -283,13 +283,14 @@ const HomePage = () => {
                   <SongCard
                     key={song.songid}
                     musicName={song.songname}
-                    musicURL={song.songuri}
+                    musicURL={song.songimg}
                     musicAuthor={song.authorname}
                     onSongPressed={() => {
+                      setCurrentList([song])
                       setCurrentName(song.songname);
                       setCurrentSinger(song.authorname);
                       setCurrentSongid(song.songid);
-                      setCurrentAudioIndex(index);
+                      setCurrentAudioIndex(0);
                       loadSound({uri: "http://" + ipAddress + ":3177" + song.songuri})
                     }}
                   />

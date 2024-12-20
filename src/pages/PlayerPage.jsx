@@ -50,9 +50,11 @@ function LyricScreen() {
   const navigation = useNavigation();
   const [arrLyric, setArrLyric] = useState([])
   useEffect(() => {
-    let lyric = currentList[currentAudioIndex].songlyric
-    let tempArr = lyric.split('\n')
-    setArrLyric(tempArr)
+    if(currentList.length > 0) {
+      let lyric = currentList[currentAudioIndex].songlyric
+      let tempArr = lyric.split('\n')
+      setArrLyric(tempArr)
+    }
   }, [currentAudioIndex])
   
   return (
