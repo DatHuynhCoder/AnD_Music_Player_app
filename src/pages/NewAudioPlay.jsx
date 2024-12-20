@@ -102,7 +102,7 @@ export default function NewAudioPlay({route}) {
     loadSound
   } = useContext(AudioContext)
 
-  const {albumURL} = route.params
+  const albumURL = route?.params?.albumURL
 
   const convertTime = milis => {
     let second = milis % 60
@@ -175,7 +175,7 @@ export default function NewAudioPlay({route}) {
         }}>
           <ImageBackground
             // source={albumIMG}
-            source={albumURL ? {uri: albumURL} : albumIMG}
+            source={albumURL !== undefined ? {uri: albumURL} : albumIMG}
             style={{
               flex: 1,
               justifyContent: 'center',
