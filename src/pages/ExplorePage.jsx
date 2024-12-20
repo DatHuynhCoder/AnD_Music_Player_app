@@ -324,7 +324,7 @@ const ExplorePage = () => {
       {/* Man hinh goi y cua trang */}
       {
         searchQuery === '' &&
-        <>
+        <View>
           <FlatList
             data={musicArea}
             ListHeaderComponent={(
@@ -364,7 +364,7 @@ const ExplorePage = () => {
               />
             )}
           />
-        </>
+        </View>
 
       }
     </View>
