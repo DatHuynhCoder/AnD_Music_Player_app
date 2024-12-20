@@ -7,7 +7,7 @@ import {
   FlatList,
   ScrollView
 } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 //constants
 import { colors } from '../constants/color'
 import { iconSizes, textSizes } from '../constants/demensions'
@@ -19,9 +19,20 @@ import GenreCard from '../components/GenreCard'
 import SongCard from '../components/SongCard'
 import axios from 'axios'
 import { ipAddress } from '../constants/ipAddress';
+import { AudioContext } from '../context/NewAudioContextProvider'
 
 const HomePage = () => {
   const [musicData, setMusicData] = useState([])
+  const {
+    currentList,
+    setCurrentSongid,
+    setCurrentName,
+    setCurrentSinger,
+    currentAudioIndex,
+    setCurrentAudioIndex,
+    loadSound
+  } = useContext(AudioContext)
+
   useEffect(() => {
     console.log("let's get all songs")
     async function getAllSongs() {
@@ -170,7 +181,7 @@ const HomePage = () => {
     },
   ]
 
-  
+
 
   const renderPlayListItem = ({ item }) => (
     <TouchableOpacity style={styles.itemContainer}>
@@ -268,8 +279,20 @@ const HomePage = () => {
             horizontal={true}
             renderItem={({ item }) => (
               <View style={styles.rowSong}>
-                {item.map(song => (
-                  <SongCard key={song.songid} musicName={song.songname} musicURL={song.songuri} musicAuthor={song.authorname}/>
+                {item.map((song,index) => (
+                  <SongCard
+                    key={song.songid}
+                    musicName={song.songname}
+                    musicURL={song.songuri}
+                    musicAuthor={song.authorname}
+                    onSongPressed={() => {
+                      setCurrentName(song.songname);
+                      setCurrentSinger(song.authorname);
+                      setCurrentSongid(song.songid);
+                      setCurrentAudioIndex(index);
+                      loadSound({uri: "http://" + ipAddress + ":3177" + song.songuri})
+                    }}
+                  />
                 ))}
               </View>
             )}
