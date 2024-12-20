@@ -35,7 +35,6 @@ const FloatingPlayer = () => {
     loadSound
   } = useContext(AudioContext)
   const navigation = useNavigation();
-
   return (
     <TouchableOpacity style={{
       borderRadius: 20, 
