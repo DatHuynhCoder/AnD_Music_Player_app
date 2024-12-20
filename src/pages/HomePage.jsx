@@ -275,21 +275,6 @@ const HomePage = () => {
             )}
           />
         </View>
-        <View>
-          <Text style={styles.quickpickTxt}>Quick picks</Text>
-          <FlatList
-            data={packMusic}
-            keyExtractor={(item, index) => index.toString()}
-            horizontal={true}
-            renderItem={({ item }) => (
-              <View style={styles.rowSong}>
-                {item.map(song => (
-                  <SongCard key={song.id} musicName={song.musicName} musicURL="../../assets/img/temp_playlist_pic.jpg" musicAuthor={song.musicAuthor}/>
-                ))}
-              </View>
-            )}
-          />
-        </View>
       </ScrollView>
     </View>
 

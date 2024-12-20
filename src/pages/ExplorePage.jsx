@@ -252,121 +252,130 @@ const ExplorePage = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchContainer}>
-        <MaterialIcons name="search" size={20} color="#888" style={styles.searchIcon} />
-        <TextInput
-          placeholder='Enter songs or artists...'
-          value={searchQuery}
-          style={styles.searchBar}
-          onChangeText={(queryData) => handleSearch(queryData)}
-        />
-      </View>
-
-      {/* Author list */}
-      {filteredAuthor.length > 0 && searchQuery !== '' &&
-        <FlatList
-          ListHeaderComponent={(
-            <View>
-              <Text style={styles.HeaderTxt}>Authors</Text>
-            </View>
-          )}
-          data={filteredAuthor}
-          renderItem={({ item }) =>
-            <AuthorCard
-              key={item.id}
-              authorName={item.authorName}
-              authorURL={item.authorURL}
-            />
-          }
-          ItemSeparatorComponent={
-            <View style={{ marginVertical: 10 }} />
-          }
-        />
-      }
-
-      {/* Song list */}
-      {filteredSongs.length > 0 && searchQuery !== '' &&
-        <FlatList
-          ListHeaderComponent={(
-            <View>
-              <Text style={styles.HeaderTxt}>Songs</Text>
-            </View>
-          )}
-          data={filteredSongs}
-          renderItem={({ item }) =>
-            <SongCard2
-              key={item.id}
-              musicName={item.musicName}
-              musicURL={item.musicURL}
-              musicAuthor={item.musicAuthor}
-            />
-          }
-          keyExtractor={(item, index) => index.toString()}
-          ItemSeparatorComponent={
-            <View style={{ marginVertical: 10 }} />
-          }
-        />
-      }
-
-      {/* Khong tim thay ket qua */}
-      {filteredAuthor.length === 0 && filteredSongs.length === 0 && searchQuery !== '' &&
-        <View style={styles.noResultContainer}>
-          <MaterialIcons
-            name='search-off'
-            color={colors.iconPrimary}
-            size={60}
-          />
-          <Text style={styles.noResultTxt}>No result for <Text style={styles.noResultTxtEnter}>{searchQuery}</Text></Text>
-          <Text style={styles.noResultSubTxt}>Try different keywords</Text>
-        </View>
-      }
-
-      {/* Man hinh goi y cua trang */}
-      {
-        searchQuery === '' &&
-        <View>
-          <FlatList
-            data={musicArea}
-            ListHeaderComponent={(
-              <View>
-                <Text style={styles.HeaderTxt}>Recommend for you</Text>
-              </View>
-            )}
-            numColumns={2}
-            renderItem={({ item }) => (
-              <AreaCard
-                key={item.id}
-                areaName={item.areaName}
-                areaURL={item.areaURL}
-                musicType={item.musicType}
-              />
-            )}
-            columnWrapperStyle={{ justifyContent: 'space-between' }}
-            ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
-            keyExtractor={(item) => item.id.toString()}
-          />
-          {/* Top Albums */}
-          <Text style={styles.HeaderTxt}>Top Albums</Text>
-          <FlatList
-            data={albumData}
-            horizontal={true}
-            ItemSeparatorComponent={
-              <View style={{ marginHorizontal: 10 }}></View>
-            }
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => (
-              <AlbumCard
-                key={item.albumid}
-                albumURL={'http://' + ipAddress + ':3177' + item.albumimg}
-                albumId={item.albumid}
-                albumAuthor={item.authorname}
-                albumName={item.albumname}
-              />
-            )}
+      <ScrollView>
+        <View style={styles.searchContainer}>
+          <MaterialIcons name="search" size={20} color="#888" style={styles.searchIcon} />
+          <TextInput
+            placeholder='Enter songs or artists...'
+            value={searchQuery}
+            style={styles.searchBar}
+            onChangeText={(queryData) => handleSearch(queryData)}
           />
         </View>
 
-      }
+        {/* Author list */}
+        {filteredAuthor.length > 0 && searchQuery !== '' &&
+          <View>
+            <FlatList
+              nestedScrollEnabled
+              ListHeaderComponent={(
+                <View>
+                  <Text style={styles.HeaderTxt}>Authors</Text>
+                </View>
+              )}
+              data={filteredAuthor}
+              renderItem={({ item }) =>
+                <AuthorCard
+                  key={item.id}
+                  authorName={item.authorName}
+                  authorURL={item.authorURL}
+                />
+              }
+              ItemSeparatorComponent={
+                <View style={{ marginVertical: 10 }} />
+              }
+            />
+          </View>
+        }
+
+        {/* Song list */}
+        {filteredSongs.length > 0 && searchQuery !== '' &&
+          <View>
+            <FlatList
+              nestedScrollEnabled
+              ListHeaderComponent={(
+                <View>
+                  <Text style={styles.HeaderTxt}>Songs</Text>
+                </View>
+              )}
+              data={filteredSongs}
+              renderItem={({ item }) =>
+                <SongCard2
+                  key={item.id}
+                  musicName={item.musicName}
+                  musicURL={item.musicURL}
+                  musicAuthor={item.musicAuthor}
+                />
+              }
+              keyExtractor={(item, index) => index.toString()}
+              ItemSeparatorComponent={
+                <View style={{ marginVertical: 10 }} />
+              }
+            />
+          </View>
+        }
+
+        {/* Khong tim thay ket qua */}
+        {filteredAuthor.length === 0 && filteredSongs.length === 0 && searchQuery !== '' &&
+          <View style={styles.noResultContainer}>
+            <MaterialIcons
+              name='search-off'
+              color={colors.iconPrimary}
+              size={60}
+            />
+            <Text style={styles.noResultTxt}>No result for <Text style={styles.noResultTxtEnter}>{searchQuery}</Text></Text>
+            <Text style={styles.noResultSubTxt}>Try different keywords</Text>
+          </View>
+        }
+
+        {/* Man hinh goi y cua trang */}
+        {
+          searchQuery === '' &&
+          <View>
+            <FlatList
+              nestedScrollEnabled
+              data={musicArea}
+              ListHeaderComponent={(
+                <View>
+                  <Text style={styles.HeaderTxt}>Recommend for you</Text>
+                </View>
+              )}
+              numColumns={2}
+              renderItem={({ item }) => (
+                <AreaCard
+                  key={item.id}
+                  areaName={item.areaName}
+                  areaURL={item.areaURL}
+                  musicType={item.musicType}
+                />
+              )}
+              columnWrapperStyle={{ justifyContent: 'space-between' }}
+              ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
+              keyExtractor={(item) => item.id.toString()}
+            />
+            {/* Top Albums */}
+            <Text style={styles.HeaderTxt}>Top Albums</Text>
+            <FlatList
+              nestedScrollEnabled
+              data={albumData}
+              horizontal={true}
+              ItemSeparatorComponent={
+                <View style={{ marginHorizontal: 10 }}></View>
+              }
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <AlbumCard
+                  key={item.albumid}
+                  albumURL={'http://' + ipAddress + ':3177' + item.albumimg}
+                  albumId={item.albumid}
+                  albumAuthor={item.authorname}
+                  albumName={item.albumname}
+                />
+              )}
+            />
+          </View>
+        }
+      </ScrollView>
     </View>
   )
 }
