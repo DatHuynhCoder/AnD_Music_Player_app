@@ -106,7 +106,7 @@ const HomePage = () => {
   //   },
   // ];
   const tempUserData = {
-    userName: 'Coichung2hondaicuamay'
+    userName: 'hi'
   }
 
   const playListData = [
@@ -270,21 +270,6 @@ const HomePage = () => {
               <View style={styles.rowSong}>
                 {item.map(song => (
                   <SongCard key={song.songid} musicName={song.songname} musicURL={song.songuri} musicAuthor={song.authorname}/>
-                ))}
-              </View>
-            )}
-          />
-        </View>
-        <View>
-          <Text style={styles.quickpickTxt}>Quick picks</Text>
-          <FlatList
-            data={packMusic}
-            keyExtractor={(item, index) => index.toString()}
-            horizontal={true}
-            renderItem={({ item }) => (
-              <View style={styles.rowSong}>
-                {item.map(song => (
-                  <SongCard key={song.id} musicName={song.musicName} musicURL="../../assets/img/temp_playlist_pic.jpg" musicAuthor={song.musicAuthor}/>
                 ))}
               </View>
             )}
