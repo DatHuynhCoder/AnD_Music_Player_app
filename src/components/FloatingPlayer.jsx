@@ -18,6 +18,7 @@ const FloatingPlayer = () => {
     currentList, setCurrentList,
     listLength, setListLength,
     currentSongid, setCurrentSongid,
+    currentSongimg, setCurrentSongimg,
     currentName, setCurrentName,
     currentSinger, setCurrentSinger,
     playback, setPlayback,
@@ -54,11 +55,24 @@ const FloatingPlayer = () => {
           source={UserAvatar}
           style={{borderWidth: 1, height: 48, width: 48,borderRadius: 24, justifyContent: 'center', alignItems: 'center'}}
         /> */}
-        <View style={{height: 48, width: 48, flexBasis: 50,backgroundColor: colors.emphasis,justifyContent: 'center',alignItems: 'center',borderRadius: 25,}}>
+        {
+          currentSongimg === '' ? 
+          <View style={{height: 48, width: 48, flexBasis: 50,backgroundColor: colors.emphasis,justifyContent: 'center',alignItems: 'center',borderRadius: 25,}}>
+            <Text style={{fontSize: 16,fontWeight: 'bold',color: misc_colors.FONT}}>
+              {currentName === '' ? '?' : currentName[0]}
+            </Text>
+          </View>
+          :
+          <Image source={{uri: 'http://' + ipAddress + ':3177' + currentSongimg}}
+            style={{height: 48, width: 48, borderRadius: 24}}
+          >
+          </Image>
+        }
+        {/* <View style={{height: 48, width: 48, flexBasis: 50,backgroundColor: colors.emphasis,justifyContent: 'center',alignItems: 'center',borderRadius: 25,}}>
           <Text style={{fontSize: 16,fontWeight: 'bold',color: misc_colors.FONT}}>
             {currentName === '' ? '?' : currentName[0]}
           </Text>
-        </View>
+        </View> */}
         <View style={{flex: 1, overflow: 'hidden', marginLeft: 10, justifyContent: 'center'}}>
           <Text numberOfLines={1} style={{fontSize: 13, fontWeight: '600', paddingLeft: 5, color: 'white'}}>
             {currentName === '' ? 'Không có dữ liệu' : currentName}

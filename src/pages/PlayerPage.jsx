@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { Text, View, StyleSheet, Button, TouchableOpacity, Dimensions, TouchableWithoutFeedback, Modal, Animated, Easing, ScrollView } from 'react-native';
+import { Text, View, StyleSheet, Button, TouchableOpacity, Dimensions, TouchableWithoutFeedback, Modal, Animated, Easing, ScrollView, Image } from 'react-native';
 import { Audio } from 'expo-av';
 import Slider from '@react-native-community/slider';
 import { colors, misc_colors } from '../constants/color';
@@ -29,6 +29,7 @@ function LyricScreen() {
     currentList, setCurrentList,
     listLength, setListLength,
     currentSongid, setCurrentSongid,
+    currentSongimg, setCurrentSongimg,
     currentName, setCurrentName,
     currentSinger, setCurrentSinger,
     playback, setPlayback,
@@ -51,9 +52,11 @@ function LyricScreen() {
   const [arrLyric, setArrLyric] = useState([])
   useEffect(() => {
     if(currentList.length > 0) {
-      let lyric = currentList[currentAudioIndex].songlyric
-      let tempArr = lyric.split('\n')
-      setArrLyric(tempArr)
+      let lyric = currentList[currentAudioIndex]?.songlyric
+      if(lyric !== undefined) {
+        let tempArr = lyric.split('\n')
+        setArrLyric(tempArr)
+      }
     }
   }, [currentAudioIndex])
   
@@ -100,6 +103,7 @@ function PlayerPage({navigation}) {
     currentList, setCurrentList,
     listLength, setListLength,
     currentSongid, setCurrentSongid,
+    currentSongimg, setCurrentSongimg,
     currentName, setCurrentName,
     currentSinger, setCurrentSinger,
     playback, setPlayback,
@@ -234,9 +238,18 @@ function PlayerPage({navigation}) {
         />
       </View>
       <View style={{justifyContent: 'center', alignItems: 'center'}}>
-        <Animated.View style={{transform: [{rotate}]}}>
-          <MaterialCommunityIcons name="music-circle" size={300} color="#00C2CB"/>
-        </Animated.View>
+        <View>
+          {
+            currentSongimg === '' ? 
+            <MaterialCommunityIcons name="music-circle" size={300} color="#00C2CB"/>
+            :
+            <Image 
+              source={{uri: 'http://' + ipAddress + ':3177' + currentSongimg}}
+              style={{width: 250, height: 250, borderRadius: 175}}
+            ></Image>
+          }
+          
+        </View>
         <View style={{flexDirection: 'row', marginVertical: 30}}>
           <View>
             <FontAwesome5 name="share-square" size={24} color="white"/>
