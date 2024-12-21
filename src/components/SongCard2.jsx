@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   Image
  } from 'react-native'
-import React from 'react'
+import React, {useContext} from 'react'
 //constants
 import { colors } from '../constants/color'
 import { iconSizes, textSizes } from '../constants/demensions'
@@ -14,9 +14,13 @@ import { ipAddress } from '../constants/ipAddress'
 //icons
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
-const SongCard = ({ musicName, musicURL, musicAuthor }) => {
+const SongCard2 = ({ musicName, musicURL, musicAuthor, onSongPressed }) => {
+  
   return (
-    <TouchableOpacity style={styles.songContainer}>
+    <TouchableOpacity 
+      style={styles.songContainer}
+      onPress={() => onSongPressed()}
+    >
       <View style={styles.extraContainer}>
         <Image source={{uri: 'http://'+ ipAddress + ':3177' + musicURL}} style={styles.songImg} />
         <View style={styles.songTxtContainer}>
@@ -31,11 +35,14 @@ const SongCard = ({ musicName, musicURL, musicAuthor }) => {
             style={styles.songAuthor}>{musicAuthor}</Text>
         </View>
       </View>
-      <MaterialCommunityIcons
-        name='dots-vertical'
-        size={iconSizes.md}
-        color={colors.iconPrimary}
-      />
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <MaterialCommunityIcons
+          name='dots-vertical'
+          size={iconSizes.lg}
+          color={colors.iconPrimary}
+          onPress={() => console.log('press on option')}
+        />
+      </View>
     </TouchableOpacity>
   )
 }
@@ -49,6 +56,7 @@ const styles = StyleSheet.create({
     width: '100%'
   },
   extraContainer: {
+    flex: 4,
     flexDirection: 'row',
   },
   songImg: {
@@ -72,4 +80,4 @@ const styles = StyleSheet.create({
   }
 })
 
-export default SongCard
+export default SongCard2

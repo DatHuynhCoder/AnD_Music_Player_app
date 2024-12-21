@@ -8,7 +8,8 @@ import {
   Modal,
   Pressable,
   Alert,
-  TextInput
+  TextInput,
+  ScrollView
 } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import * as MediaLibrary from 'expo-media-library'
@@ -22,11 +23,13 @@ import { UserContext } from '../context/UserContext'
 import { AudioContext } from '../context/NewAudioContextProvider'
 import axios from 'axios'
 import {DefaultPlaylistImg} from '../../assets/img/AnD_logo.png'
+import SongCard2 from '../components/SongCard2'
 import {
   useNavigation
 } from '@react-navigation/native';
 
 const Library = () => {
+  const {currentList} = useContext(AudioContext)
   const { userid, setUserid } = useContext(UserContext)
   const { setCurrentList } = useContext(AudioContext)
   const navigation = useNavigation();
@@ -35,7 +38,7 @@ const Library = () => {
     const permission = await MediaLibrary.getPermissionsAsync()
     console.log(permission);
   }
-  const [selectedOption, setSelectedOption] = useState(''); // To track the selected library button
+  const [selectedOption, setSelectedOption] = useState(1); // To track the selected library button
   const handleLibraryChoice = (optionId) => {
     setSelectedOption(optionId);
   }
@@ -101,20 +104,20 @@ const Library = () => {
     },
     {
       id: 2,
-      option: 'Songs',
+      option: 'Favourite',
     },
-    {
-      id: 3,
-      option: 'Artists',
-    },
-    {
-      id: 4,
-      option: 'Albums',
-    },
-    {
-      id: 5,
-      option: 'Podcasts',
-    },
+    // {
+    //   id: 3,
+    //   option: 'Artists',
+    // },
+    // {
+    //   id: 4,
+    //   option: 'Albums',
+    // },
+    // {
+    //   id: 5,
+    //   option: 'Podcasts',
+    // },
   ]
 
   return (
@@ -139,7 +142,7 @@ const Library = () => {
           }
         />
       </View>
-
+      <>
       <TouchableOpacity
         style={styles.create_playlist_box}
         onPress={() => setmodalPlaylistVisible(true)}
@@ -156,7 +159,10 @@ const Library = () => {
               onPress={() => {
                 axios.get('http://' + ipAddress + ':3177/get-listsongs-by-playlistid?playlistid=' + item.playlistid).then(res => {
                   setCurrentList(res.data)
-                  navigation.navigate('NewAudioPlay', { songColectionURL: 'http://' + ipAddress + ':3177' + item.playlistimg, songColectionName: item.playlistname })
+                  navigation.navigate('NewAudioPlay', { 
+                    songColectionURL: 'http://' + ipAddress + ':3177' + item.playlistimg, 
+                    songColectionName: item.playlistname 
+                  })
                 })
               }}
             >
@@ -207,6 +213,7 @@ const Library = () => {
           </View>
         </View>
       </Modal>
+      </>
     </View>
   )
 }
