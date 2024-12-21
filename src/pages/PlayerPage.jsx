@@ -13,7 +13,8 @@ import {
   ScrollView,
   Image,
   TextInput,
-  Pressable
+  Pressable,
+  ImageBackground
 } from 'react-native';
 import { Audio } from 'expo-av';
 import Slider from '@react-native-community/slider';
@@ -249,7 +250,7 @@ function PlayerPage({ navigation }) {
       </Modal>
 
       <View style={styles.container}>
-        <View style={{ borderWidth: 1, padding: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
+        <View style={{ padding: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
           <MaterialCommunityIcons
             name="arrow-left-circle-outline"
             size={40}
@@ -258,9 +259,6 @@ function PlayerPage({ navigation }) {
             onPress={() => navigation.goBack()}
             style={{ borderWidth: 1, borderColor: '#121111' }}
           />
-          <Entypo name="dots-three-vertical" size={40} color="white"
-            onPress={() => setModalVisible(true)}
-          />
         </View>
         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
           <View>
@@ -268,10 +266,12 @@ function PlayerPage({ navigation }) {
               currentSongimg === '' ?
                 <MaterialCommunityIcons name="music-circle" size={300} color="#00C2CB" />
                 :
-                <Image
+                <ImageBackground
                   source={{ uri: 'http://' + ipAddress + ':3177' + currentSongimg }}
-                  style={{ width: 250, height: 250, borderRadius: 175 }}
-                ></Image>
+                  style={{ width: 250, height: 250, borderRadius: 175, justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }}
+                >
+                  <View style={styles.discHole}/>
+                </ImageBackground>
             }
 
           </View>
@@ -390,6 +390,12 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#121111',
     flex: 1,
+  },
+  discHole:{
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.background,
   },
   //Modal
   centeredView: {

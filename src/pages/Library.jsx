@@ -22,16 +22,17 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { UserContext } from '../context/UserContext'
 import { AudioContext } from '../context/NewAudioContextProvider'
 import axios from 'axios'
-import {DefaultPlaylistImg} from '../../assets/img/AnD_logo.png'
+import { DefaultPlaylistImg } from '../../assets/img/AnD_logo.png'
 import SongCard2 from '../components/SongCard2'
 import {
   useNavigation
 } from '@react-navigation/native';
 
 const Library = () => {
-  const {currentList} = useContext(AudioContext)
+  const { currentList } = useContext(AudioContext)
   const { userid, setUserid } = useContext(UserContext)
   const { setCurrentList } = useContext(AudioContext)
+  const [rerender,setRerender] = useState(false);
   const navigation = useNavigation();
 
   const getPermission = async () => {
@@ -77,7 +78,7 @@ const Library = () => {
           const response = await axios.post('http://' + ipAddress + ':3177/add-new-playlist', info);
           if (response.data.Status === 'Success') {
             Alert.alert('Create playlist successfully!');
-            setmodalPlaylistVisible(!modalPlaylistVisible)
+            setmodalPlaylistVisible(!modalPlaylistVisible);
           }
           else {
             Alert.alert(response.data.Error);
@@ -88,14 +89,14 @@ const Library = () => {
         }
       }
       createNewPlaylist();
-      getPlaylist();
+      setRerender(!rerender);
     }
   }
 
   useEffect(() => {
     getPermission();
     getPlaylist();
-  }, [])
+  }, [rerender])
 
   const libraryOptionsData = [
     {
@@ -143,76 +144,76 @@ const Library = () => {
         />
       </View>
       <>
-      <TouchableOpacity
-        style={styles.create_playlist_box}
-        onPress={() => setmodalPlaylistVisible(true)}
-      >
-        <AntDesign name="plussquare" size={iconSizes.xxl} color={colors.emphasis} />
-        <Text style={styles.create_playlist_txt}>Create new playlist</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.create_playlist_box}
+          onPress={() => setmodalPlaylistVisible(true)}
+        >
+          <AntDesign name="plussquare" size={iconSizes.xxl} color={colors.emphasis} />
+          <Text style={styles.create_playlist_txt}>Create new playlist</Text>
+        </TouchableOpacity>
 
-      <View>
-        <FlatList
-          data={listPlaylist}
-          renderItem={({ item }) => (
-            <TouchableOpacity style={styles.playlist_item}
-              onPress={() => {
-                axios.get('http://' + ipAddress + ':3177/get-listsongs-by-playlistid?playlistid=' + item.playlistid).then(res => {
-                  setCurrentList(res.data)
-                  navigation.navigate('NewAudioPlay', { 
-                    songColectionURL: 'http://' + ipAddress + ':3177' + item.playlistimg, 
-                    songColectionName: item.playlistname 
+        <View>
+          <FlatList
+            data={listPlaylist}
+            renderItem={({ item }) => (
+              <TouchableOpacity style={styles.playlist_item}
+                onPress={() => {
+                  axios.get('http://' + ipAddress + ':3177/get-listsongs-by-playlistid?playlistid=' + item.playlistid).then(res => {
+                    setCurrentList(res.data)
+                    navigation.navigate('NewAudioPlay', {
+                      songColectionURL: 'http://' + ipAddress + ':3177' + item.playlistimg,
+                      songColectionName: item.playlistname
+                    })
                   })
-                })
-              }}
-            >
-              <Image
-                source={item.playlistimg !== '' ? { uri: 'http://' + ipAddress + ':3177' + item.playlistimg } : {uri: 'http://' + ipAddress + ':3177/image/album/defaultplaylist.png'}}
-                style={styles.playlist_img}
-              />
-              <View style={styles.playlist_info}>
-                <Text style={styles.playlist_name}>{item.playlistname}</Text>
-                <Text style={styles.playlist_subinfo}>PLAYLIST.Number of songs: {item.numsongs}</Text>
-              </View>
-            </TouchableOpacity>
-          )}
-          keyExtractor={item => item.playlistid}
-        />
-      </View>
-
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalPlaylistVisible}
-        onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
-          setmodalPlaylistVisible(!modalPlaylistVisible);
-        }}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-
-            <AntDesign
-              style={{ alignSelf: 'flex-end' }}
-              name="close"
-              size={iconSizes.lg}
-              color="black"
-              onPress={() => setmodalPlaylistVisible(!modalPlaylistVisible)}
-            />
-            <Text style={styles.modalText}>New playlist name</Text>
-            <TextInput
-              placeholder='Enter playlist name'
-              value={playlistName}
-              onChangeText={(txt) => setPlaylistName(txt)}
-              style={styles.enter_playlist}
-            />
-            <Pressable
-              style={[styles.button, styles.buttonClose]}
-              onPress={() =>handleCreatePlaylist(playlistName)}>
-              <Text style={styles.textStyle}>Create</Text>
-            </Pressable>
-          </View>
+                }}
+              >
+                <Image
+                  source={item.playlistimg !== '' ? { uri: 'http://' + ipAddress + ':3177' + item.playlistimg } : { uri: 'http://' + ipAddress + ':3177/image/album/defaultplaylist.png' }}
+                  style={styles.playlist_img}
+                />
+                <View style={styles.playlist_info}>
+                  <Text style={styles.playlist_name}>{item.playlistname}</Text>
+                  <Text style={styles.playlist_subinfo}>PLAYLIST.Number of songs: {item.numsongs}</Text>
+                </View>
+              </TouchableOpacity>
+            )}
+            keyExtractor={item => item.playlistid}
+          />
         </View>
-      </Modal>
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalPlaylistVisible}
+          onRequestClose={() => {
+            Alert.alert('Modal has been closed.');
+            setmodalPlaylistVisible(!modalPlaylistVisible);
+          }}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+
+              <AntDesign
+                style={{ alignSelf: 'flex-end' }}
+                name="close"
+                size={iconSizes.lg}
+                color="black"
+                onPress={() => setmodalPlaylistVisible(!modalPlaylistVisible)}
+              />
+              <Text style={styles.modalText}>New playlist name</Text>
+              <TextInput
+                placeholder='Enter playlist name'
+                value={playlistName}
+                onChangeText={(txt) => setPlaylistName(txt)}
+                style={styles.enter_playlist}
+              />
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => handleCreatePlaylist(playlistName)}>
+                <Text style={styles.textStyle}>Create</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
       </>
     </View>
   )
