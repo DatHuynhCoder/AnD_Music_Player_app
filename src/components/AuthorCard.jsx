@@ -1,5 +1,5 @@
 //This card is use in ExplorePage.jsx
-import { StyleSheet, Text, View, Image } from 'react-native'
+import { StyleSheet, Text, View, Image, ScrollView } from 'react-native'
 import React from 'react'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 //constants
@@ -37,17 +37,17 @@ const AuthorCard = ({ authorName, authorURL, musicData }) => {
         />
       </View>
       <View style={styles.authorSongsContainer}>
+        <ScrollView>
         {filteredSongOfAuthor.map((item, index) => (
-          <View style={styles.cardWrapper} key={item.id}>
+          <View style={styles.cardWrapper} key={item.authorid + index}>
             <SongCard2 musicName={item.songname} musicURL={item.songimg} musicAuthor={item.authorname}/>
           </View>
         ))}
+        </ScrollView>
       </View>
     </View>
   )
 }
-
-export default AuthorCard
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -92,3 +92,5 @@ const styles = StyleSheet.create({
     margin: 5
   }
 })
+
+export default AuthorCard

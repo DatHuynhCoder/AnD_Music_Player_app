@@ -315,6 +315,7 @@ const ExplorePage = () => {
                   musicData={musicData}
                 />
               }
+              keyExtractor={(item, index) => index.toString()}
               ItemSeparatorComponent={
                 <View style={{ marginVertical: 10 }} />
               }
@@ -377,7 +378,6 @@ const ExplorePage = () => {
               numColumns={2}
               renderItem={({ item, index }) => (
                 <AreaCard
-                  key={index}
                   areaName={item.areaName}
                   areaURL={item.areaURL}
                   musicType={item.musicType}
@@ -385,7 +385,7 @@ const ExplorePage = () => {
               )}
               columnWrapperStyle={{ justifyContent: 'space-between' }}
               ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
-              keyExtractor={(item) => item.id.toString()}
+              keyExtractor={(item, index) => index.toString()}
             />
             {/* Top Albums */}
             <Text style={styles.HeaderTxt}>Top Albums</Text>
@@ -396,7 +396,7 @@ const ExplorePage = () => {
               ItemSeparatorComponent={
                 <View style={{ marginHorizontal: 10 }}></View>
               }
-              keyExtractor={(item,index) => item.key}
+              keyExtractor={(item,index) => index.toString()}
               renderItem={({ item }) => (
                 <AlbumCard
                   key={item.albumid}
@@ -413,7 +413,165 @@ const ExplorePage = () => {
     </View>
   )
 }
+// const ExplorePage = () => {
+//   const musicArea = [
+//     {
+//       id: 1,
+//       musicType: 'Electronic&Dance',
+//       areaName: 'US-UK',
+//       areaURL: require('../../assets/img/edm.png')
+//     },
+//     {
+//       id: 2,
+//       musicType: 'Nhạc đỏ',
+//       areaName: 'Việt Nam',
+//       areaURL: require('../../assets/img/edm.png')
+//     },
+//     {
+//       id: 3,
+//       musicType: 'Traditional music',
+//       areaName: 'China',
+//       areaURL: require('../../assets/img/edm.png')
+//     },
+//     {
+//       id: 4,
+//       musicType: 'K-POP',
+//       areaName: 'Korea',
+//       areaURL: require('../../assets/img/edm.png')
+//     },
+//     {
+//       id: 5,
+//       musicType: 'Country',
+//       areaName: 'US-UK',
+//       areaURL: require('../../assets/img/edm.png')
+//     },
+//     {
+//       id: 6,
+//       musicType: 'RAP&Underground',
+//       areaName: 'US-UK',
+//       areaURL: require('../../assets/img/edm.png')
+//     },
+//   ]
+//   const [albumData, setAlbumData] = useState([
+//     {
+//       albumid: 1,
+//       albumname: 'PARALLAX',
+//       albumimg: '',
+//       authorname: 'TheFatRat'
+//     },
+//     {
+//       albumid: 1,
+//       albumname: 'PARALLAX',
+//       albumimg: '',
+//       authorname: 'TheFatRat'
+//     },
+//     {
+//       albumid: 1,
+//       albumname: 'PARALLAX',
+//       albumimg: '',
+//       authorname: 'TheFatRat'
+//     },
+//     {
+//       albumid: 1,
+//       albumname: 'PARALLAX',
+//       albumimg: '',
+//       authorname: 'TheFatRat'
+//     },
+//     {
+//       albumid: 1,
+//       albumname: 'PARALLAX',
+//       albumimg: '',
+//       authorname: 'TheFatRat'
+//     },
+//   ])
+//   const [authorData,setAuthorData] = useState([]);
+//   const [musicData,setMusicData] = useState([]);
+//   const [searchQuery, setSearchQuery] = useState('');
+//   const [filteredSongs, setFilteredSongs] = useState([]); //Chứa các bài hát theo tên bài hát và tác giả
+//   const [filteredAuthor, setFilteredAuthor] = useState([]); // Chứa tên tác giả
 
+//   const handleSearch = (queryData) => {
+//     setSearchQuery(queryData);
+//     const tempfilteredSongs = musicData.filter(item =>
+//       item.songname.toLowerCase().includes(queryData.toLowerCase()) ||
+//       item.authorname.toLowerCase().includes(queryData.toLowerCase())
+//     )
+//     const tempfilterAuthors = authorData.filter(item =>
+//       item.authorname.toLowerCase().includes(queryData.toLowerCase())
+//     )
+//     setFilteredSongs(tempfilteredSongs);
+//     setFilteredAuthor(tempfilterAuthors);
+//   }
+//   useEffect(() => {
+//     axios.get('http://' + ipAddress + ':3177/get-top-albums').then(res => {
+//       setAlbumData(res.data)
+//     })
+
+//     const getAllSongsWithAuthorAndGenre = async () => {
+//       try {
+//         const response = await axios.get('http://' + ipAddress + ':3177/get-all-songs-with-author-and-genre');
+//         if(response.data){
+//           setMusicData(response.data)
+//         }
+//         else {
+//           console.log('Lay bai hat that bai');
+//         }
+//       } catch (error) {
+//         console.log('Khong the lay bai hat: ' + error)
+//       }
+//     }
+
+//     const getAllAuthor = async () => {
+//       try {
+//         const response = await axios.get('http://' + ipAddress + ':3177/get-all-author');
+//         if(response.data){
+//           setAuthorData(response.data)
+//         }
+//         else {
+//           console.log('Lay nhac si that bai');
+//         }
+//       } catch (error) {
+//         console.log('Khong the lay nhac si: ' + error)
+//       }
+//     }
+
+//     getAllAuthor();
+//     getAllSongsWithAuthorAndGenre();
+//   }, [])
+
+//   return (
+//     <View style={styles.container}>
+//       {/* <ScrollView nestedScrollEnabled={true}> */}
+//       <View>
+//         <View style={styles.searchContainer}>
+//           <MaterialIcons name="search" size={20} color="#888" style={styles.searchIcon} />
+//           <TextInput
+//             placeholder='Enter songs or artists...'
+//             value={searchQuery}
+//             style={styles.searchBar}
+//             onChangeText={(queryData) => handleSearch(queryData)}
+//           />
+//         </View>
+//         <ScrollView>
+//         {
+//           filteredAuthor.length > 0 && searchQuery !== '' ?
+//           filteredAuthor.map((item, index) => {
+//             return <AuthorCard
+//               key={item.authorid}
+//               authorName={item.authorname}
+//               authorURL={item.authoravatar}
+//               musicData={musicData}
+//             />}
+//           )
+//           :
+//           <View></View>
+//         }
+//         </ScrollView>
+        
+//       </View>
+//     </View>
+//   )
+// }
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.background,
