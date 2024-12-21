@@ -1,5 +1,5 @@
 //This card is use in ExplorePage.jsx
-import { StyleSheet, Text, View, Image, ScrollView } from 'react-native'
+import { StyleSheet, Text, View, Image, ScrollView,TouchableOpacity } from 'react-native'
 import React, {useContext} from 'react'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 //constants
@@ -9,8 +9,10 @@ import SongCard2 from './SongCard2'
 import { ipAddress } from '../constants/ipAddress'
 import {DefaultAvatar} from '../../assets/img/temp_playlist_pic.jpg'
 import { AudioContext } from '../context/NewAudioContextProvider'
+import axios from 'axios'
+import { useNavigation } from '@react-navigation/native'
 
-const AuthorCard = ({ authorName, authorURL, musicData }) => {
+const AuthorCard = ({ authorId, authorName, authorURL, musicData }) => {
   const {
     currentList, setCurrentList,
     listLength, setListLength,
@@ -36,13 +38,31 @@ const AuthorCard = ({ authorName, authorURL, musicData }) => {
     handlePressSlider,
     loadSound
   } = useContext(AudioContext)
+  const navigation = useNavigation();
   const filteredSongOfAuthor = musicData.filter((item) => {
     return item.authorname === authorName;
   }) // Chứa những bài hát của 1 tác giả nào đấy
 
   return (
     <View style={styles.mainContainer}>
-      <View style={styles.container}>
+      <TouchableOpacity style={styles.container}
+        onPress={() => {
+          axios.get("http://" + ipAddress + ":3177" + "/get-song-by-authorid?authorid=" + authorId)
+          .then(res => {
+            if(res.data.Status === 'Success') {
+              setCurrentList(res.data.Result)
+              navigation.navigate('NewAudioPlay', {
+                songColectionURL: 'http://' + ipAddress + ':3177' + authorURL,
+                songColectionName: authorName,
+                authorId: authorId
+              })
+            }
+            else {
+              alert('Error')
+            }
+          })
+        }}
+      >
         <View style={styles.authorContainer}>
           <Image
             source={{uri: 'http://' + ipAddress + ':3177' + authorURL}}
@@ -59,7 +79,7 @@ const AuthorCard = ({ authorName, authorURL, musicData }) => {
           color={colors.iconPrimary}
           size={iconSizes.md}
         />
-      </View>
+      </TouchableOpacity>
       <View style={styles.authorSongsContainer}>
         {/* <ScrollView> */}
         {filteredSongOfAuthor.map((item, index) => (

@@ -210,6 +210,7 @@ const ExplorePage = () => {
               renderItem={({ item, index }) =>
                 <AuthorCard
                   key={index}
+                  authorId={item.authorid}
                   authorName={item.authorname}
                   authorURL={item.authoravatar}
                   musicData={musicData}
