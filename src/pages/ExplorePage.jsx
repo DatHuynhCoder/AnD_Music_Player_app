@@ -7,6 +7,7 @@ import {
   FlatList
 } from 'react-native'
 import React, { useContext, useState, useEffect } from 'react'
+import { useRoute } from '@react-navigation/native';
 //constants
 import { colors } from '../constants/color'
 import { textSizes } from '../constants/demensions';
@@ -119,18 +120,20 @@ const ExplorePage = () => {
       authorname: 'TheFatRat'
     },
   ])
+  const route = useRoute();
 
-  const [authorData,setAuthorData] = useState([]);
-  const [musicData,setMusicData] = useState([]);
+  const [authorData, setAuthorData] = useState([]);
+  const [musicData, setMusicData] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredSongs, setFilteredSongs] = useState([]); //Chứa các bài hát theo tên bài hát và tác giả
+  const [filteredSongs, setFilteredSongs] = useState([]); //Chứa các bài hát theo tên bài hát và tác giả và thể loại
   const [filteredAuthor, setFilteredAuthor] = useState([]); // Chứa tên tác giả
 
   const handleSearch = (queryData) => {
     setSearchQuery(queryData);
     const tempfilteredSongs = musicData.filter(item =>
       item.songname.toLowerCase().includes(queryData.toLowerCase()) ||
-      item.authorname.toLowerCase().includes(queryData.toLowerCase())
+      item.authorname.toLowerCase().includes(queryData.toLowerCase()) ||
+      item.genrename.toLowerCase().includes(queryData.toLowerCase())
     )
     const tempfilterAuthors = authorData.filter(item =>
       item.authorname.toLowerCase().includes(queryData.toLowerCase())
@@ -147,7 +150,7 @@ const ExplorePage = () => {
     const getAllSongsWithAuthorAndGenre = async () => {
       try {
         const response = await axios.get('http://' + ipAddress + ':3177/get-all-songs-with-author-and-genre');
-        if(response.data){
+        if (response.data) {
           setMusicData(response.data)
         }
         else {
@@ -161,7 +164,7 @@ const ExplorePage = () => {
     const getAllAuthor = async () => {
       try {
         const response = await axios.get('http://' + ipAddress + ':3177/get-all-author');
-        if(response.data){
+        if (response.data) {
           setAuthorData(response.data)
         }
         else {
@@ -174,7 +177,11 @@ const ExplorePage = () => {
 
     getAllAuthor();
     getAllSongsWithAuthorAndGenre();
-  }, [])
+    if (route.params?.genrename) {
+      setSearchQuery(route.params.genrename);
+      handleSearch(route.params.genrename);
+    }
+  }, [route.params])
 
   return (
     <View style={styles.container}>
@@ -298,7 +305,7 @@ const ExplorePage = () => {
               ItemSeparatorComponent={
                 <View style={{ marginHorizontal: 10 }}></View>
               }
-              keyExtractor={(item,index) => index.toString()}
+              keyExtractor={(item, index) => index.toString()}
               renderItem={({ item }) => (
                 <AlbumCard
                   key={item.albumid}
@@ -311,7 +318,7 @@ const ExplorePage = () => {
             />
           </View>
         }
-        <View style={{height: 125}}></View>
+        <View style={{ height: 125 }}></View>
       </ScrollView>
     </View>
   )
@@ -470,7 +477,7 @@ const ExplorePage = () => {
 //           <View></View>
 //         }
 //         </ScrollView>
-        
+
 //       </View>
 //     </View>
 //   )

@@ -170,12 +170,12 @@ const HomePage = () => {
       onPress={() => {
         axios.get('http://' + ipAddress + ':3177/get-listsongs-by-playlistid?playlistid=' + item.playlistid).then(res => {
           setCurrentList(res.data)
-          navigation.navigate('NewAudioPlay', { songColectionURL: 'http://'+ ipAddress+ ':3177' + item.playlistimg, songColectionName: item.playlistname })
+          navigation.navigate('NewAudioPlay', { songColectionURL: 'http://' + ipAddress + ':3177' + item.playlistimg, songColectionName: item.playlistname })
         })
       }}
     >
       <Image
-        source={item.playlistimg !== '' ? { uri: 'http://' + ipAddress + ':3177' + item.playlistimg } : {uri: 'http://' + ipAddress + ':3177/image/album/defaultplaylist.png'}}
+        source={item.playlistimg !== '' ? { uri: 'http://' + ipAddress + ':3177' + item.playlistimg } : { uri: 'http://' + ipAddress + ':3177/image/album/defaultplaylist.png' }}
         style={styles.playlistImg}
       />
       <Text
@@ -254,9 +254,13 @@ const HomePage = () => {
           <Text style={styles.genreTxt}>Genres you may love</Text>
           <View style={styles.genreCardContainer}>
             {genreList.map((item, index) => (
-              <View style={styles.cardWrapper} key={item.genreid}>
+              <TouchableOpacity
+                style={styles.cardWrapper}
+                key={item.genreid}
+                onPress={() => navigation.navigate('ExplorePage',{genrename: item.genrename})}
+              >
                 <GenreCard genreName={item.genrename} genreUrl={item.genreimg} />
-              </View>
+              </TouchableOpacity>
             ))}
           </View>
         </View>
