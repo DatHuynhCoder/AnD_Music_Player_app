@@ -64,8 +64,8 @@ function LyricScreen() {
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.background }}>
       <ScrollView>
         {arrLyric.map((item, index) => {
-          return <View style={{margin: 10, textAlign: 'center'}}>
-            <Text key={index} style={{color: colors.textPrimary, alignSelf: 'center'}}>
+          return <View key={index} style={{margin: 10, textAlign: 'center'}}>
+            <Text style={{color: colors.textPrimary, alignSelf: 'center'}}>
               {item} 
             </Text>
           </View>

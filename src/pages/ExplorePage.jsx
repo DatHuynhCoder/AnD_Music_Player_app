@@ -307,9 +307,9 @@ const ExplorePage = () => {
                 </View>
               )}
               data={filteredAuthor}
-              renderItem={({ item }) =>
+              renderItem={({ item, index }) =>
                 <AuthorCard
-                  key={item.id}
+                  key={index}
                   authorName={item.authorname}
                   authorURL={item.authoravatar}
                   musicData={musicData}
@@ -333,9 +333,9 @@ const ExplorePage = () => {
                 </View>
               )}
               data={filteredSongs}
-              renderItem={({ item }) =>
+              renderItem={({ item, index }) =>
                 <SongCard2
-                  key={item.songid}
+                  key={index}
                   musicName={item.songname}
                   musicURL={item.songimg}
                   musicAuthor={item.authorname}
@@ -375,9 +375,9 @@ const ExplorePage = () => {
                 </View>
               )}
               numColumns={2}
-              renderItem={({ item }) => (
+              renderItem={({ item, index }) => (
                 <AreaCard
-                  key={item.id}
+                  key={index}
                   areaName={item.areaName}
                   areaURL={item.areaURL}
                   musicType={item.musicType}
@@ -396,7 +396,7 @@ const ExplorePage = () => {
               ItemSeparatorComponent={
                 <View style={{ marginHorizontal: 10 }}></View>
               }
-              keyExtractor={(item) => item.id}
+              keyExtractor={(item,index) => item.key}
               renderItem={({ item }) => (
                 <AlbumCard
                   key={item.albumid}
