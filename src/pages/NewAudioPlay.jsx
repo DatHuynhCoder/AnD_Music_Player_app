@@ -15,6 +15,7 @@ import { AudioContext } from '../context/NewAudioContextProvider';
 import PlayerButton from '../components/PlayerButton';
 import albumIMG from '../../assets/albumIMG.jpeg'
 import { textSizes } from '../constants/demensions';
+import { UserContext } from '../context/UserContext';
 
 const {width} = Dimensions.get('window')
 
@@ -99,9 +100,15 @@ export default function NewAudioPlay({route}) {
     handlePressForward,
     loadSound
   } = useContext(AudioContext)
-
-  const songColectionURL = route?.params?.songColectionURL
+  const {userid} = useContext(UserContext)
+  const [isFollowed, setIsFollowed] = useState(false) // for author list song
+  const authorId = route?.params?.authorId // for author list song
+  const songColectionURL = route?.params?.songColectionURL // http://ip:port/image/album/... or http://ip:port/image/author/...
+  const type = songColectionURL !== undefined ? songColectionURL.split('/')[4] : 'Unknown'
+  //check link with album:  ["http:", "", "192.168.137.1:3177", "image", "album", "thongdongmahat.jpg"]
+  //check link with author:  ["http:", "", "192.168.137.1:3177", "image", "author", "sontungmtp.png"]
   const songColectionName = route?.params?.songColectionName
+  
   const convertTime = milis => {
     let second = milis % 60
     let minute = Math.floor(milis / 60)
@@ -184,6 +191,27 @@ export default function NewAudioPlay({route}) {
       </View>
       <View style={{marginBottom: 30}}>
         <Text style={{color: colors.textPrimary, fontSize: textSizes.md, fontWeight: 'bold'}}>{songColectionName === undefined ? 'No album is loaded' : songColectionName}</Text>
+        {
+          type === 'author' 
+        ? 
+          <Button title={isFollowed === false ? 'Follow' : 'Followed'} disabled={isFollowed} onPress={() => {
+            if(isFollowed === false) {
+              axios.post('http://' + ipAddress + ':3177/follow-author', {
+                authorid: authorId,
+                userid: userid
+              }).then(res => {
+                if(res.data.Status === 'Success') {
+                  setIsFollowed(true)
+                }
+                else {
+                  alert('Error')
+                }
+              })
+            }
+          }}></Button>
+        :
+          <></>
+        }
       </View>
     </View>
     {/* <View style={{style: styles.container}}> */}

@@ -6,7 +6,6 @@ import ExplorePage from './ExplorePage';
 import Library from './Library';
 // import Player from './Player';
 import NewAudioPlay from './NewAudioPlay'
-import PlayerPage from './PlayerPage';
 //contanst
 import { colors } from '../constants/color'
 //icons
@@ -96,14 +95,6 @@ const MainBottom = () => {
           headerShown: false
         }}
       />
-      {/* <Tab.Screen
-        name='PlayerPage'
-        component={PlayerPage}
-        options={{
-          title: 'Player',
-          headerShown: false
-        }}
-      /> */}
     </Tab.Navigator>
     </>
   )
