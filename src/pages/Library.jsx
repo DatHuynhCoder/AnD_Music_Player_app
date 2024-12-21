@@ -4,14 +4,18 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
-  Image
+  Image,
+  Modal,
+  Pressable
 } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import * as MediaLibrary from 'expo-media-library'
 //constants
 import { ipAddress } from '../constants/ipAddress'
 import { colors } from '../constants/color'
-import { textSizes } from '../constants/demensions'
+import { iconSizes, textSizes } from '../constants/demensions'
+//icon
+import AntDesign from '@expo/vector-icons/AntDesign';
 import { UserContext } from '../context/UserContext'
 import { AudioContext } from '../context/NewAudioContextProvider'
 import axios from 'axios'
@@ -33,6 +37,7 @@ const Library = () => {
     setSelectedOption(optionId);
   }
 
+  const [modalPlaylistVisible, setmodalPlaylistVisible] = useState(false);
   const [listPlaylist, setListPlaylist] = useState([]);
 
   const getPlaylist = async () => {
@@ -100,8 +105,12 @@ const Library = () => {
             <View style={{ marginHorizontal: 5 }} />
           }
         />
-
       </View>
+
+      <TouchableOpacity style={styles.create_playlist_box}>
+        <AntDesign name="plussquare" size={iconSizes.xxl} color={colors.emphasis} />
+        <Text style={styles.create_playlist_txt}>Tạo playlist mới</Text>
+      </TouchableOpacity>
 
       <View>
         <FlatList
@@ -128,6 +137,26 @@ const Library = () => {
           keyExtractor={item => item.playlistid}
         />
       </View>
+
+      <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalPlaylistVisible}
+          onRequestClose={() => {
+            Alert.alert('Modal has been closed.');
+            setmodalPlaylistVisible(!modalPlaylistVisible);
+          }}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>Hello World!</Text>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => setmodalPlaylistVisible(!modalPlaylistVisible)}>
+                <Text style={styles.textStyle}>Hide Modal</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
     </View>
   )
 }
@@ -159,6 +188,17 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     fontWeight: '600',
     fontSize: textSizes.xm
+  },
+  create_playlist_box: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 10
+  },
+  create_playlist_txt: {
+    fontSize: textSizes.sm,
+    color: colors.textPrimary,
+    fontWeight: '700',
+    marginLeft: 5
   },
   playlist_item: {
     flexDirection: 'row',
