@@ -163,68 +163,6 @@ const HomePage = () => {
     userName: 'hi'
   }
 
-  const playListData = [
-    {
-      id: 1,
-      playlistUrl: require('../../assets/img/temp_playlist_pic.jpg'),
-      playlistName: 'Strong Music'
-    },
-    {
-      id: 2,
-      playlistUrl: require('../../assets/img/temp_playlist_pic.jpg'),
-      playlistName: 'EDM Music'
-    },
-    {
-      id: 3,
-      playlistUrl: require('../../assets/img/temp_playlist_pic.jpg'),
-      playlistName: 'listen while working'
-    },
-    {
-      id: 4,
-      playlistUrl: require('../../assets/img/temp_playlist_pic.jpg'),
-      playlistName: 'sad music'
-    },
-    {
-      id: 5,
-      playlistUrl: require('../../assets/img/temp_playlist_pic.jpg'),
-      playlistName: 'best of the bestttttttttttttttttttttttttttttttttttttttt'
-    }
-  ]
-
-  const genreData = [
-    {
-      id: 1,
-      genreName: 'EDM',
-      genreUrl: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 2,
-      genreName: 'Anime OSTs',
-      genreUrl: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 3,
-      genreName: 'Morning',
-      genreUrl: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 4,
-      genreName: 'Courage',
-      genreUrl: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 5,
-      genreName: 'Lofi beats',
-      genreUrl: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-    {
-      id: 6,
-      genreName: 'Classical',
-      genreUrl: require('../../assets/img/temp_playlist_pic.jpg')
-    },
-  ]
-
-
 
   const renderPlayListItem = ({ item }) => (
     <TouchableOpacity
@@ -237,7 +175,7 @@ const HomePage = () => {
       }}
     >
       <Image
-        source={{ uri: 'http://' + ipAddress + ':3177' + item.playlistimg }}
+        source={item.playlistimg !== '' ? { uri: 'http://' + ipAddress + ':3177' + item.playlistimg } : {uri: 'http://' + ipAddress + ':3177/image/album/defaultplaylist.png'}}
         style={styles.playlistImg}
       />
       <Text
