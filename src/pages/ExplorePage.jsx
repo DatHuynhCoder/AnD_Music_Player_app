@@ -409,6 +409,7 @@ const ExplorePage = () => {
             />
           </View>
         }
+        <View style={{height: 125}}></View>
       </ScrollView>
     </View>
   )
