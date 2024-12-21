@@ -379,7 +379,20 @@ function PlayerPage({ navigation }) {
           <View style={{ borderRadius: 10, paddingHorizontal: 5, backgroundColor: 'grey', opacity: 0.7 }}>
             <Text style={{ fontWeight: '600', color: 'white' }}>128 Kbps</Text>
           </View>
-          <AntDesign name="hearto" size={24} color="white" />
+          <AntDesign name="hearto" size={24} color="white" onPress={() => {
+            console.log('Add to favourite')
+            axios.post("http://" + ipAddress + ":3177" + "/add-song-to-favourite-playlist", {
+              songid: currentSongid,
+              userid: userid
+            }).then(res => {
+              if(res.data.Status === 'Success'){
+                alert('Add to favourite successfully')
+              }
+              else {
+                alert(res.data.Error)
+              }
+            })
+          }}/>
         </View>
       </View>
     </>
