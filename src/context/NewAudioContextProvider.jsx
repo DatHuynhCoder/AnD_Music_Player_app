@@ -28,7 +28,16 @@ const NewAudioContextProvider = ({children}) => {
 
   function _onPlaybackStatusUpdate(status) {
     if(status.didJustFinish === true) {
-      finish()
+      if(status.isLooping === true) {
+        console.log('looping')
+        async function replay() {
+          await playback.replayAsync()
+        }
+        replay()
+      }
+      else {
+        finish()
+      }
     }
     if(status.isLoaded === true && status.isPlaying === true) {
       setPlaybackPosition(status.positionMillis)

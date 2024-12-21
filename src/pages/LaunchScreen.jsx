@@ -25,10 +25,6 @@ const LaunchScreen = ({ navigation }) => {
       />
       <Text style={styles.appTxt}>AnD Music</Text>
       <ActivityIndicator size="large" />
-      <Button
-        onPress={() => navigation.navigate('Login')}
-        title='To Login'
-      />
     </View>
   )
 }

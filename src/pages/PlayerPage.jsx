@@ -64,8 +64,8 @@ function LyricScreen() {
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.background }}>
       <ScrollView>
         {arrLyric.map((item, index) => {
-          return <View style={{margin: 10, textAlign: 'center'}}>
-            <Text key={index} style={{color: colors.textPrimary, alignSelf: 'center'}}>
+          return <View key={index} style={{margin: 10, textAlign: 'center'}}>
+            <Text style={{color: colors.textPrimary, alignSelf: 'center'}}>
               {item} 
             </Text>
           </View>
@@ -285,11 +285,12 @@ function PlayerPage({navigation}) {
       </View>
       <View style={{padding: 5, width: width, justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row'}}>
         <View>
-          <Entypo name="shuffle" size={24} color={status.isLooping === false ? "white" : colors.emphasis} style={{marginLeft: 10}}
+          <Entypo name="loop" size={24} color={status.isLooping === false ? "white" : colors.emphasis} style={{marginLeft: 10}}
             onPress={() => {
               async function setShuffle() {
                 if(status.isLooping === false) {
                   const status = await playback.setIsLoopingAsync(true)
+                  console.log('status after enable loop: ', status)
                   setStatus(status)
                 }  
                 else {
