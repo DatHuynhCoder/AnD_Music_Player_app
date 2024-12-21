@@ -1,6 +1,6 @@
 //This card is use in ExplorePage.jsx
 import { StyleSheet, Text, View, Image, ScrollView } from 'react-native'
-import React from 'react'
+import React, {useContext} from 'react'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 //constants
 import { colors } from '../constants/color'
@@ -8,10 +8,34 @@ import { iconSizes, textSizes } from '../constants/demensions'
 import SongCard2 from './SongCard2'
 import { ipAddress } from '../constants/ipAddress'
 import {DefaultAvatar} from '../../assets/img/temp_playlist_pic.jpg'
-
+import { AudioContext } from '../context/NewAudioContextProvider'
 
 const AuthorCard = ({ authorName, authorURL, musicData }) => {
-
+  const {
+    currentList, setCurrentList,
+    listLength, setListLength,
+    currentSongid, setCurrentSongid,
+    currentSongimg, setCurrentSongimg,
+    currentName, setCurrentName,
+    currentSinger, setCurrentSinger,
+    playback, setPlayback,
+    status, setStatus,
+    sound, setSound,
+    currentAudioId, setCurrentAudioId,
+    isPlaying, setIsPlaying,
+    currentAudioIndex, setCurrentAudioIndex,
+    playbackPosition, setPlaybackPosition,
+    playbackDuration, setPlaybackDuration,
+    sliderPosition, setSliderPosition,
+    intervalId, setIntervalId,
+    handlePressOnIcon,
+    handlePressPrevious,
+    handlePressNext,
+    handlePressReplay,
+    handlePressForward,
+    handlePressSlider,
+    loadSound
+  } = useContext(AudioContext)
   const filteredSongOfAuthor = musicData.filter((item) => {
     return item.authorname === authorName;
   }) // Chứa những bài hát của 1 tác giả nào đấy
@@ -37,13 +61,26 @@ const AuthorCard = ({ authorName, authorURL, musicData }) => {
         />
       </View>
       <View style={styles.authorSongsContainer}>
-        <ScrollView>
+        {/* <ScrollView> */}
         {filteredSongOfAuthor.map((item, index) => (
           <View style={styles.cardWrapper} key={item.authorid + index}>
-            <SongCard2 musicName={item.songname} musicURL={item.songimg} musicAuthor={item.authorname}/>
+            <SongCard2 
+              musicName={item.songname} 
+              musicURL={item.songimg} 
+              musicAuthor={item.authorname}
+              onSongPressed={() => {
+                setCurrentList([item]);
+                setCurrentSongid(item.songid);
+                setCurrentSongimg(item.songimg)
+                setCurrentName(item.songname);
+                setCurrentSinger(item.authorname);
+                setCurrentAudioIndex(0);
+                loadSound({ uri: "http://" + ipAddress + ":3177" + item.songuri })
+              }}
+            />
           </View>
         ))}
-        </ScrollView>
+        {/* </ScrollView> */}
       </View>
     </View>
   )
