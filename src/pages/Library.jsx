@@ -32,6 +32,7 @@ const Library = () => {
   const {currentList} = useContext(AudioContext)
   const { userid, setUserid } = useContext(UserContext)
   const { setCurrentList } = useContext(AudioContext)
+  const [rerender, setRerender] = useState(false)
   const navigation = useNavigation();
 
   const getPermission = async () => {
@@ -88,14 +89,14 @@ const Library = () => {
         }
       }
       createNewPlaylist();
-      getPlaylist();
+      setRerender(!rerender);
     }
   }
 
   useEffect(() => {
     getPermission();
     getPlaylist();
-  }, [])
+  }, [rerender])
 
   const libraryOptionsData = [
     {
@@ -122,7 +123,7 @@ const Library = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.selected_type_container}>
+      {/* <View style={styles.selected_type_container}>
         <FlatList
           data={libraryOptionsData}
           renderItem={({ item }) => (
@@ -141,7 +142,7 @@ const Library = () => {
             <View style={{ marginHorizontal: 5 }} />
           }
         />
-      </View>
+      </View> */}
       <>
       <TouchableOpacity
         style={styles.create_playlist_box}
