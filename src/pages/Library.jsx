@@ -6,7 +6,9 @@ import {
   FlatList,
   Image,
   Modal,
-  Pressable
+  Pressable,
+  Alert,
+  TextInput
 } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import * as MediaLibrary from 'expo-media-library'
@@ -19,13 +21,14 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { UserContext } from '../context/UserContext'
 import { AudioContext } from '../context/NewAudioContextProvider'
 import axios from 'axios'
+import {DefaultPlaylistImg} from '../../assets/img/AnD_logo.png'
 import {
   useNavigation
 } from '@react-navigation/native';
 
 const Library = () => {
   const { userid, setUserid } = useContext(UserContext)
-  const {setCurrentList} = useContext(AudioContext)
+  const { setCurrentList } = useContext(AudioContext)
   const navigation = useNavigation();
 
   const getPermission = async () => {
@@ -39,13 +42,14 @@ const Library = () => {
 
   const [modalPlaylistVisible, setmodalPlaylistVisible] = useState(false);
   const [listPlaylist, setListPlaylist] = useState([]);
+  const [playlistName, setPlaylistName] = useState('');
 
   const getPlaylist = async () => {
     console.log(userid);
     try {
       const response = await axios.get("http://" + ipAddress + ":3177" + "/get-playlist-by-userid?userid=" + userid)
       if (response.data.Status === 'Success') {
-        console.log('Lay playlist thanh cong!');
+        console.log('Lay playlist thanh cong!', response.data.Result);
         setListPlaylist(response.data.Result);
       }
       else {
@@ -53,6 +57,35 @@ const Library = () => {
       }
     } catch (error) {
       console.log('Khong the lay playlist ' + error)
+    }
+  }
+
+  const handleCreatePlaylist = (playlistName) => {
+    if (playlistName === '') {
+      Alert.alert('Please enter playlist name!')
+    }
+    else {
+      const info = {
+        playlistname: playlistName,
+        userid: userid
+      }
+      const createNewPlaylist = async () => {
+        try {
+          const response = await axios.post('http://' + ipAddress + ':3177/add-new-playlist', info);
+          if (response.data.Status === 'Success') {
+            Alert.alert('Create playlist successfully!');
+            setmodalPlaylistVisible(!modalPlaylistVisible)
+          }
+          else {
+            Alert.alert(response.data.Error);
+          }
+        }
+        catch (error) {
+          console.log('Loi trong qua trinh tao playlist')
+        }
+      }
+      createNewPlaylist();
+      getPlaylist();
     }
   }
 
@@ -107,9 +140,12 @@ const Library = () => {
         />
       </View>
 
-      <TouchableOpacity style={styles.create_playlist_box}>
+      <TouchableOpacity
+        style={styles.create_playlist_box}
+        onPress={() => setmodalPlaylistVisible(true)}
+      >
         <AntDesign name="plussquare" size={iconSizes.xxl} color={colors.emphasis} />
-        <Text style={styles.create_playlist_txt}>Tạo playlist mới</Text>
+        <Text style={styles.create_playlist_txt}>Create new playlist</Text>
       </TouchableOpacity>
 
       <View>
@@ -125,7 +161,7 @@ const Library = () => {
               }}
             >
               <Image
-                source={{ uri: 'http://' + ipAddress + ':3177' + item.playlistimg }}
+                source={item.playlistimg !== '' ? { uri: 'http://' + ipAddress + ':3177' + item.playlistimg } : {uri: 'http://' + ipAddress + ':3177/image/album/defaultplaylist.png'}}
                 style={styles.playlist_img}
               />
               <View style={styles.playlist_info}>
@@ -139,24 +175,38 @@ const Library = () => {
       </View>
 
       <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalPlaylistVisible}
-          onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
-            setmodalPlaylistVisible(!modalPlaylistVisible);
-          }}>
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}>Hello World!</Text>
-              <Pressable
-                style={[styles.button, styles.buttonClose]}
-                onPress={() => setmodalPlaylistVisible(!modalPlaylistVisible)}>
-                <Text style={styles.textStyle}>Hide Modal</Text>
-              </Pressable>
-            </View>
+        animationType="slide"
+        transparent={true}
+        visible={modalPlaylistVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setmodalPlaylistVisible(!modalPlaylistVisible);
+        }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+
+            <AntDesign
+              style={{ alignSelf: 'flex-end' }}
+              name="close"
+              size={iconSizes.lg}
+              color="black"
+              onPress={() => setmodalPlaylistVisible(!modalPlaylistVisible)}
+            />
+            <Text style={styles.modalText}>New playlist name</Text>
+            <TextInput
+              placeholder='Enter playlist name'
+              value={playlistName}
+              onChangeText={(txt) => setPlaylistName(txt)}
+              style={styles.enter_playlist}
+            />
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={() =>handleCreatePlaylist(playlistName)}>
+              <Text style={styles.textStyle}>Create</Text>
+            </Pressable>
           </View>
-        </Modal>
+        </View>
+      </Modal>
     </View>
   )
 }
@@ -223,6 +273,55 @@ const styles = StyleSheet.create({
   playlist_subinfo: {
     fontSize: textSizes.xxm,
     color: colors.textSecondary
+  },
+  //Modal
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingBottom: 25,
+    paddingTop: 10,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonClose: {
+    backgroundColor: colors.emphasis,
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    fontSize: textSizes.sm,
+    fontWeight: '500',
+    textAlign: 'center',
+  },
+  enter_playlist: {
+    borderWidth: 2,
+    borderRadius: 15,
+    borderColor: colors.emphasis,
+    margin: 10,
+    minWidth: 130
   }
 })
 
