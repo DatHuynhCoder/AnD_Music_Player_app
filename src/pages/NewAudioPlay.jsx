@@ -30,13 +30,6 @@ const songs = [
     duration: 252, //second
   },
   {
-    author: 'Datkaa',
-    genre: '',
-    name: 'Có sao cũng đành',
-    uri: require('../../assets/CoSaoCungDanh-DatKaa.mp3'),
-    duration: 236,//second
-  },
-  {
     author: 'Châu Khải Phong',
     genre: '',
     name: 'Nụ cười không vui remix',
