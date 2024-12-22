@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { use, useContext, useEffect, useState } from 'react';
 import { Text, View, StyleSheet, Button, TouchableOpacity, Dimensions, TouchableWithoutFeedback, ScrollView,ImageBackground, Image } from 'react-native';
 import { Audio } from 'expo-av';
 import Slider from '@react-native-community/slider';
@@ -160,6 +160,22 @@ export default function NewAudioPlay({route}) {
   //   }    
   //   getAllSongs()
   // }, [])
+  useEffect(() => {
+    if(type === 'author') {
+      console.log('its author')
+      axios.get("http://" + ipAddress + ":3177" + "/check-is-followed?authorid=" + authorId + "&userid=" + userid).then(res => {
+        if(res.data.Status === 'Existed') {
+          setIsFollowed(true)
+        }
+        else if(res.data.Status === 'NotExisted') {
+          setIsFollowed(false)
+        }
+        else {
+          alert('Error while check followed')
+        }
+      })
+    }
+  }, [currentList])
   return (
     <View style={{backgroundColor: colors.background, flex: 1, paddingBottom: 130}}>
     <View style={{backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center', paddingTop: 30}}>
@@ -200,7 +216,12 @@ export default function NewAudioPlay({route}) {
                 authorid: authorId,
                 userid: userid
               }).then(res => {
-                if(res.data.Status === 'Success') {
+                if(res.data.Status === 'Existed') {
+                  alert('You have followed this author')
+                  setIsFollowed(true)
+                }
+                else if(res.data.Status === 'Success') {
+                  alert('Followed')
                   setIsFollowed(true)
                 }
                 else {
