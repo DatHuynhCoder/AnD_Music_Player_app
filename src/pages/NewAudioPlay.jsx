@@ -210,7 +210,7 @@ export default function NewAudioPlay({route}) {
         {
           type === 'author' 
         ? 
-          <Button title={isFollowed === false ? 'Follow' : 'Followed'} disabled={isFollowed} onPress={() => {
+          <Button title={isFollowed === false ? 'Follow' : 'Followed'} onPress={() => {
             if(isFollowed === false) {
               axios.post('http://' + ipAddress + ':3177/follow-author', {
                 authorid: authorId,
@@ -223,6 +223,24 @@ export default function NewAudioPlay({route}) {
                 else if(res.data.Status === 'Success') {
                   alert('Followed')
                   setIsFollowed(true)
+                }
+                else {
+                  alert('Error')
+                }
+              })
+            }
+            else if(isFollowed === true) {
+              axios.post('http://' + ipAddress + ':3177/unfollow-author', {
+                authorid: authorId,
+                userid: userid
+              }).then(res => {
+                if(res.data.Status === 'NotExisted') {
+                  alert('You have unfollowed this author')
+                  setIsFollowed(false)
+                }
+                else if(res.data.Status === 'Success') {
+                  alert('Unfollowed')
+                  setIsFollowed(false)
                 }
                 else {
                   alert('Error')
