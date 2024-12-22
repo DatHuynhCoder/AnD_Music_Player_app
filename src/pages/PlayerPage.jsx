@@ -14,7 +14,8 @@ import {
   Image,
   TextInput,
   Pressable,
-  ImageBackground
+  ImageBackground,
+  Alert
 } from 'react-native';
 import { Audio } from 'expo-av';
 import Slider from '@react-native-community/slider';
@@ -161,6 +162,73 @@ function PlayerPage({ navigation }) {
     }
   }
 
+  const handleAddSong = async (playlistid) => {
+    const addSongInfo = {
+      songid: currentSongid,
+      playlistid: playlistid
+    }
+    const addSongResponse = await axios.post(
+      'http://' + ipAddress + ':3177/add-song-to-playlist',
+      addSongInfo
+    );
+    if (addSongResponse.data.Status !== 'Success') {
+      Alert.alert(addSongResponse.data.Error || 'Failed to add song to playlist!');
+      return;
+    }
+
+    // Tải lại danh sách playlist
+    await getPlaylist();
+
+    Alert.alert('Playlist created and song added successfully!');
+    setmodalPlaylistVisible(false);
+  }
+
+  const handleCreatePlaylist = async (playlistName) => {
+    if (playlistName === '') {
+      Alert.alert('Please enter playlist name!');
+      return;
+    }
+  
+    const info = {
+      playlistname: playlistName,
+      userid: userid,
+    };
+  
+    try {
+      // Thêm playlist mới
+      const response = await axios.post('http://' + ipAddress + ':3177/add-new-playlist', info);
+      if (response.data.Status !== 'Success') {
+        Alert.alert(response.data.Error || 'Failed to create playlist!');
+        return;
+      }
+      const newplaylistid = response.data.playlistid;
+  
+      // Thêm bài hát vào playlist mới
+      const addSongInfo = {
+        songid: currentSongid,
+        playlistid: newplaylistid,
+      };
+      console.log(addSongInfo.playlistid);
+      const addSongResponse = await axios.post(
+        'http://' + ipAddress + ':3177/add-song-to-playlist',
+        addSongInfo
+      );
+      if (addSongResponse.data.Status !== 'Success') {
+        Alert.alert(addSongResponse.data.Error || 'Failed to add song to playlist!');
+        return;
+      }
+  
+      // Tải lại danh sách playlist
+      await getPlaylist();
+  
+      Alert.alert('Playlist created and song added successfully!');
+      setmodalPlaylistVisible(false);
+    } catch (error) {
+      console.error('Error in handleCreatePlaylist:', error);
+      Alert.alert('An error occurred while creating the playlist!');
+    }
+  };  
+
   const spinValue = new Animated.Value(0)
   const rotate = spinValue.interpolate({
     inputRange: [0, 1],
@@ -227,11 +295,14 @@ function PlayerPage({ navigation }) {
             />
             <Text style={styles.modalText}>Add your song to playlist</Text>
             {listPlaylist.map((item, index) => (
-              <View key={index} style={{flexDirection:'row', alignSelf: 'flex-start', margin: '5'}}>
+              <TouchableOpacity 
+              key={index} 
+              onPress={() => handleAddSong(item.playlistid)}
+              style={{ flexDirection: 'row', alignSelf: 'flex-start', margin: '5' }}>
                 <MaterialCommunityIcons name="checkbox-multiple-blank-outline" size={24} color="black" />
                 {/* <MaterialCommunityIcons name="checkbox-multiple-marked" size={24} color="black" /> */}
-                <Text style={{marginLeft: 5, alignSelf: 'center'}}>{item.playlistname}</Text>
-              </View>
+                <Text style={{ marginLeft: 5, alignSelf: 'center' }}>{item.playlistname}</Text>
+              </TouchableOpacity>
             ))}
             <Text style={styles.modalText}>Or create new playlist</Text>
             <TextInput
@@ -270,7 +341,7 @@ function PlayerPage({ navigation }) {
                   source={{ uri: 'http://' + ipAddress + ':3177' + currentSongimg }}
                   style={{ width: 250, height: 250, borderRadius: 175, justifyContent: 'center', alignItems: 'center', overflow: 'hidden' }}
                 >
-                  <View style={styles.discHole}/>
+                  <View style={styles.discHole} />
                 </ImageBackground>
             }
 
@@ -385,14 +456,14 @@ function PlayerPage({ navigation }) {
               songid: currentSongid,
               userid: userid
             }).then(res => {
-              if(res.data.Status === 'Success'){
+              if (res.data.Status === 'Success') {
                 alert('Add to favourite successfully')
               }
               else {
                 alert(res.data.Error)
               }
             })
-          }}/>
+          }} />
         </View>
       </View>
     </>
@@ -404,7 +475,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#121111',
     flex: 1,
   },
-  discHole:{
+  discHole: {
     width: 40,
     height: 40,
     borderRadius: 20,
