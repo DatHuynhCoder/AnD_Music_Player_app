@@ -137,29 +137,44 @@ export default function NewAudioPlay({route}) {
       }
     }
   }
-
-  // function _onPlaybackStatusUpdate(status) {
-  //   if(status.didJustFinish === true) {
-  //     finish()
-  //     return
-  //   }
-  //   if(status.isLoaded === true && status.isPlaying === true) {
-  //     setPlaybackPosition(status.positionMillis)
-  //     setPlaybackDuration(status.durationMillis) 
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   console.log("let's get all author")
-  //   console.log("let's get all song")
-  //   async function getAllSongs () {
-  //     await axios.get("http://" + ipAddress + ":3177" + "/get-all-songs").then(res => { // đổi thành địa chỉ ip máy thay vì localhost
-  //       setCurrentList(res.data)
-  //       setListLength(res.data.length)
-  //     }).catch(err => console.log(err))
-  //   }    
-  //   getAllSongs()
-  // }, [])
+  const handle_Follow_UnFolllow = () => {
+    if(isFollowed === false) {
+      axios.post('http://' + ipAddress + ':3177/follow-author', {
+        authorid: authorId,
+        userid: userid
+      }).then(res => {
+        if(res.data.Status === 'Existed') {
+          alert('You have followed this author')
+          setIsFollowed(true)
+        }
+        else if(res.data.Status === 'Success') {
+          alert('Followed')
+          setIsFollowed(true)
+        }
+        else {
+          alert('Error')
+        }
+      })
+    }
+    else if(isFollowed === true) {
+      axios.post('http://' + ipAddress + ':3177/unfollow-author', {
+        authorid: authorId,
+        userid: userid
+      }).then(res => {
+        if(res.data.Status === 'NotExisted') {
+          alert('You have unfollowed this author')
+          setIsFollowed(false)
+        }
+        else if(res.data.Status === 'Success') {
+          alert('Unfollowed')
+          setIsFollowed(false)
+        }
+        else {
+          alert('Error')
+        }
+      })
+    }
+  }
   useEffect(() => {
     if(type === 'author') {
       console.log('its author')
@@ -205,55 +220,21 @@ export default function NewAudioPlay({route}) {
           ></ImageBackground>
         </View>
       </View>
-      <View style={{marginBottom: 30}}>
+      <View style={{display: 'flex', marginBottom: 30, justifyContent: 'center', alignItems: 'center'}}>
         <Text style={{color: colors.textPrimary, fontSize: textSizes.md, fontWeight: 'bold'}}>{songColectionName === undefined ? 'No album is loaded' : songColectionName}</Text>
         {
           type === 'author' 
         ? 
-          <Button title={isFollowed === false ? 'Follow' : 'Followed'} onPress={() => {
-            if(isFollowed === false) {
-              axios.post('http://' + ipAddress + ':3177/follow-author', {
-                authorid: authorId,
-                userid: userid
-              }).then(res => {
-                if(res.data.Status === 'Existed') {
-                  alert('You have followed this author')
-                  setIsFollowed(true)
-                }
-                else if(res.data.Status === 'Success') {
-                  alert('Followed')
-                  setIsFollowed(true)
-                }
-                else {
-                  alert('Error')
-                }
-              })
-            }
-            else if(isFollowed === true) {
-              axios.post('http://' + ipAddress + ':3177/unfollow-author', {
-                authorid: authorId,
-                userid: userid
-              }).then(res => {
-                if(res.data.Status === 'NotExisted') {
-                  alert('You have unfollowed this author')
-                  setIsFollowed(false)
-                }
-                else if(res.data.Status === 'Success') {
-                  alert('Unfollowed')
-                  setIsFollowed(false)
-                }
-                else {
-                  alert('Error')
-                }
-              })
-            }
-          }}></Button>
+          <TouchableOpacity style={styles.followbutton(isFollowed)} onPress={() => {
+            handle_Follow_UnFolllow()
+          }}>
+            <Text style={{textAlign: 'center', color: 'white', textTransform: 'uppercase', fontWeight: 'bold'}}>{isFollowed === false ? 'Follow' : 'Followed'}</Text>
+          </TouchableOpacity>
         :
           <></>
         }
       </View>
     </View>
-    {/* <View style={{style: styles.container}}> */}
       <ScrollView style={styles.scroller}>
         {
           currentList.map((song, index) => {
@@ -294,5 +275,14 @@ const styles = StyleSheet.create({
   scroller: {
     backgroundColor: colors.background,
     // paddingBottom: 130,
-  }
+  },
+  followbutton: (isFollowed) => ({
+    backgroundColor: isFollowed === false ? colors.emphasis : 'rgba(1,1,1,1)',
+    width: 120,
+    height: 43,
+    borderWidth: 1,
+    borderColor: isFollowed === false ? colors.background : 'white',
+    borderRadius: 25,
+    padding: 10
+  })
 });

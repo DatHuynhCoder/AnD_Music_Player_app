@@ -9,7 +9,8 @@ import {
   Pressable,
   Alert,
   TextInput,
-  ScrollView
+  ScrollView,
+  ActivityIndicator
 } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import * as MediaLibrary from 'expo-media-library'
@@ -33,6 +34,7 @@ const Library = () => {
   const { userid, setUserid } = useContext(UserContext)
   const { setCurrentList } = useContext(AudioContext)
   const [rerender, setRerender] = useState(false)
+  const [isLoaded, setIsLoaded] = useState(false)
   const navigation = useNavigation();
 
   const getPermission = async () => {
@@ -55,6 +57,7 @@ const Library = () => {
       if (response.data.Status === 'Success') {
         console.log('Lay playlist thanh cong!', response.data.Result);
         setListPlaylist(response.data.Result);
+        setIsLoaded(true)
       }
       else {
         console.log('Lay playlist that bai')
@@ -62,6 +65,17 @@ const Library = () => {
     } catch (error) {
       console.log('Khong the lay playlist ' + error)
     }
+  }
+  
+  async function getAuthorFollowed() {
+    await axios.get('http://' + ipAddress + ':3177/get-all-followed-author-by-userid?userid=' + userid).then(res => {
+      if(res.data.Status === 'Success') {
+        console.log('followed author: ', res.data.Result)
+      }
+      else {
+        console.log(res.data.Error)
+      }
+    })
   }
 
   const handleCreatePlaylist = (playlistName) => {
@@ -74,11 +88,13 @@ const Library = () => {
         userid: userid
       }
       const createNewPlaylist = async () => {
+        setIsLoaded(false)
         try {
           const response = await axios.post('http://' + ipAddress + ':3177/add-new-playlist', info);
           if (response.data.Status === 'Success') {
             Alert.alert('Create playlist successfully!');
             setmodalPlaylistVisible(!modalPlaylistVisible);
+            setIsLoaded(true)
           }
           else {
             Alert.alert(response.data.Error);
@@ -94,9 +110,14 @@ const Library = () => {
   }
 
   useEffect(() => {
-    getPermission();
-    getPlaylist();
-  }, [rerender])
+    getPermission()
+    if(selectedOption === 1) {
+      getPlaylist()
+    }
+    if(selectedOption === 2) {
+      getAuthorFollowed()
+    }
+  }, [rerender, selectedOption])
 
   const libraryOptionsData = [
     {
@@ -105,117 +126,129 @@ const Library = () => {
     },
     {
       id: 2,
-      option: 'Favourite',
+      option: 'Authors',
     },
-    // {
-    //   id: 3,
-    //   option: 'Artists',
-    // },
-    // {
-    //   id: 4,
-    //   option: 'Albums',
-    // },
-    // {
-    //   id: 5,
-    //   option: 'Podcasts',
-    // },
   ]
 
   return (
-    <View style={styles.container}>
-      {/* <View style={styles.selected_type_container}>
-        <FlatList
-          data={libraryOptionsData}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={[
-                styles.libraryChoicesBtn,
-                selectedOption === item.id && styles.libraryChoiceOnPressed,
-              ]}
-              onPress={() => handleLibraryChoice(item.id)}>
-              <Text style={styles.libraryChoicesTxt}>{item.option}</Text>
-            </TouchableOpacity>
-          )}
-          horizontal={true}
-          keyExtractor={item => item.id}
-          ItemSeparatorComponent={
-            <View style={{ marginHorizontal: 5 }} />
-          }
-        />
-      </View> */}
-      <>
-        <TouchableOpacity
-          style={styles.create_playlist_box}
-          onPress={() => setmodalPlaylistVisible(true)}
-        >
-          <AntDesign name="plussquare" size={iconSizes.xxl} color={colors.emphasis} />
-          <Text style={styles.create_playlist_txt}>Create new playlist</Text>
-        </TouchableOpacity>
-
+    <>
+      {
+        isLoaded === false
+        ?
         <View>
-          <FlatList
-            data={listPlaylist}
-            renderItem={({ item }) => (
-              <TouchableOpacity style={styles.playlist_item}
-                onPress={() => {
-                  axios.get('http://' + ipAddress + ':3177/get-listsongs-by-playlistid?playlistid=' + item.playlistid).then(res => {
-                    setCurrentList(res.data)
-                    navigation.navigate('NewAudioPlay', {
-                      songColectionURL: 'http://' + ipAddress + ':3177' + item.playlistimg,
-                      songColectionName: item.playlistname
-                    })
-                  })
-                }}
-              >
-                <Image
-                  source={item.playlistimg !== '' ? { uri: 'http://' + ipAddress + ':3177' + item.playlistimg } : { uri: 'http://' + ipAddress + ':3177/image/album/defaultplaylist.png' }}
-                  style={styles.playlist_img}
-                />
-                <View style={styles.playlist_info}>
-                  <Text style={styles.playlist_name}>{item.playlistname}</Text>
-                  <Text style={styles.playlist_subinfo}>PLAYLIST.Number of songs: {item.numsongs}</Text>
-                </View>
-              </TouchableOpacity>
-            )}
-            keyExtractor={item => item.playlistid}
-          />
+          <ActivityIndicator size={'large'}></ActivityIndicator>
         </View>
-
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalPlaylistVisible}
-          onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
-            setmodalPlaylistVisible(!modalPlaylistVisible);
-          }}>
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-
-              <AntDesign
-                style={{ alignSelf: 'flex-end' }}
-                name="close"
-                size={iconSizes.lg}
-                color="black"
-                onPress={() => setmodalPlaylistVisible(!modalPlaylistVisible)}
-              />
-              <Text style={styles.modalText}>New playlist name</Text>
-              <TextInput
-                placeholder='Enter playlist name'
-                value={playlistName}
-                onChangeText={(txt) => setPlaylistName(txt)}
-                style={styles.enter_playlist}
-              />
-              <Pressable
-                style={[styles.button, styles.buttonClose]}
-                onPress={() => handleCreatePlaylist(playlistName)}>
-                <Text style={styles.textStyle}>Create</Text>
-              </Pressable>
-            </View>
+        :
+        <View style={styles.container}>
+          <View style={styles.selected_type_container}>
+            <FlatList
+              data={libraryOptionsData}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={[
+                    styles.libraryChoicesBtn,
+                    selectedOption === item.id && styles.libraryChoiceOnPressed,
+                  ]}
+                  onPress={() => handleLibraryChoice(item.id)}>
+                  <Text style={styles.libraryChoicesTxt}>{item.option}</Text>
+                </TouchableOpacity>
+              )}
+              horizontal={true}
+              keyExtractor={item => item.id}
+              ItemSeparatorComponent={
+                <View style={{ marginHorizontal: 5 }} />
+              }
+            />
           </View>
-        </Modal>
-      </>
-    </View>
+          <>
+            {
+              selectedOption === 1
+              ?
+              <>
+                <TouchableOpacity
+                  style={styles.create_playlist_box}
+                  onPress={() => setmodalPlaylistVisible(true)}
+                >
+                  <AntDesign name="plussquare" size={iconSizes.xxl} color={colors.emphasis} />
+                  <Text style={styles.create_playlist_txt}>Create new playlist</Text>
+                </TouchableOpacity>
+
+                <View>
+                  <FlatList
+                    data={listPlaylist}
+                    renderItem={({ item }) => (
+                      <TouchableOpacity style={styles.playlist_item}
+                        onPress={() => {
+                          axios.get('http://' + ipAddress + ':3177/get-listsongs-by-playlistid?playlistid=' + item.playlistid).then(res => {
+                            setCurrentList(res.data)
+                            navigation.navigate('NewAudioPlay', {
+                              songColectionURL: 'http://' + ipAddress + ':3177' + item.playlistimg,
+                              songColectionName: item.playlistname
+                            })
+                          })
+                        }}
+                      >
+                        <Image
+                          source={item.playlistimg !== '' ? { uri: 'http://' + ipAddress + ':3177' + item.playlistimg } : { uri: 'http://' + ipAddress + ':3177/image/album/defaultplaylist.png' }}
+                          style={styles.playlist_img}
+                        />
+                        <View style={styles.playlist_info}>
+                          <Text style={styles.playlist_name}>{item.playlistname}</Text>
+                          <Text style={styles.playlist_subinfo}>PLAYLIST.Number of songs: {item.numsongs}</Text>
+                        </View>
+                      </TouchableOpacity>
+                    )}
+                    keyExtractor={item => item.playlistid}
+                  />
+                </View>
+
+                <Modal
+                  animationType="slide"
+                  transparent={true}
+                  visible={modalPlaylistVisible}
+                  onRequestClose={() => {
+                    Alert.alert('Modal has been closed.');
+                    setmodalPlaylistVisible(!modalPlaylistVisible);
+                  }}>
+                  <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+
+                      <AntDesign
+                        style={{ alignSelf: 'flex-end' }}
+                        name="close"
+                        size={iconSizes.lg}
+                        color="black"
+                        onPress={() => setmodalPlaylistVisible(!modalPlaylistVisible)}
+                      />
+                      <Text style={styles.modalText}>New playlist name</Text>
+                      <TextInput
+                        placeholder='Enter playlist name'
+                        value={playlistName}
+                        onChangeText={(txt) => setPlaylistName(txt)}
+                        style={styles.enter_playlist}
+                      />
+                      <Pressable
+                        style={[styles.button, styles.buttonClose]}
+                        onPress={() => handleCreatePlaylist(playlistName)}>
+                        <Text style={styles.textStyle}>Create</Text>
+                      </Pressable>
+                    </View>
+                  </View>
+                </Modal>
+              </>
+              :
+              <>
+                <View>
+                  <Text>Hello</Text>
+                </View>
+              </>
+            }
+            
+          </>
+        </View>
+      }
+    </>
+    
   )
 }
 
