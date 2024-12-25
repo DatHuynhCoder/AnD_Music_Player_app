@@ -28,7 +28,7 @@ const LoginAccount = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [pass, setPassword] = useState('');
 
-  const {userid, setUserid} = useContext(UserContext);
+  const {userid, setUserid, setUsername,setUseravatar} = useContext(UserContext);
 
   const handleLogin = () => {
     if (email === '' || pass === '') {
@@ -46,6 +46,8 @@ const LoginAccount = ({ navigation }) => {
           if (response.data.Status === 'Success') {
             Alert.alert("Account login successful, have fun listening to our music!");
             setUserid(response.data.userid);
+            setUsername(response.data.username);
+            setUseravatar(response.data.useravatar);
             navigation.navigate('MainBottom');
           }
           else {
