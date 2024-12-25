@@ -43,10 +43,13 @@ const HomePage = () => {
     loadSound
   } = useContext(AudioContext)
 
-  const { userid } = useContext(UserContext)
+  const { userid, username, useravatar } = useContext(UserContext)
 
   useEffect(() => {
-    console.log("let's get all songs")
+    console.log("let's get all songs");
+    console.log('userid:'+ userid);
+    console.log('username:'+ username);
+    console.log('useravatar:'+ useravatar);
     async function getAllSongs() {
       await axios.get("http://" + ipAddress + ":3177" + "/get-songs-for-quickpick").then(res => {
         setMusicData(res.data)
@@ -210,7 +213,7 @@ const HomePage = () => {
 
             <View style={styles.userContainer}>
               <Text style={styles.welcometxt}>Welcome Back !</Text>
-              <Text style={styles.usertxt}>{tempUserData.userName}</Text>
+              <Text style={styles.usertxt}>{username}</Text>
             </View>
           </View>
           <View style={styles.userOptionsContainer}>

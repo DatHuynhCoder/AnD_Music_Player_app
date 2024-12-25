@@ -4,14 +4,16 @@ import {
   TextInput,
   ScrollView,
   StyleSheet,
-  FlatList
+  FlatList,
+  Image
 } from 'react-native'
 import React, { useContext, useState, useEffect } from 'react'
 import { useRoute } from '@react-navigation/native';
 //constants
 import { colors } from '../constants/color'
-import { textSizes } from '../constants/demensions';
+import { iconSizes, textSizes } from '../constants/demensions';
 import { ipAddress } from '../constants/ipAddress.js';
+import AnDLogo from '../../assets/img/AnD_logo.png';
 //components
 import SongCard2 from '../components/SongCard2';
 import AuthorCard from '../components/AuthorCard';
@@ -185,16 +187,24 @@ const ExplorePage = () => {
 
   return (
     <View style={styles.container}>
+      <View style={{marginTop: 16, flexDirection: 'row', alignItems: 'center', gap: 10}}>
+        <Image 
+          source={AnDLogo}
+          style={{height: iconSizes.xl, width: iconSizes.xl}}
+        />
+        <Text style={{color: colors.emphasis, fontSize: textSizes.lg, elevation: 3, textShadowColor: colors.emphasis, textShadowOffset: { width: 1, height: 1 },textShadowRadius: 4, fontWeight: '500'}}>Explore</Text>
+      </View>
+
+      <View style={styles.searchContainer}>
+        <MaterialIcons name="search" size={20} color="#888" style={styles.searchIcon} />
+        <TextInput
+          placeholder='Enter songs or artists...'
+          value={searchQuery}
+          style={styles.searchBar}
+          onChangeText={(queryData) => handleSearch(queryData)}
+        />
+      </View>
       <ScrollView nestedScrollEnabled={true}>
-        <View style={styles.searchContainer}>
-          <MaterialIcons name="search" size={20} color="#888" style={styles.searchIcon} />
-          <TextInput
-            placeholder='Enter songs or artists...'
-            value={searchQuery}
-            style={styles.searchBar}
-            onChangeText={(queryData) => handleSearch(queryData)}
-          />
-        </View>
 
         {/* Author list */}
         {filteredAuthor.length > 0 && searchQuery !== '' &&
