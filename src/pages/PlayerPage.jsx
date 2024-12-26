@@ -277,7 +277,7 @@ function PlayerPage({ navigation }) {
   return (
     <>
       <Modal
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         visible={modalPlaylistVisible}
         onRequestClose={() => {
@@ -294,16 +294,19 @@ function PlayerPage({ navigation }) {
               onPress={() => setmodalPlaylistVisible(!modalPlaylistVisible)}
             />
             <Text style={styles.modalText}>Add your song to playlist</Text>
+            <ScrollView>
             {listPlaylist.map((item, index) => (
               <TouchableOpacity 
-              key={index} 
-              onPress={() => handleAddSong(item.playlistid)}
-              style={{ flexDirection: 'row', alignSelf: 'flex-start', margin: '5' }}>
-                <MaterialCommunityIcons name="checkbox-multiple-blank-outline" size={24} color="black" />
-                {/* <MaterialCommunityIcons name="checkbox-multiple-marked" size={24} color="black" /> */}
-                <Text style={{ marginLeft: 5, alignSelf: 'center' }}>{item.playlistname}</Text>
+                key={index} 
+                onPress={() => handleAddSong(item.playlistid)}
+                style={{ flexDirection: 'row', alignSelf: 'flex-start', margin: '5', borderWidth: 1, width: 220, borderRadius: 10, borderColor: 'rgba(1,1,1,0.2)'}}
+              >
+                {/* <MaterialCommunityIcons name="checkbox-multiple-blank-outline" size={24} color="black" /> */}
+                <Image source={item.playlistimg !== '' ? { uri: 'http://' + ipAddress + ':3177' + item.playlistimg } : { uri: 'http://' + ipAddress + ':3177/image/album/defaultplaylist.png' }} style={{height: 55,width: 55,borderRadius: 10}} />
+                <Text numberOfLines={1} style={{ marginLeft: 5, alignSelf: 'center', fontWeight: 'bold', fontSize: 15 }}>{item.playlistname}</Text>
               </TouchableOpacity>
             ))}
+            </ScrollView>
             <Text style={styles.modalText}>Or create new playlist</Text>
             <TextInput
               placeholder='Enter playlist name'
@@ -354,18 +357,35 @@ function PlayerPage({ navigation }) {
           </View>
         </View>
         <View style={{ marginVertical: 10 }}>
-          <TouchableWithoutFeedback onPress={() => handlePressSlider()}>
             <Slider
               style={{ width: 393, height: 40 }}
               minimumValue={0}
               maximumValue={1}
               value={playbackPosition / playbackDuration}
-              onValueChange={setSliderPosition}
+              // onValueChange={setSliderPosition}
               minimumTrackTintColor='#00C2CB'
               maximumTrackTintColor='white'
             >
             </Slider>
-          </TouchableWithoutFeedback>
+          {/* <TouchableWithoutFeedback onPress={() => handlePressSlider()}> */}
+            <Slider
+              style={{ width: 393, height: 40, position: 'absolute', zIndex: 1000 }}
+              minimumValue={0}
+              maximumValue={1}
+              onValueChange={(e) => {
+                async function changePos() {
+                  let letgo = playbackDuration * e
+                  setPlaybackPosition(letgo)
+                  await playback.setPositionAsync(letgo)
+                }
+                changePos()
+                // setSliderPosition(e)
+              }}
+              minimumTrackTintColor='rgba(1,1,1,0)'
+              maximumTrackTintColor='rgba(1,1,1,0)'
+              thumbTintColor='rgba(1,1,1,0)'
+            ></Slider>
+          {/* </TouchableWithoutFeedback> */}
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 30 }}>
             <Text style={{ color: 'white' }}>{convertTime(Math.floor(playbackPosition / 1000))} </Text>
             <Text style={{ marginLeft: 1, color: 'white' }}>
@@ -485,13 +505,13 @@ const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   modalView: {
     margin: 20,
-    backgroundColor: 'white',
+    backgroundColor: 'rgba(229,228,228,0.8)',
     borderRadius: 20,
-    paddingHorizontal: 10,
+    paddingHorizontal: 50,
     paddingBottom: 25,
     paddingTop: 10,
     alignItems: 'center',
