@@ -14,10 +14,12 @@ import {
 } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import * as MediaLibrary from 'expo-media-library'
+import * as ImagePicker from 'expo-image-picker';
 //constants
 import { ipAddress } from '../constants/ipAddress'
 import { colors } from '../constants/color'
 import { iconSizes, textSizes } from '../constants/demensions'
+import Default_Avatar from '../../assets/img/UserAvatarDefault.png'
 //icon
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { UserContext } from '../context/UserContext'
@@ -32,10 +34,18 @@ import {
 
 const Library = () => {
   const { currentList } = useContext(AudioContext)
-  const { userid, setUserid } = useContext(UserContext)
+  const {
+    userid,
+    setUserid,
+    username,
+    setUsername,
+    useravatar,
+    setUseravatar
+  } = useContext(UserContext)
   const { setCurrentList } = useContext(AudioContext)
   const [rerender, setRerender] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
+  const [avatar,setAvatar] = useState();
   const navigation = useNavigation();
 
   const getPermission = async () => {
@@ -50,6 +60,8 @@ const Library = () => {
   const [modalPlaylistVisible, setmodalPlaylistVisible] = useState(false);
   const [listPlaylist, setListPlaylist] = useState([]);
   const [playlistName, setPlaylistName] = useState('');
+
+  const [showModalUsername, setShowModalUsername] = useState(false);
 
   const getPlaylist = async () => {
     console.log(userid);
@@ -110,6 +122,69 @@ const Library = () => {
     }
   }
 
+  //Image picker
+  const pickAvatar = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+      base64: true
+    });
+
+    if (!result.canceled) {
+      const formData = new FormData();
+      formData.append('avatar',{
+        uri: result.assets[0].uri,
+        type: 'image/png',
+        name: 'image.png',
+        fileName:'image'
+      })
+
+      try {
+        const response = await axios.post('http://' + ipAddress + ':3177/upload-avatar', formData,
+        { headers: { 'Content-Type': 'multipart/form-data' } })
+        setUseravatar(response.data.useravatar);
+        console.log(response.data.useravatar)
+        changeUseravatar(response.data.useravatar);
+      } catch (error) {
+        console.log('Error uploading avatar to backend:', error)
+      }
+    }
+  };
+
+  const changeUseravatar = async (newUserAvatar) => {
+    try {
+      const info = {
+        userid: userid,
+        useravatar: newUserAvatar
+      }
+      const response = await axios.put('http://' + ipAddress + ':3177/update-useravatar', info);
+      Alert.alert('Update username successfully');
+    } catch (error) {
+      console.log('Cannot update user: ', error);
+    }
+  }
+
+  const handleUpdateUserName = () => {
+    const changeUsername = async () => {
+      try {
+        const info = {
+          userid: userid,
+          username: username
+        }
+        const response = await axios.put('http://' + ipAddress + ':3177/update-username', info);
+        console.log(response.Status);
+        Alert.alert('Update username successfully');
+        setShowModalUsername(!showModalUsername);
+      } catch (error) {
+        console.log('Cannot update user: ', error);
+      }
+    }
+    changeUsername();
+  }
+
   useEffect(() => {
     getPermission()
     if (selectedOption === 1) {
@@ -155,6 +230,31 @@ const Library = () => {
                 textShadowRadius: 4, fontWeight: '500'
               }}>Library</Text>
             </View>
+
+            {/* Useravatar and name */}
+            <View style={styles.user_container}>
+              <View>
+                <Image
+                  source={useravatar !== '' ? {uri: 'http://' + ipAddress + ':3177' + useravatar} : Default_Avatar}
+                  style={{ width: 125, height: 125, borderRadius: 125 }}
+                />
+
+                <TouchableOpacity onPress={() => pickAvatar()} style={styles.avatar_picker}>
+                  <AntDesign
+                    name='camerao'
+                    size={30}
+                  />
+                </TouchableOpacity>
+              </View>
+              <Text style={styles.user_txt}>{username}
+                <AntDesign 
+                  name='edit'
+                  size={iconSizes.sm}
+                  onPress={() => setShowModalUsername(!showModalUsername)}
+                />
+              </Text>
+            </View>
+
             <View style={styles.selected_type_container}>
               <FlatList
                 data={libraryOptionsData}
@@ -188,34 +288,34 @@ const Library = () => {
                       <Text style={styles.create_playlist_txt}>Create new playlist</Text>
                     </TouchableOpacity>
 
-                    <View>
-                      <FlatList
-                        data={listPlaylist}
-                        renderItem={({ item }) => (
-                          <TouchableOpacity style={styles.playlist_item}
-                            onPress={() => {
-                              axios.get('http://' + ipAddress + ':3177/get-listsongs-by-playlistid?playlistid=' + item.playlistid).then(res => {
-                                setCurrentList(res.data)
-                                navigation.navigate('NewAudioPlay', {
-                                  songColectionURL: 'http://' + ipAddress + ':3177' + item.playlistimg,
-                                  songColectionName: item.playlistname
-                                })
+
+                    <FlatList
+                      data={listPlaylist}
+                      renderItem={({ item }) => (
+                        <TouchableOpacity style={styles.playlist_item}
+                          onPress={() => {
+                            axios.get('http://' + ipAddress + ':3177/get-listsongs-by-playlistid?playlistid=' + item.playlistid).then(res => {
+                              setCurrentList(res.data)
+                              navigation.navigate('NewAudioPlay', {
+                                songColectionURL: 'http://' + ipAddress + ':3177' + item.playlistimg,
+                                songColectionName: item.playlistname
                               })
-                            }}
-                          >
-                            <Image
-                              source={item.playlistimg !== '' ? { uri: 'http://' + ipAddress + ':3177' + item.playlistimg } : { uri: 'http://' + ipAddress + ':3177/image/album/defaultplaylist.png' }}
-                              style={styles.playlist_img}
-                            />
-                            <View style={styles.playlist_info}>
-                              <Text style={styles.playlist_name}>{item.playlistname}</Text>
-                              <Text style={styles.playlist_subinfo}>PLAYLIST.Number of songs: {item.numsongs}</Text>
-                            </View>
-                          </TouchableOpacity>
-                        )}
-                        keyExtractor={item => item.playlistid}
-                      />
-                    </View>
+                            })
+                          }}
+                        >
+                          <Image
+                            source={item.playlistimg !== '' ? { uri: 'http://' + ipAddress + ':3177' + item.playlistimg } : { uri: 'http://' + ipAddress + ':3177/image/album/defaultplaylist.png' }}
+                            style={styles.playlist_img}
+                          />
+                          <View style={styles.playlist_info}>
+                            <Text style={styles.playlist_name}>{item.playlistname}</Text>
+                            <Text style={styles.playlist_subinfo}>PLAYLIST.Number of songs: {item.numsongs}</Text>
+                          </View>
+                        </TouchableOpacity>
+                      )}
+                      keyExtractor={item => item.playlistid}
+                      ListFooterComponent={() => <View style={{height:120}}></View>}
+                    />
 
                     <Modal
                       animationType="slide"
@@ -250,6 +350,41 @@ const Library = () => {
                         </View>
                       </View>
                     </Modal>
+
+                    {/* username modal */}
+                    <Modal
+                      animationType="slide"
+                      transparent={true}
+                      visible={showModalUsername}
+                      onRequestClose={() => {
+                        Alert.alert('Modal has been closed.');
+                        setShowModalUsername(!showModalUsername);
+                      }}>
+                      <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+
+                          <AntDesign
+                            style={{ alignSelf: 'flex-end' }}
+                            name="close"
+                            size={iconSizes.lg}
+                            color="black"
+                            onPress={() => setShowModalUsername(!showModalUsername)}
+                          />
+                          <Text style={styles.modalText}>New Username</Text>
+                          <TextInput
+                            placeholder='Enter new username'
+                            value={username}
+                            onChangeText={(txt) => setUsername(txt)}
+                            style={styles.enter_username}
+                          />
+                          <Pressable
+                            style={[styles.button, styles.buttonClose]}
+                            onPress={() => handleUpdateUserName()}>
+                            <Text style={styles.textStyle}>Update</Text>
+                          </Pressable>
+                        </View>
+                      </View>
+                    </Modal>
                   </>
                   :
                   <>
@@ -273,6 +408,27 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     flexDirection: 'column',
     paddingHorizontal: 10
+  },
+  user_container: {
+    marginVertical: 10,
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 10
+  },
+  avatar_picker: {
+    width: 40,
+    height: 40,
+    backgroundColor: '#fff',
+    borderRadius: 35,
+    padding: 5,
+    position: 'absolute',
+    bottom: 0,
+    right: 0
+  },
+  user_txt: {
+    color: colors.textPrimary,
+    fontSize: textSizes.md,
+    fontWeight: '600'
   },
   selected_type_container: {
     marginVertical: 15
@@ -373,6 +529,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   enter_playlist: {
+    borderWidth: 2,
+    borderRadius: 15,
+    borderColor: colors.emphasis,
+    margin: 10,
+    minWidth: 130
+  },
+  enter_username: {
     borderWidth: 2,
     borderRadius: 15,
     borderColor: colors.emphasis,
