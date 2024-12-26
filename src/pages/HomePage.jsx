@@ -11,6 +11,7 @@ import React, { useContext, useEffect, useState } from 'react'
 //constants
 import { colors } from '../constants/color'
 import { iconSizes, textSizes } from '../constants/demensions'
+import Default_Avatar from '../../assets/img/UserAvatarDefault.png'
 //icons
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -47,9 +48,9 @@ const HomePage = () => {
 
   useEffect(() => {
     console.log("let's get all songs");
-    console.log('userid:'+ userid);
-    console.log('username:'+ username);
-    console.log('useravatar:'+ useravatar);
+    console.log('userid:' + userid);
+    console.log('username:' + username);
+    console.log('useravatar:' + useravatar);
     async function getAllSongs() {
       await axios.get("http://" + ipAddress + ":3177" + "/get-songs-for-quickpick").then(res => {
         setMusicData(res.data)
@@ -88,83 +89,6 @@ const HomePage = () => {
     getAllSongs();
     getAllGenre();
   }, [])
-  // const musicData = [
-  //   {
-  //     id: 1,
-  //     musicName: 'Let Love Win',
-  //     musicAuthor: 'TheFatRat',
-  //     musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-  //   },
-  //   {
-  //     id: 2,
-  //     musicName: 'Blood, Sweet & Tear',
-  //     musicAuthor: 'Riot games',
-  //     musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-  //   },
-  //   {
-  //     id: 3,
-  //     musicName: 'The Legend',
-  //     musicAuthor: 'TobyFox',
-  //     musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-  //   },
-  //   {
-  //     id: 4,
-  //     musicName: 'Mang tiền về cho mẹ',
-  //     musicAuthor: 'Đen Vâu',
-  //     musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-  //   },
-  //   {
-  //     id: 5,
-  //     musicName: 'Superheroes',
-  //     musicAuthor: 'TheScripts',
-  //     musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-  //   },
-  //   {
-  //     id: 6,
-  //     musicName: 'Memory reboot',
-  //     musicAuthor: 'Narvent',
-  //     musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-  //   },
-  //   {
-  //     id: 7,
-  //     musicName: '7 Years',
-  //     musicAuthor: 'Lukas graham',
-  //     musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-  //   },
-  //   {
-  //     id: 8,
-  //     musicName: 'Beautiful now',
-  //     musicAuthor: 'Zedd',
-  //     musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-  //   },
-  //   {
-  //     id: 9,
-  //     musicName: 'ĐAM MÊ | Double2T x Cao Thanh Thảo My ft Thảo Đan (Prod. HảiMa) - Official Music Video',
-  //     musicAuthor: 'Gia đình lớn',
-  //     musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-  //   },
-  //   {
-  //     id: 10,
-  //     musicName: 'Dandadan openning',
-  //     musicAuthor: 'The Creepy nuts',
-  //     musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-  //   },
-  //   {
-  //     id: 11,
-  //     musicName: 'Waiting for love',
-  //     musicAuthor: 'Acvicii',
-  //     musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-  //   },
-  //   {
-  //     id: 12,
-  //     musicName: 'Rises',
-  //     musicAuthor: 'League of Legends',
-  //     musicURL: require('../../assets/img/temp_playlist_pic.jpg')
-  //   },
-  // ];
-  const tempUserData = {
-    userName: 'hi'
-  }
 
 
   const renderPlayListItem = ({ item }) => (
@@ -207,7 +131,7 @@ const HomePage = () => {
         <View style={styles.headerContainer}>
           <View style={styles.welcomeUserContainer}>
             <Image
-              source={UserAvatar}
+              source={useravatar !== '' ? { uri: 'http://' + ipAddress + ':3177' + useravatar } : Default_Avatar}
               style={styles.userAvatar}
             />
 
@@ -260,7 +184,7 @@ const HomePage = () => {
               <TouchableOpacity
                 style={styles.cardWrapper}
                 key={item.genreid}
-                onPress={() => navigation.navigate('ExplorePage',{genrename: item.genrename})}
+                onPress={() => navigation.navigate('ExplorePage', { genrename: item.genrename })}
               >
                 <GenreCard genreName={item.genrename} genreUrl={item.genreimg} />
               </TouchableOpacity>
