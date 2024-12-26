@@ -96,14 +96,14 @@ const MainBottom = () => {
           title: 'Library'
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name='NewAudioPlay'
         component={NewAudioPlay}
         options={{
           title: 'List',
           headerShown: false,
         }}
-      />
+      /> */}
     </Tab.Navigator>
     </>
   )

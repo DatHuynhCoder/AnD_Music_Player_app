@@ -36,7 +36,7 @@ import PlayerButton from '../components/PlayerButton';
 
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { iconSizes, textSizes } from '../constants/demensions';
-import { FlatList } from 'react-native-gesture-handler';
+import CurrentPlaylist from './CurrentPlaylist'
 
 const { width } = Dimensions.get('window')
 const Tab = createMaterialTopTabNavigator();
@@ -97,9 +97,9 @@ export default function MyTabs() {
 
   return (
     <Tab.Navigator
-      tabBar={() => <View style={{ backgroundColor: colors.background }}>
-        <MaterialCommunityIcons
-          name="arrow-left-circle-outline"
+      tabBar={() => <View style={{ backgroundColor: colors.background, padding: 10}}>
+        <AntDesign
+          name="arrowleft"
           size={40}
           color="white"
           onPress={() => navigation.goBack()}
@@ -110,6 +110,7 @@ export default function MyTabs() {
     >
       <Tab.Screen name="Lyric" component={LyricScreen} />
       <Tab.Screen name="Player" component={PlayerPage} />
+      <Tab.Screen name="CurrentPlaylist" component={CurrentPlaylist} />
     </Tab.Navigator>
   );
 }
@@ -483,7 +484,7 @@ function PlayerPage({ navigation }) {
                 alert(res.data.Error)
               }
             })
-          }} />
+          }}/>
         </View>
       </View>
     </>

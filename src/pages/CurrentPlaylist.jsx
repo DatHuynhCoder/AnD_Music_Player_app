@@ -7,9 +7,8 @@ import { ipAddress } from '../constants/ipAddress';
 
 import Entypo from '@expo/vector-icons/Entypo';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import AntDesign from '@expo/vector-icons/AntDesign';
 
+import AntDesign from '@expo/vector-icons/AntDesign';
 import axios from 'axios';
 
 import { AudioContext } from '../context/NewAudioContextProvider';
@@ -47,14 +46,7 @@ const SongItem = ({id, img = '../../assets/albumIMG.jpeg', title = '', isPlaying
       <View style={id === currentSongid ? {flexDirection: 'row',alignSelf: 'center',width: width - 80,borderRadius: 25, backgroundColor: 'rgba(92, 145, 151, 0.27)'} : {flexDirection: 'row',alignSelf: 'center',width: width - 80,borderRadius: 25}}>
         <TouchableWithoutFeedback onPress={() => onSongPress()}>
           <View style={{flexDirection: 'row',alignItems: 'center', width: 263,}}>
-            <Image source={{uri: 'http://' + ipAddress + ':3177' + img}} style={{height: 50, width: 50, borderRadius: 25}}>
-
-            </Image>
-            {/* <View style={{height: 50,flexBasis: 50,backgroundColor: colors.emphasis,justifyContent: 'center',alignItems: 'center',borderRadius: 25,}}>
-              <Text style={{fontSize: 22,fontWeight: 'bold',color: misc_colors.FONT}}>
-                {title[0]}
-              </Text>
-            </View> */}
+            <Image source={{uri: 'http://' + ipAddress + ':3177' + img}} style={{height: 50, width: 50, borderRadius: 25}}></Image>
             <View style={{width: width - 180,paddingLeft: 10,}}>
               <Text numberOfLines={1} style={{fontSize: 16,color: colors.textPrimary}}>{title}</Text>
               <Text style={{fontSize: 14,color: misc_colors.FONT_LIGHT}}>
@@ -78,7 +70,7 @@ const SongItem = ({id, img = '../../assets/albumIMG.jpeg', title = '', isPlaying
   )
 }
 
-export default function NewAudioPlay({navigation, route}) {
+export default function CurrentPlaylist({route}) {
   const {
     currentList, setCurrentList,
     listLength, setListLength,
@@ -104,13 +96,8 @@ export default function NewAudioPlay({navigation, route}) {
   } = useContext(AudioContext)
   const {userid} = useContext(UserContext)
   const [isFollowed, setIsFollowed] = useState(false) // for author list song
-  const authorId = route?.params?.authorId // for author list song
-  const songColectionURL = route?.params?.songColectionURL // http://ip:port/image/album/... or http://ip:port/image/author/...
-  const type = songColectionURL !== undefined ? songColectionURL.split('/')[4] : 'Unknown'
-  //check link with album:  ["http:", "", "192.168.137.1:3177", "image", "album", "thongdongmahat.jpg"]
-  //check link with author:  ["http:", "", "192.168.137.1:3177", "image", "author", "sontungmtp.png"]
-  const songColectionName = route?.params?.songColectionName
-  
+  const [songinfo, setSonginfo] = useState({})
+  const [favouriteNum, setFavouriteNum] = useState(0)
   const convertTime = milis => {
     let second = milis % 60
     let minute = Math.floor(milis / 60)
@@ -178,68 +165,72 @@ export default function NewAudioPlay({navigation, route}) {
     }
   }
   useEffect(() => {
-    if(type === 'author') {
-      console.log('its author')
-      axios.get("http://" + ipAddress + ":3177" + "/check-is-followed?authorid=" + authorId + "&userid=" + userid).then(res => {
-        if(res.data.Status === 'Existed') {
-          setIsFollowed(true)
-        }
-        else if(res.data.Status === 'NotExisted') {
-          setIsFollowed(false)
+    async function getSongInfo() {
+      await axios.get('http://' + ipAddress + ':3177/get-detail-song-info?songid=' + currentSongid).then(res => {
+        if(res.data.Status === 'Success') {
+          console.log('check song info: ', res.data.Result[0])
+          setSonginfo(res.data.Result[0])
         }
         else {
-          alert('Error while check followed')
+          alert('Error')
         }
       })
     }
-  }, [currentList])
+    async function getFavouriteNum() {
+      await axios.get('http://' + ipAddress + ':3177/count-favourite-by-songid?songid=' + currentSongid).then(res => {
+        if(res.data.Status === 'Success') {
+          console.log('check favourite info: ', res.data.Result)
+          setFavouriteNum(res.data.Result[0].soluotthich)
+        }
+        else {
+          alert('Error')
+        }
+      })
+    }
+    getSongInfo()
+    getFavouriteNum()
+  }, [currentSongid])
   return (
     <View style={{backgroundColor: colors.background, flex: 1, paddingBottom: 130}}>
-      <TouchableOpacity style={{padding: 10}}>
-        <Ionicons name="caret-back" size={40} color={colors.iconPrimary} onPress={() => {
-          navigation.goBack()
-        }}/>
-      </TouchableOpacity>
-      <View style={{backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center', paddingTop: 30}}>
-        <View 
+      <View style={{backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center'}}>
+        <View
           style={{borderWidth: 1,
-            borderColor: '#ccc',
             borderRadius: 20,
-            overflow: 'hidden',
-            height: 200,
-            width: 200,
-            margin: 20
+            // overflow: 'hidden',
+            height: 150,
+            width: 330,
+            marginTop: 20,
+            marginBottom: 20,
+            padding: 10,
+            backgroundColor: 'rgba(1,1,1,0.5)'
           }}
         >
-          <View style={{
-            flex: 1,
-            borderRadius: 15,
-            overflow: 'hidden',
-          }}>
-            <ImageBackground
-              // source={albumIMG}
-              source={songColectionURL !== undefined ? {uri: songColectionURL} : albumIMG}
-              style={{
-                flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            ></ImageBackground>
+          <View style={{flex: 1, flexDirection: 'row'}}>
+            <Image source={{uri: 'http://' + ipAddress + ':3177' + currentSongimg}} style={{width: 60, height: 60, borderRadius: 5}}></Image>
+            <View style={{flex: 1, marginLeft: 10, flexDirection: 'column'}}>
+              <Text style={{color: colors.textPrimary}}>{currentName}</Text>
+              <Text style={{color: colors.textPrimary, opacity: 0.5}}>{currentSinger}</Text>
+              <Text>
+                <AntDesign name="hearto" size={20} color='red' style={{marginRight: 10}}/>
+                <Text style={{color: colors.textPrimary, fontSize: 16 }}> {favouriteNum}</Text>
+              </Text>
+            </View>
           </View>
-        </View>
-        <View style={{display: 'flex', marginBottom: 30, justifyContent: 'center', alignItems: 'center'}}>
-          <Text style={{color: colors.textPrimary, fontSize: textSizes.md, fontWeight: 'bold'}}>{songColectionName === undefined ? 'No album is loaded' : songColectionName}</Text>
-          {
-            type === 'author' 
-          ? 
-            <TouchableOpacity style={styles.followbutton(isFollowed)} onPress={() => {
-              handle_Follow_UnFolllow()
-            }}>
-              <Text style={{textAlign: 'center', color: 'white', textTransform: 'uppercase', fontWeight: 'bold'}}>{isFollowed === false ? 'Follow' : 'Followed'}</Text>
-            </TouchableOpacity>
-          :
-            <></>
-          }
+          <View style={{backgroundColor: 'white', height: 1, opacity: 0.3}}>
+
+          </View>
+          <View style={{display: 'flex', flexDirection: 'row'}}>
+            <View style={{flex: 2}}>
+              <Text style={{color: colors.textPrimary, opacity: 0.5}}>Album</Text>
+              <Text style={{color: colors.textPrimary, opacity: 0.5}}>Author</Text>
+              <Text style={{color: colors.textPrimary, opacity: 0.5}}>Genre</Text>
+            </View>
+            <View style={{flex: 5}}>
+              <Text style={{color: colors.textPrimary}}>{songinfo?.albumname}</Text>
+              <Text style={{color: colors.textPrimary}}>{currentSinger}</Text>
+              <Text style={{color: colors.textPrimary}}>{songinfo?.genrename}</Text>
+            </View>
+          </View>
         </View>
       </View>
       <ScrollView style={styles.scroller}>
@@ -262,6 +253,7 @@ export default function NewAudioPlay({navigation, route}) {
                 console.log('current index: ', currentAudioIndex)
                 setCurrentAudioIndex(index)
                 loadSound({uri: "http://" + ipAddress + ":3177" + song.songuri})
+                
               }}>
 
             </SongItem>
@@ -284,13 +276,14 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     // paddingBottom: 130,
   },
-  followbutton: (isFollowed) => ({
-    backgroundColor: isFollowed === false ? colors.emphasis : 'rgba(1,1,1,1)',
-    width: 120,
-    height: 43,
-    borderWidth: 1,
-    borderColor: isFollowed === false ? colors.background : 'white',
-    borderRadius: 25,
-    padding: 10
-  })
+  
+  // followbutton: (isFollowed) => ({
+  //   backgroundColor: isFollowed === false ? colors.emphasis : 'rgba(1,1,1,1)',
+  //   width: 120,
+  //   height: 43,
+  //   borderWidth: 1,
+  //   borderColor: isFollowed === false ? colors.background : 'white',
+  //   borderRadius: 25,
+  //   padding: 10
+  // })
 });
