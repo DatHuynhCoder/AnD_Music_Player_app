@@ -27,6 +27,7 @@ import { AudioContext } from '../context/NewAudioContextProvider'
 import axios from 'axios'
 import { DefaultPlaylistImg } from '../../assets/img/AnD_logo.png'
 import SongCard2 from '../components/SongCard2'
+import AuthorCard2 from '../components/AuthorCard2';
 import AnDLogo from '../../assets/img/AnD_logo.png';
 import {
   useNavigation
@@ -45,7 +46,6 @@ const Library = () => {
   const { setCurrentList } = useContext(AudioContext)
   const [rerender, setRerender] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
-  const [avatar,setAvatar] = useState();
   const navigation = useNavigation();
 
   const getPermission = async () => {
@@ -60,6 +60,7 @@ const Library = () => {
   const [modalPlaylistVisible, setmodalPlaylistVisible] = useState(false);
   const [listPlaylist, setListPlaylist] = useState([]);
   const [playlistName, setPlaylistName] = useState('');
+  const [listAuthorFollowed, setListAuthorFollowed] = useState([]);
 
   const [showModalUsername, setShowModalUsername] = useState(false);
 
@@ -83,7 +84,8 @@ const Library = () => {
   async function getAuthorFollowed() {
     await axios.get('http://' + ipAddress + ':3177/get-all-followed-author-by-userid?userid=' + userid).then(res => {
       if (res.data.Status === 'Success') {
-        console.log('followed author: ', res.data.Result)
+        console.log('followed author: ', res.data.Result);
+        setListAuthorFollowed(res.data.Result);
       }
       else {
         console.log(res.data.Error)
@@ -135,16 +137,16 @@ const Library = () => {
 
     if (!result.canceled) {
       const formData = new FormData();
-      formData.append('avatar',{
+      formData.append('avatar', {
         uri: result.assets[0].uri,
         type: 'image/png',
         name: 'image.png',
-        fileName:'image'
+        fileName: 'image'
       })
 
       try {
         const response = await axios.post('http://' + ipAddress + ':3177/upload-avatar', formData,
-        { headers: { 'Content-Type': 'multipart/form-data' } })
+          { headers: { 'Content-Type': 'multipart/form-data' } })
         setUseravatar(response.data.useravatar);
         console.log(response.data.useravatar)
         changeUseravatar(response.data.useravatar);
@@ -235,7 +237,7 @@ const Library = () => {
             <View style={styles.user_container}>
               <View>
                 <Image
-                  source={useravatar !== '' ? {uri: 'http://' + ipAddress + ':3177' + useravatar} : Default_Avatar}
+                  source={useravatar !== '' ? { uri: 'http://' + ipAddress + ':3177' + useravatar } : Default_Avatar}
                   style={{ width: 125, height: 125, borderRadius: 125 }}
                 />
 
@@ -247,7 +249,7 @@ const Library = () => {
                 </TouchableOpacity>
               </View>
               <Text style={styles.user_txt}>{username}
-                <AntDesign 
+                <AntDesign
                   name='edit'
                   size={iconSizes.sm}
                   onPress={() => setShowModalUsername(!showModalUsername)}
@@ -314,7 +316,7 @@ const Library = () => {
                         </TouchableOpacity>
                       )}
                       keyExtractor={item => item.playlistid}
-                      ListFooterComponent={() => <View style={{height:120}}></View>}
+                      ListFooterComponent={() => <View style={{ height: 120 }}></View>}
                     />
 
                     <Modal
@@ -388,9 +390,22 @@ const Library = () => {
                   </>
                   :
                   <>
-                    <View>
-                      <Text>Hello</Text>
-                    </View>
+                    <FlatList
+                      data={listAuthorFollowed}
+                      renderItem={({ item, index }) =>
+                        <AuthorCard2
+                          key={index}
+                          authorId={item.authorid}
+                          authorName={item.authorname}
+                          authorURL={item.authoravatar}
+                        />
+                      }
+                      keyExtractor={(item, index) => index.toString()}
+                      ItemSeparatorComponent={
+                        <View style={{ marginVertical: 10 }} />
+                      }
+                      ListFooterComponent={() => <View style={{ height: 120 }}></View>}
+                    />
                   </>
               }
 
