@@ -44,7 +44,7 @@ const HomePage = () => {
     loadSound
   } = useContext(AudioContext)
 
-  const { userid, username, useravatar } = useContext(UserContext)
+  const { userid, username, useravatar, rerenderCxt } = useContext(UserContext)
 
   useEffect(() => {
     console.log("let's get all songs");
@@ -88,7 +88,7 @@ const HomePage = () => {
     getPlaylist();
     getAllSongs();
     getAllGenre();
-  }, [])
+  }, [rerenderCxt])
 
 
   const renderPlayListItem = ({ item }) => (
@@ -97,7 +97,12 @@ const HomePage = () => {
       onPress={() => {
         axios.get('http://' + ipAddress + ':3177/get-listsongs-by-playlistid?playlistid=' + item.playlistid).then(res => {
           setCurrentList(res.data)
-          navigation.navigate('NewAudioPlay', { songColectionURL: 'http://' + ipAddress + ':3177' + item.playlistimg, songColectionName: item.playlistname })
+          if(item.playlistimg !== ''){
+            navigation.navigate('NewAudioPlay', { songColectionURL: 'http://' + ipAddress + ':3177' + item.playlistimg, songColectionName: item.playlistname })
+          }
+          else {
+            navigation.navigate('NewAudioPlay', { songColectionURL: 'http://' + ipAddress + ':3177/image/album/defaultplaylist.png', songColectionName: item.playlistname })
+          }
         })
       }}
     >

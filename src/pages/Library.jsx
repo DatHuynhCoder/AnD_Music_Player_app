@@ -43,7 +43,9 @@ const Library = () => {
     username,
     setUsername,
     useravatar,
-    setUseravatar
+    setUseravatar,
+    setRerenderCxt,
+    rerenderCxt
   } = useContext(UserContext)
   const { setCurrentList } = useContext(AudioContext)
   const [rerender, setRerender] = useState(false)
@@ -126,6 +128,7 @@ const Library = () => {
       }
       createNewPlaylist();
       setRerender(!rerender);
+      setRerenderCxt(!rerenderCxt);
     }
   }
 
@@ -182,7 +185,6 @@ const Library = () => {
           username: username
         }
         const response = await axios.put('http://' + ipAddress + ':3177/update-username', info);
-        console.log(response.Status);
         Alert.alert('Update username successfully');
         setShowModalUsername(!showModalUsername);
       } catch (error) {
@@ -200,7 +202,6 @@ const Library = () => {
           playlistname: modalPlaylistname
         }
         const response = await axios.put('http://' + ipAddress + ':3177/update-playlistname', info);
-        console.log(response.Status);
         Alert.alert('Update playlistname successfully');
         setShowModalUpandDel(!showModalUpandDel);
       } catch (error) {
@@ -222,6 +223,7 @@ const Library = () => {
     }
     deletePlaylist();
     setRerender(!rerender);
+    setRerenderCxt(!rerenderCxt);
   }
 
 
@@ -294,6 +296,8 @@ const Library = () => {
                   onPress={() => setShowModalUsername(!showModalUsername)}
                 />
               </Text>
+
+              <AntDesign name="logout" size={24} color="black" onPress={() => navigation.navigate('LoginAccount')} />
             </View>
 
             <View style={styles.selected_type_container}>
@@ -336,11 +340,13 @@ const Library = () => {
                         <TouchableOpacity style={styles.playlist_item}
                           onPress={() => {
                             axios.get('http://' + ipAddress + ':3177/get-listsongs-by-playlistid?playlistid=' + item.playlistid).then(res => {
-                              setCurrentList(res.data)
-                              navigation.navigate('NewAudioPlay', {
-                                songColectionURL: 'http://' + ipAddress + ':3177' + item.playlistimg,
-                                songColectionName: item.playlistname
-                              })
+                              setCurrentList(res.data);
+                              if (item.playlistimg !== '') {
+                                navigation.navigate('NewAudioPlay', { songColectionURL: 'http://' + ipAddress + ':3177' + item.playlistimg, songColectionName: item.playlistname })
+                              }
+                              else {
+                                navigation.navigate('NewAudioPlay', { songColectionURL: 'http://' + ipAddress + ':3177/image/album/defaultplaylist.png', songColectionName: item.playlistname })
+                              }
                             })
                           }}
                         >

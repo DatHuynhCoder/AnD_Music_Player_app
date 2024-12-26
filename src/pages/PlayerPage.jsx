@@ -145,7 +145,7 @@ function PlayerPage({ navigation }) {
   const [modalPlaylistVisible, setmodalPlaylistVisible] = useState(false);
   const [playlistName, setPlaylistName] = useState('');
   const [listPlaylist, setListPlaylist] = useState([]); //Chứa playlist hiện có trong thư viện
-  const { userid, setUserid } = useContext(UserContext)
+  const { userid, setUserid, rerenderCxt,setRerenderCxt } = useContext(UserContext)
 
   const getPlaylist = async () => {
     console.log(userid);
@@ -179,6 +179,7 @@ function PlayerPage({ navigation }) {
 
     // Tải lại danh sách playlist
     await getPlaylist();
+    setRerenderCxt(!rerenderCxt);
 
     Alert.alert('Playlist created and song added successfully!');
     setmodalPlaylistVisible(false);
@@ -221,6 +222,7 @@ function PlayerPage({ navigation }) {
   
       // Tải lại danh sách playlist
       await getPlaylist();
+      setRerenderCxt(!rerenderCxt);
   
       Alert.alert('Playlist created and song added successfully!');
       setmodalPlaylistVisible(false);
@@ -478,7 +480,8 @@ function PlayerPage({ navigation }) {
               userid: userid
             }).then(res => {
               if (res.data.Status === 'Success') {
-                alert('Add to favourite successfully')
+                alert('Add to favourite successfully');
+                setRerenderCxt(!rerenderCxt);
               }
               else {
                 alert(res.data.Error)
