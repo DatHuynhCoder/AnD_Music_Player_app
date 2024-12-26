@@ -22,6 +22,7 @@ import { iconSizes, textSizes } from '../constants/demensions'
 import Default_Avatar from '../../assets/img/UserAvatarDefault.png'
 //icon
 import AntDesign from '@expo/vector-icons/AntDesign';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { UserContext } from '../context/UserContext'
 import { AudioContext } from '../context/NewAudioContextProvider'
 import axios from 'axios'
@@ -29,6 +30,7 @@ import { DefaultPlaylistImg } from '../../assets/img/AnD_logo.png'
 import SongCard2 from '../components/SongCard2'
 import AuthorCard2 from '../components/AuthorCard2';
 import AnDLogo from '../../assets/img/AnD_logo.png';
+import Entypo from '@expo/vector-icons/Entypo';
 import {
   useNavigation
 } from '@react-navigation/native';
@@ -57,12 +59,15 @@ const Library = () => {
     setSelectedOption(optionId);
   }
 
-  const [modalPlaylistVisible, setmodalPlaylistVisible] = useState(false);
   const [listPlaylist, setListPlaylist] = useState([]);
   const [playlistName, setPlaylistName] = useState('');
   const [listAuthorFollowed, setListAuthorFollowed] = useState([]);
 
+  const [modalPlaylistVisible, setmodalPlaylistVisible] = useState(false);
   const [showModalUsername, setShowModalUsername] = useState(false);
+  const [showModalUpandDel, setShowModalUpandDel] = useState(false);
+  const [modalPlaylistid, setModalPlaylistid] = useState(1);
+  const [modalPlaylistname, setModalPlaylistname] = useState('');
 
   const getPlaylist = async () => {
     console.log(userid);
@@ -186,6 +191,40 @@ const Library = () => {
     }
     changeUsername();
   }
+
+  const handleUpdatePlaylist = () => {
+    const changePlaylistname = async () => {
+      try {
+        const info = {
+          playlistid: modalPlaylistid,
+          playlistname: modalPlaylistname
+        }
+        const response = await axios.put('http://' + ipAddress + ':3177/update-playlistname', info);
+        console.log(response.Status);
+        Alert.alert('Update playlistname successfully');
+        setShowModalUpandDel(!showModalUpandDel);
+      } catch (error) {
+        console.log('Cannot update Playlist: ', error);
+      }
+    }
+    changePlaylistname();
+  }
+
+  const handleDeletePlaylist = () => {
+    const deletePlaylist = async () => {
+      try {
+        const response = await axios.delete('http://' + ipAddress + ':3177/delete-playlist-by-id?playlistid=' + modalPlaylistid);
+        Alert.alert('Delete playlist successfully');
+        setShowModalUpandDel(!showModalUpandDel);
+      } catch (error) {
+        console.log('Cannot delete playlist: ', error);
+      }
+    }
+    deletePlaylist();
+    setRerender(!rerender);
+  }
+
+
 
   useEffect(() => {
     getPermission()
@@ -313,12 +352,69 @@ const Library = () => {
                             <Text style={styles.playlist_name}>{item.playlistname}</Text>
                             <Text style={styles.playlist_subinfo}>PLAYLIST.Number of songs: {item.numsongs}</Text>
                           </View>
+
+                          {item.playlistname !== 'Favourite' &&
+                            <TouchableOpacity
+                              onPress={() => {
+                                setModalPlaylistid(item.playlistid);
+                                setModalPlaylistname(item.playlistname);
+                                setShowModalUpandDel(true);
+                              }}
+                              style={{ alignSelf: 'center' }}>
+                              <Entypo name="dots-three-vertical" size={24} color={colors.iconPrimary} />
+                            </TouchableOpacity>
+                          }
                         </TouchableOpacity>
                       )}
                       keyExtractor={item => item.playlistid}
                       ListFooterComponent={() => <View style={{ height: 120 }}></View>}
                     />
 
+                    {/* update and delete playlist */}
+                    <Modal
+                      animationType="slide"
+                      transparent={true}
+                      visible={showModalUpandDel}
+                      onRequestClose={() => {
+                        Alert.alert('Modal has been closed.');
+                        setShowModalUpandDel(!showModalUpandDel);
+                      }}>
+                      <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+
+                          <AntDesign
+                            style={{ alignSelf: 'flex-end' }}
+                            name="close"
+                            size={iconSizes.lg}
+                            color="black"
+                            onPress={() => setShowModalUpandDel(!showModalUpandDel)}
+                          />
+                          <Text style={styles.modalText}>Update playlist name</Text>
+                          <TextInput
+                            placeholder='Enter playlist name'
+                            value={modalPlaylistname}
+                            onChangeText={(txt) => setModalPlaylistname(txt)}
+                            style={styles.enter_playlist}
+                          />
+                          <View style={{ flexDirection: 'row', gap: 20 }}>
+                            <Pressable
+                              style={[styles.button, styles.buttonDelete]}
+                              onPress={() => handleDeletePlaylist()}>
+                              <Text style={styles.textStyle}>or Delete</Text>
+                              <FontAwesome6 name="trash-can" size={20} color="white" />
+                            </Pressable>
+
+                            <Pressable
+                              style={[styles.button, styles.buttonClose]}
+                              onPress={() => handleUpdatePlaylist()}>
+                              <Text style={styles.textStyle}>Update</Text>
+                            </Pressable>
+                          </View>
+                        </View>
+                      </View>
+                    </Modal>
+
+                    {/* Create playlist modal */}
                     <Modal
                       animationType="slide"
                       transparent={true}
@@ -479,7 +575,7 @@ const styles = StyleSheet.create({
   },
   playlist_item: {
     flexDirection: 'row',
-    marginVertical: 5
+    marginVertical: 5,
   },
   playlist_img: {
     height: 60,
@@ -531,6 +627,13 @@ const styles = StyleSheet.create({
   },
   buttonClose: {
     backgroundColor: colors.emphasis,
+  },
+  buttonDelete: {
+    backgroundColor: '#ab0d0a',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 10
   },
   textStyle: {
     color: 'white',
