@@ -5,7 +5,8 @@ import {
   ScrollView,
   StyleSheet,
   FlatList,
-  Image
+  Image,
+  SafeAreaView
 } from 'react-native'
 import React, { useContext, useState, useEffect } from 'react'
 import { useRoute } from '@react-navigation/native';
@@ -210,7 +211,7 @@ const ExplorePage = () => {
         {filteredAuthor.length > 0 && searchQuery !== '' &&
           <View>
             <FlatList
-              nestedScrollEnabled
+              nestedScrollEnabled = {true}
               ListHeaderComponent={(
                 <View>
                   <Text style={styles.HeaderTxt}>Authors</Text>
@@ -238,7 +239,7 @@ const ExplorePage = () => {
         {filteredSongs.length > 0 && searchQuery !== '' &&
           <View>
             <FlatList
-              nestedScrollEnabled
+              nestedScrollEnabled={true}
               ListHeaderComponent={(
                 <View>
                   <Text style={styles.HeaderTxt}>Songs</Text>
@@ -288,7 +289,7 @@ const ExplorePage = () => {
           searchQuery === '' &&
           <View>
             <FlatList
-              nestedScrollEnabled
+              nestedScrollEnabled = {true}
               data={musicArea}
               ListHeaderComponent={(
                 <View>
@@ -310,7 +311,7 @@ const ExplorePage = () => {
             {/* Top Albums */}
             <Text style={styles.HeaderTxt}>Top Albums</Text>
             <FlatList
-              nestedScrollEnabled
+              nestedScrollEnabled = {true}
               data={albumData}
               horizontal={true}
               ItemSeparatorComponent={
