@@ -8,6 +8,7 @@ import { Audio } from 'expo-av';
 import { useNavigation } from '@react-navigation/native';
 import { ipAddress } from '../constants/ipAddress';
 import { colors, misc_colors } from '../constants/color'
+import Slider from '@react-native-community/slider';
 const windowHeight = Dimensions.get('window').height;
 const context = {
   "isLoad": false,
@@ -37,6 +38,7 @@ const FloatingPlayer = () => {
   } = useContext(AudioContext)
   const navigation = useNavigation();
   return (
+    <>
     <TouchableOpacity style={{
       borderRadius: 20, 
       left: 30, 
@@ -50,52 +52,70 @@ const FloatingPlayer = () => {
     }}
       onPress={() => navigation.navigate('PlayerPage')}
     >
-      <>
+      {
+        currentSongimg === '' ? 
+        <View style={{height: 48, width: 48, flexBasis: 50,backgroundColor: colors.emphasis,justifyContent: 'center',alignItems: 'center',borderRadius: 25,}}>
+          <Text style={{fontSize: 16,fontWeight: 'bold',color: misc_colors.FONT}}>
+            {currentName === '' ? '?' : currentName[0]}
+          </Text>
+        </View>
+        :
+        <Image source={{uri: 'http://' + ipAddress + ':3177' + currentSongimg}}
+          style={{height: 48, width: 48, borderRadius: 24}}
+        >
+        </Image>
+      }
+      <View style={{flex: 1, flexDirection: 'column'}}>
+        
+      {/* <> */}
         {/* <Image
           source={UserAvatar}
           style={{borderWidth: 1, height: 48, width: 48,borderRadius: 24, justifyContent: 'center', alignItems: 'center'}}
         /> */}
-        {
-          currentSongimg === '' ? 
-          <View style={{height: 48, width: 48, flexBasis: 50,backgroundColor: colors.emphasis,justifyContent: 'center',alignItems: 'center',borderRadius: 25,}}>
-            <Text style={{fontSize: 16,fontWeight: 'bold',color: misc_colors.FONT}}>
-              {currentName === '' ? '?' : currentName[0]}
-            </Text>
-          </View>
-          :
-          <Image source={{uri: 'http://' + ipAddress + ':3177' + currentSongimg}}
-            style={{height: 48, width: 48, borderRadius: 24}}
-          >
-          </Image>
-        }
+        
         {/* <View style={{height: 48, width: 48, flexBasis: 50,backgroundColor: colors.emphasis,justifyContent: 'center',alignItems: 'center',borderRadius: 25,}}>
           <Text style={{fontSize: 16,fontWeight: 'bold',color: misc_colors.FONT}}>
             {currentName === '' ? '?' : currentName[0]}
           </Text>
         </View> */}
-        <View style={{flex: 1, overflow: 'hidden', marginLeft: 10, justifyContent: 'center'}}>
-          <Text numberOfLines={1} style={{fontSize: 13, fontWeight: '600', paddingLeft: 5, color: 'white'}}>
-            {currentName === '' ? 'Không có dữ liệu' : currentName}
-          </Text>
+        <View style={{flex: 1, flexDirection: 'row'}}>
+          <View style={{flex: 1, overflow: 'hidden', marginLeft: 10, justifyContent: 'center'}}>
+            <Text numberOfLines={1} style={{fontSize: 13, fontWeight: '600', paddingLeft: 5, color: 'white'}}>
+              {currentName === '' ? 'Không có dữ liệu' : currentName}
+            </Text>
+          </View>
+          <View style={{flexDirection: 'row', alignItems: 'center', columnGap: 20, marginRight: 16, paddingLeft: 16, paddingVertical: 5}}>
+            <PlayerButton iconType='PREVIOUS' size={25} color={'white'} onPress={()=> {
+              handlePressPrevious()
+            }}/>
+            
+            <PlayerButton 
+              onPress={() => handlePressOnIcon()}
+              style={{marginLeft: 5, marginRight: 5}} 
+              iconType={status.isPlaying ? 'PLAY' : 'PAUSE'}
+              size={40}
+              color={'white'}
+            />
+            <PlayerButton iconType='NEXT' size={25} color={'white'} onPress={() => {
+              handlePressNext()
+            }}/>
+          </View>
         </View>
-        <View style={{flexDirection: 'row', alignItems: 'center', columnGap: 20, marginRight: 16, paddingLeft: 16, paddingVertical: 5}}>
-          <PlayerButton iconType='PREVIOUS' size={25} color={'white'} onPress={()=> {
-            handlePressPrevious()
-          }}/>
-          
-          <PlayerButton 
-            onPress={() => handlePressOnIcon()}
-            style={{marginLeft: 5, marginRight: 5}} 
-            iconType={status.isPlaying ? 'PLAY' : 'PAUSE'}
-            size={40}
-            color={'white'}
-          />
-          <PlayerButton iconType='NEXT' size={25} color={'white'} onPress={() => {
-            handlePressNext()
-          }}/>
-        </View>
-      </>
+        <Slider
+          style={{ marginTop: -10, marginBottom: -7}}
+          minimumValue={0}
+          maximumValue={1}
+          value={playbackPosition / playbackDuration}
+          // onValueChange={setSliderPosition}
+          minimumTrackTintColor='#00C2CB'
+          maximumTrackTintColor='white'
+          thumbTintColor='rgba(1,1,1,0)'
+        >
+        </Slider>
+      {/* </> */}
+      </View>
     </TouchableOpacity>
+    </>
   )
 }
 
