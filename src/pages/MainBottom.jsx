@@ -101,7 +101,7 @@ const MainBottom = () => {
         component={NewAudioPlay}
         options={{
           title: 'List',
-          headerShown: false
+          headerShown: false,
         }}
       />
     </Tab.Navigator>
