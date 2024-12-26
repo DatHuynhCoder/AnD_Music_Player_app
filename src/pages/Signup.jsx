@@ -58,6 +58,10 @@ const SignUp = ({ navigation }) => {
           const response = await axios.post("http://" + ipAddress + ":3177" + "/register", info);
           if (response.data.Status === 'Success') {
             Alert.alert("Account registration successful, please log in!");
+            const info = {userid : response.data.userid}
+            console.log('Data sent to add-favourite-playlist:', info);
+            const favoraddresponse = await axios.post('http://' + ipAddress + ':3177/add-favourite-playlist', info);
+            console.log(favoraddresponse.data.Status);
             navigation.navigate('LoginAccount');
           }
           else {
