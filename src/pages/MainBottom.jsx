@@ -1,5 +1,5 @@
 import { StatusBar } from 'react-native';
-import React from 'react'
+import React, {useContext} from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import HomePage from './HomePage';
 import ExplorePage from './ExplorePage';
@@ -12,14 +12,23 @@ import { colors } from '../constants/color'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FloatingPlayer from '../components/FloatingPlayer';
 import { Text, View } from 'react-native';
+import { AudioContext } from '../context/NewAudioContextProvider';
 
 const Tab = createBottomTabNavigator();
 
 const MainBottom = () => {
+  const { currentList } = useContext(AudioContext)
   return (
     <>
     <StatusBar/>
-    <FloatingPlayer/>
+    {
+      currentList.length > 0
+      ?
+      <FloatingPlayer/>
+      :
+      <></>
+    }
+    
     <Tab.Navigator
       initialRouteName='HomePage'
       screenOptions={({ route }) => (
