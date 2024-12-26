@@ -36,7 +36,7 @@ const App = ({ navigation }) => {
                 headerShown: false,
               }}
             />
-            {/* <Stack.Screen name='NewAudioPlay' component={NewAudioPlay} options={{headerShown: false}}/> */}
+            <Stack.Screen name='NewAudioPlay' component={NewAudioPlay} options={{headerShown: false}}/>
           </Stack.Navigator>
         </NavigationContainer>
       </NewAudioContextProvider>
