@@ -175,8 +175,8 @@ function PlayerPage({ navigation }) {
     );
     if (addSongResponse.data.Status !== 'Success') {
       Toast.show({
-        type:'error',
-        text1: addSongResponse.data.Error || 'Failed to add song to playlist!'
+        type: 'error',
+        text1: 'Song already in your playlist ❌'
       })
       return;
     }
@@ -187,7 +187,7 @@ function PlayerPage({ navigation }) {
 
     Toast.show({
       type: 'success',
-      text1: 'Playlist created and song added successfully!'
+      text1: 'Song added successfully! ✅'
     })
     setmodalPlaylistVisible(false);
   }
@@ -510,7 +510,7 @@ function PlayerPage({ navigation }) {
               else {
                 Toast.show({
                   type: 'error',
-                  text1: 'Error ddd to favourite ❌' + res.data.Error
+                  text1: res.data.Error + ' ❌'
                 })
               }
             })
