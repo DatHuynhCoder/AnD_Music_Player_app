@@ -1,5 +1,5 @@
 import { use, useContext, useEffect, useState } from 'react';
-import { Text, View, StyleSheet, Button, TouchableOpacity, Dimensions, TouchableWithoutFeedback, ScrollView,ImageBackground, Image } from 'react-native';
+import { Text, View, StyleSheet, Button, TouchableOpacity, Dimensions, TouchableWithoutFeedback, ScrollView, ImageBackground, Image } from 'react-native';
 import { Audio } from 'expo-av';
 import Slider from '@react-native-community/slider';
 import { colors, misc_colors } from '../constants/color';
@@ -18,7 +18,7 @@ import albumIMG from '../../assets/albumIMG.jpeg'
 import { textSizes } from '../constants/demensions';
 import { UserContext } from '../context/UserContext';
 
-const {width} = Dimensions.get('window')
+const { width } = Dimensions.get('window')
 
 const map = new Map()
 map['ThuyenQuyen'] = '../../assets/ThuyenQuyen.mp3'
@@ -40,18 +40,43 @@ const songs = [
   }
 ]
 
-const SongItem = ({id, img = '../../assets/albumIMG.jpeg', title = '', isPlaying = false, duration = 0, onOptionPress, onSongPress, isPlaylist = false}) => {
-  const {currentSongid} = useContext(AudioContext)
+const SongItem = ({ id, img = '../../assets/albumIMG.jpeg', title = '', isPlaying = false, duration = 0, onOptionPress, onSongPress, isPlaylist = false, playlistid }) => {
+  const { currentSongid } = useContext(AudioContext)
+  const { rerenderCxt, setRerenderCxt } = useContext(UserContext)
   return (
     <>
-      <View style={id === currentSongid ? {flexDirection: 'row',alignSelf: 'center',width: width - 80,borderRadius: 25, backgroundColor: 'rgba(92, 145, 151, 0.27)'} : {flexDirection: 'row',alignSelf: 'center',width: width - 80,borderRadius: 25}}>
+      <View style={id === currentSongid ? { flexDirection: 'row', alignSelf: 'center', width: width - 80, borderRadius: 25, backgroundColor: 'rgba(92, 145, 151, 0.27)' } : { flexDirection: 'row', alignSelf: 'center', width: width - 80, borderRadius: 25 }}>
         <TouchableOpacity onPress={() => onSongPress()} onLongPress={() => {
-          if(isPlaylist) {
-            console.log('delete modal !')
+          if (isPlaylist) {
+            console.log(playlistid);
+            console.log(id);
+            const info = {
+              playlistid: playlistid,
+              songid: id
+            }
+            const deleteSongFromPlaylist = async () => {
+              try {
+                const response = await axios.post(`http://${ipAddress}:3177/delete-song-from-playlist`, info);
+              } catch (error) {
+                console.log('Error delete song: ', error);
+              }
+            }
+
+            const getPlaylist = async () => {
+              try {
+                const response = await axios.get('http://' + ipAddress + ':3177/get-listsongs-by-playlistid?playlistid=' + playlistid);
+                setCurrentList(response.data)
+              } catch (error) {
+                console.log('Error get playlist: ', error);
+              }
+            }
+            deleteSongFromPlaylist();
+            getPlaylist();
+            setRerenderCxt(!rerenderCxt);
           }
         }}>
-          <View style={{flexDirection: 'row',alignItems: 'center', width: 263,}}>
-            <Image source={{uri: 'http://' + ipAddress + ':3177' + img}} style={{height: 50, width: 50, borderRadius: 25}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', width: 263, }}>
+            <Image source={{ uri: 'http://' + ipAddress + ':3177' + img }} style={{ height: 50, width: 50, borderRadius: 25 }}>
 
             </Image>
             {/* <View style={{height: 50,flexBasis: 50,backgroundColor: colors.emphasis,justifyContent: 'center',alignItems: 'center',borderRadius: 25,}}>
@@ -59,30 +84,30 @@ const SongItem = ({id, img = '../../assets/albumIMG.jpeg', title = '', isPlaying
                 {title[0]}
               </Text>
             </View> */}
-            <View style={{width: width - 180,paddingLeft: 10,}}>
-              <Text numberOfLines={1} style={{fontSize: 16,color: colors.textPrimary}}>{title}</Text>
-              <Text style={{fontSize: 14,color: misc_colors.FONT_LIGHT}}>
+            <View style={{ width: width - 180, paddingLeft: 10, }}>
+              <Text numberOfLines={1} style={{ fontSize: 16, color: colors.textPrimary }}>{title}</Text>
+              <Text style={{ fontSize: 14, color: misc_colors.FONT_LIGHT }}>
                 {duration}
               </Text>
             </View>
           </View>
         </TouchableOpacity>
-        <View style={{flexBasis: 50,height: 50,alignItems: 'center',justifyContent: 'center',}}>
-          <Entypo 
-            name="dots-three-vertical" 
-            size={20} 
+        <View style={{ flexBasis: 50, height: 50, alignItems: 'center', justifyContent: 'center', }}>
+          <Entypo
+            name="dots-three-vertical"
+            size={20}
             color={misc_colors.FONT_MEDIUM}
             onPress={onOptionPress}
-            style={{padding: 10}}
+            style={{ padding: 10 }}
           />
         </View>
       </View>
-      <View style={{width: width - 80,backgroundColor: '#333',opacity: 0.3,height: 0.5,alignSelf: 'center',marginTop: 10,marginBottom: 10}}></View>
+      <View style={{ width: width - 80, backgroundColor: '#333', opacity: 0.3, height: 0.5, alignSelf: 'center', marginTop: 10, marginBottom: 10 }}></View>
     </>
   )
 }
 
-export default function NewAudioPlay({navigation, route}) {
+export default function NewAudioPlay({ navigation, route }) {
   const {
     currentList, setCurrentList,
     listLength, setListLength,
@@ -106,7 +131,7 @@ export default function NewAudioPlay({navigation, route}) {
     handlePressForward,
     loadSound
   } = useContext(AudioContext)
-  const {userid} = useContext(UserContext)
+  const { userid } = useContext(UserContext)
   const [isFollowed, setIsFollowed] = useState(false) // for author list song
   const authorId = route?.params?.authorId // for author list song
   const songColectionURL = route?.params?.songColectionURL // http://ip:port/image/album/... or http://ip:port/image/author/...
@@ -116,20 +141,22 @@ export default function NewAudioPlay({navigation, route}) {
   const songColectionName = route?.params?.songColectionName
   const authorDescription = route?.params?.authorDescription
   const isPlaylist = route?.params?.isPlaylist
-  
+  const playlistid = route?.params?.playlistid;
+
+
   const convertTime = milis => {
     let second = milis % 60
     let minute = Math.floor(milis / 60)
-    if(minute == 0) {
-      if(second < 10) {
+    if (minute == 0) {
+      if (second < 10) {
         return `00:0${second}`
       }
       else {
         return `00:${second}`
       }
     }
-    else if(minute > 0 && minute < 10) {
-      if(second < 10) {
+    else if (minute > 0 && minute < 10) {
+      if (second < 10) {
         return `0${minute}:0${second}`
       }
       else {
@@ -137,7 +164,7 @@ export default function NewAudioPlay({navigation, route}) {
       }
     }
     else {
-      if(second < 10) {
+      if (second < 10) {
         return `${minute}:0${second}`
       }
       else {
@@ -146,16 +173,16 @@ export default function NewAudioPlay({navigation, route}) {
     }
   }
   const handle_Follow_UnFolllow = () => {
-    if(isFollowed === false) {
+    if (isFollowed === false) {
       axios.post('http://' + ipAddress + ':3177/follow-author', {
         authorid: authorId,
         userid: userid
       }).then(res => {
-        if(res.data.Status === 'Existed') {
+        if (res.data.Status === 'Existed') {
           alert('You have followed this author')
           setIsFollowed(true)
         }
-        else if(res.data.Status === 'Success') {
+        else if (res.data.Status === 'Success') {
           alert('Followed')
           setIsFollowed(true)
         }
@@ -164,16 +191,16 @@ export default function NewAudioPlay({navigation, route}) {
         }
       })
     }
-    else if(isFollowed === true) {
+    else if (isFollowed === true) {
       axios.post('http://' + ipAddress + ':3177/unfollow-author', {
         authorid: authorId,
         userid: userid
       }).then(res => {
-        if(res.data.Status === 'NotExisted') {
+        if (res.data.Status === 'NotExisted') {
           alert('You have unfollowed this author')
           setIsFollowed(false)
         }
-        else if(res.data.Status === 'Success') {
+        else if (res.data.Status === 'Success') {
           alert('Unfollowed')
           setIsFollowed(false)
         }
@@ -184,13 +211,13 @@ export default function NewAudioPlay({navigation, route}) {
     }
   }
   useEffect(() => {
-    if(type === 'author') {
+    if (type === 'author') {
       console.log('its author')
       axios.get("http://" + ipAddress + ":3177" + "/check-is-followed?authorid=" + authorId + "&userid=" + userid).then(res => {
-        if(res.data.Status === 'Existed') {
+        if (res.data.Status === 'Existed') {
           setIsFollowed(true)
         }
-        else if(res.data.Status === 'NotExisted') {
+        else if (res.data.Status === 'NotExisted') {
           setIsFollowed(false)
         }
         else {
@@ -200,15 +227,16 @@ export default function NewAudioPlay({navigation, route}) {
     }
   }, [currentList])
   return (
-    <View style={{backgroundColor: colors.background, flex: 1, paddingBottom: 130}}>
-      <TouchableOpacity style={{padding: 10}}>
+    <View style={{ backgroundColor: colors.background, flex: 1, paddingBottom: 130 }}>
+      <TouchableOpacity style={{ padding: 10 }}>
         <Ionicons name="caret-back" size={40} color={colors.iconPrimary} onPress={() => {
           navigation.goBack()
-        }}/>
+        }} />
       </TouchableOpacity>
-      <View style={{backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center', paddingTop: 30}}>
-        <View 
-          style={{borderWidth: 1,
+      <View style={{ backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center', paddingTop: 30 }}>
+        <View
+          style={{
+            borderWidth: 1,
             borderColor: '#ccc',
             borderRadius: 20,
             overflow: 'hidden',
@@ -224,7 +252,7 @@ export default function NewAudioPlay({navigation, route}) {
           }}>
             <ImageBackground
               // source={albumIMG}
-              source={songColectionURL !== undefined ? {uri: songColectionURL} : albumIMG}
+              source={songColectionURL !== undefined ? { uri: songColectionURL } : albumIMG}
               style={{
                 flex: 1,
                 justifyContent: 'center',
@@ -233,28 +261,28 @@ export default function NewAudioPlay({navigation, route}) {
             ></ImageBackground>
           </View>
         </View>
-        <View style={{display: 'flex', marginBottom: 30, justifyContent: 'center', alignItems: 'center'}}>
-          <Text style={{color: colors.textPrimary, fontSize: textSizes.md, fontWeight: 'bold'}}>{songColectionName === undefined ? 'No album is loaded' : songColectionName}</Text>
+        <View style={{ display: 'flex', marginBottom: 30, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ color: colors.textPrimary, fontSize: textSizes.md, fontWeight: 'bold' }}>{songColectionName === undefined ? 'No album is loaded' : songColectionName}</Text>
           {
-            type === 'author' 
-          ? 
-            <TouchableOpacity style={styles.followbutton(isFollowed)} onPress={() => {
-              handle_Follow_UnFolllow()
-            }}>
-              <Text style={{textAlign: 'center', color: 'white', textTransform: 'uppercase', fontWeight: 'bold'}}>{isFollowed === false ? 'Follow' : 'Followed'}</Text>
-            </TouchableOpacity>
-          :
-            <></>
+            type === 'author'
+              ?
+              <TouchableOpacity style={styles.followbutton(isFollowed)} onPress={() => {
+                handle_Follow_UnFolllow()
+              }}>
+                <Text style={{ textAlign: 'center', color: 'white', textTransform: 'uppercase', fontWeight: 'bold' }}>{isFollowed === false ? 'Follow' : 'Followed'}</Text>
+              </TouchableOpacity>
+              :
+              <></>
           }
           {
             type === 'author'
-            ?
-            <Text style={{color: colors.textPrimary, padding: 15, backgroundColor:' rgba(92, 145, 151, 0.27)', borderRadius: 5}}>
-              {authorDescription}
-            </Text>
-            :
-            <Text>
-            </Text>
+              ?
+              <Text style={{ color: colors.textPrimary, padding: 15, backgroundColor: ' rgba(92, 145, 151, 0.27)', borderRadius: 5 }}>
+                {authorDescription}
+              </Text>
+              :
+              <Text>
+              </Text>
           }
         </View>
       </View>
@@ -277,17 +305,18 @@ export default function NewAudioPlay({navigation, route}) {
                 setCurrentSinger(song.authorname)
                 console.log('current index: ', currentAudioIndex)
                 setCurrentAudioIndex(index)
-                loadSound({uri: "http://" + ipAddress + ":3177" + song.songuri})
+                loadSound({ uri: "http://" + ipAddress + ":3177" + song.songuri })
               }}
               isPlaylist={isPlaylist !== undefined ? isPlaylist : false}
-              >
+              playlistid={playlistid !== undefined ? playlistid : 0}
+            >
 
             </SongItem>
           })
         }
       </ScrollView>
-    {/* </View> */}
-    
+      {/* </View> */}
+
     </View>
   );
 }

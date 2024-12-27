@@ -236,7 +236,7 @@ const Library = () => {
     if (selectedOption === 2) {
       getAuthorFollowed()
     }
-  }, [rerender, selectedOption])
+  }, [rerender, selectedOption, rerenderCxt])
 
   const libraryOptionsData = [
     {
@@ -331,9 +331,9 @@ const Library = () => {
                 />
               </Text>
 
-              <TouchableOpacity onPress={() => navigation.navigate('LoginAccount')} style={{flexDirection:'row', justifyContent: 'center', gap: 7, backgroundColor:'#ab0d0a', padding: 5, borderRadius: 15}}>
+              <TouchableOpacity onPress={() => navigation.navigate('LoginAccount')} style={{ flexDirection: 'row', justifyContent: 'center', gap: 7, backgroundColor: '#ab0d0a', padding: 5, borderRadius: 15 }}>
                 <AntDesign name="logout" size={24} color="white" />
-                <Text style={{color: colors.textPrimary, fontWeight: 'bold'}}>Log out</Text>
+                <Text style={{ color: colors.textPrimary, fontWeight: 'bold' }}>Log out</Text>
               </TouchableOpacity>
             </View>
 
@@ -379,17 +379,19 @@ const Library = () => {
                             axios.get('http://' + ipAddress + ':3177/get-listsongs-by-playlistid?playlistid=' + item.playlistid).then(res => {
                               setCurrentList(res.data);
                               if (item.playlistimg !== '') {
-                                navigation.navigate('NewAudioPlay', { 
-                                  songColectionURL: 'http://' + ipAddress + ':3177' + item.playlistimg, 
+                                navigation.navigate('NewAudioPlay', {
+                                  songColectionURL: 'http://' + ipAddress + ':3177' + item.playlistimg,
                                   songColectionName: item.playlistname,
-                                  isPlaylist: true
+                                  isPlaylist: true,
+                                  playlistid: item.playlistid
                                 })
                               }
                               else {
-                                navigation.navigate('NewAudioPlay', { 
-                                  songColectionURL: 'http://' + ipAddress + ':3177/image/album/defaultplaylist.png', 
+                                navigation.navigate('NewAudioPlay', {
+                                  songColectionURL: 'http://' + ipAddress + ':3177/image/album/defaultplaylist.png',
                                   songColectionName: item.playlistname,
-                                  isPlaylist: true
+                                  isPlaylist: true,
+                                  playlistid: item.playlistid
                                 })
                               }
                             })
@@ -411,7 +413,7 @@ const Library = () => {
                                 setModalPlaylistname(item.playlistname);
                                 setShowModalUpandDel(true);
                               }}
-                              style={{ alignSelf: 'center',flex: 2, textAlign:'right'}}>
+                              style={{ alignSelf: 'center', flex: 2, textAlign: 'right' }}>
                               <Entypo name="dots-three-vertical" size={24} color={colors.iconPrimary} />
                             </TouchableOpacity>
                           }
@@ -500,7 +502,7 @@ const Library = () => {
                       </View>
                     </Modal>
 
-                    
+
                   </>
                   :
                   <>
