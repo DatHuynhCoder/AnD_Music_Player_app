@@ -40,12 +40,16 @@ const songs = [
   }
 ]
 
-const SongItem = ({id, img = '../../assets/albumIMG.jpeg', title = '', isPlaying = false, duration = 0, onOptionPress, onSongPress, isActive = false}) => {
+const SongItem = ({id, img = '../../assets/albumIMG.jpeg', title = '', isPlaying = false, duration = 0, onOptionPress, onSongPress, isPlaylist = false}) => {
   const {currentSongid} = useContext(AudioContext)
   return (
     <>
       <View style={id === currentSongid ? {flexDirection: 'row',alignSelf: 'center',width: width - 80,borderRadius: 25, backgroundColor: 'rgba(92, 145, 151, 0.27)'} : {flexDirection: 'row',alignSelf: 'center',width: width - 80,borderRadius: 25}}>
-        <TouchableWithoutFeedback onPress={() => onSongPress()}>
+        <TouchableOpacity onPress={() => onSongPress()} onLongPress={() => {
+          if(isPlaylist) {
+            console.log('delete modal !')
+          }
+        }}>
           <View style={{flexDirection: 'row',alignItems: 'center', width: 263,}}>
             <Image source={{uri: 'http://' + ipAddress + ':3177' + img}} style={{height: 50, width: 50, borderRadius: 25}}>
 
@@ -62,7 +66,7 @@ const SongItem = ({id, img = '../../assets/albumIMG.jpeg', title = '', isPlaying
               </Text>
             </View>
           </View>
-        </TouchableWithoutFeedback>
+        </TouchableOpacity>
         <View style={{flexBasis: 50,height: 50,alignItems: 'center',justifyContent: 'center',}}>
           <Entypo 
             name="dots-three-vertical" 
@@ -111,6 +115,7 @@ export default function NewAudioPlay({navigation, route}) {
   //check link with author:  ["http:", "", "192.168.137.1:3177", "image", "author", "sontungmtp.png"]
   const songColectionName = route?.params?.songColectionName
   const authorDescription = route?.params?.authorDescription
+  const isPlaylist = route?.params?.isPlaylist
   
   const convertTime = milis => {
     let second = milis % 60
@@ -273,7 +278,9 @@ export default function NewAudioPlay({navigation, route}) {
                 console.log('current index: ', currentAudioIndex)
                 setCurrentAudioIndex(index)
                 loadSound({uri: "http://" + ipAddress + ":3177" + song.songuri})
-              }}>
+              }}
+              isPlaylist={isPlaylist !== undefined ? isPlaylist : false}
+              >
 
             </SongItem>
           })
