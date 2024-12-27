@@ -207,6 +207,8 @@ const Library = () => {
       }
     }
     changeUsername();
+    setRerender(!rerender);
+    setRerenderCxt(!rerenderCxt);
   }
 
   const handleUpdatePlaylist = () => {
@@ -227,6 +229,8 @@ const Library = () => {
       }
     }
     changePlaylistname();
+    setRerender(!rerender);
+    setRerenderCxt(!rerenderCxt);
   }
 
   const handleDeletePlaylist = () => {
