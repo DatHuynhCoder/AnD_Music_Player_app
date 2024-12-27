@@ -331,7 +331,10 @@ const Library = () => {
                 />
               </Text>
 
-              <TouchableOpacity onPress={() => navigation.navigate('LoginAccount')} style={{flexDirection:'row', justifyContent: 'center', gap: 7, backgroundColor:'#ab0d0a', padding: 5, borderRadius: 15}}>
+              <TouchableOpacity onPress={() => {
+                  navigation.navigate('LoginAccount')
+                }} 
+                style={{flexDirection:'row', justifyContent: 'center', gap: 7, backgroundColor:'#ab0d0a', padding: 5, borderRadius: 15}}>
                 <AntDesign name="logout" size={24} color="white" />
                 <Text style={{color: colors.textPrimary, fontWeight: 'bold'}}>Log out</Text>
               </TouchableOpacity>
