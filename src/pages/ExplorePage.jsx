@@ -224,6 +224,7 @@ const ExplorePage = () => {
                   authorId={item.authorid}
                   authorName={item.authorname}
                   authorURL={item.authoravatar}
+                  authorDescription={item.aboutauthor}
                   musicData={musicData}
                 />
               }

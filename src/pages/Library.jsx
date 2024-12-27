@@ -251,6 +251,40 @@ const Library = () => {
 
   return (
     <>
+      {/* username modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showModalUsername}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setShowModalUsername(!showModalUsername);
+        }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+
+            <AntDesign
+              style={{ alignSelf: 'flex-end' }}
+              name="close"
+              size={iconSizes.lg}
+              color="black"
+              onPress={() => setShowModalUsername(!showModalUsername)}
+            />
+            <Text style={styles.modalText}>New Username</Text>
+            <TextInput
+              placeholder='Enter new username'
+              value={username}
+              onChangeText={(txt) => setUsername(txt)}
+              style={styles.enter_username}
+            />
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => handleUpdateUserName()}>
+              <Text style={styles.textStyle}>Update</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
       {
         isLoaded === false
           ?
@@ -458,40 +492,7 @@ const Library = () => {
                       </View>
                     </Modal>
 
-                    {/* username modal */}
-                    <Modal
-                      animationType="slide"
-                      transparent={true}
-                      visible={showModalUsername}
-                      onRequestClose={() => {
-                        Alert.alert('Modal has been closed.');
-                        setShowModalUsername(!showModalUsername);
-                      }}>
-                      <View style={styles.centeredView}>
-                        <View style={styles.modalView}>
-
-                          <AntDesign
-                            style={{ alignSelf: 'flex-end' }}
-                            name="close"
-                            size={iconSizes.lg}
-                            color="black"
-                            onPress={() => setShowModalUsername(!showModalUsername)}
-                          />
-                          <Text style={styles.modalText}>New Username</Text>
-                          <TextInput
-                            placeholder='Enter new username'
-                            value={username}
-                            onChangeText={(txt) => setUsername(txt)}
-                            style={styles.enter_username}
-                          />
-                          <Pressable
-                            style={[styles.button, styles.buttonClose]}
-                            onPress={() => handleUpdateUserName()}>
-                            <Text style={styles.textStyle}>Update</Text>
-                          </Pressable>
-                        </View>
-                      </View>
-                    </Modal>
+                    
                   </>
                   :
                   <>
@@ -502,6 +503,7 @@ const Library = () => {
                           key={index}
                           authorId={item.authorid}
                           authorName={item.authorname}
+                          authorDescription={item.aboutauthor}
                           authorURL={item.authoravatar}
                         />
                       }

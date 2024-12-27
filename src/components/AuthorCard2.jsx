@@ -12,7 +12,7 @@ import { AudioContext } from '../context/NewAudioContextProvider'
 import axios from 'axios'
 import { useNavigation } from '@react-navigation/native'
 
-const AuthorCard2 = ({ authorId, authorName, authorURL }) => {
+const AuthorCard2 = ({ authorId, authorName, authorDescription = 'Something about author', authorURL }) => {
   const {
     currentList, setCurrentList,
     listLength, setListLength,
@@ -51,7 +51,8 @@ const AuthorCard2 = ({ authorId, authorName, authorURL }) => {
                 navigation.navigate('NewAudioPlay', {
                   songColectionURL: 'http://' + ipAddress + ':3177' + authorURL,
                   songColectionName: authorName,
-                  authorId: authorId
+                  authorId: authorId,
+                  authorDescription: authorDescription
                 })
               }
               else {
@@ -68,14 +69,17 @@ const AuthorCard2 = ({ authorId, authorName, authorURL }) => {
 
           <View style={styles.authorSubContainer}>
             <Text style={styles.authorNameTxt}>{authorName}</Text>
-            <Text style={styles.authortxt}>Somethinng about author</Text>
+            <Text numberOfLines={1} ellipsizeMode='tail' style={styles.authortxt}>{authorDescription}</Text>
+          </View>
+          <View>
+            <AntDesign
+              name='right'
+              color={colors.iconPrimary}
+              size={iconSizes.md}
+            />
           </View>
         </View>
-        <AntDesign
-          name='right'
-          color={colors.iconPrimary}
-          size={iconSizes.md}
-        />
+        
       </TouchableOpacity>
     </View>
   )
@@ -100,6 +104,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   authorSubContainer: {
+    flex: 1,
     flexDirection: 'column',
   },
   authorNameTxt: {

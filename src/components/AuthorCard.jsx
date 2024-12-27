@@ -12,7 +12,7 @@ import { AudioContext } from '../context/NewAudioContextProvider'
 import axios from 'axios'
 import { useNavigation } from '@react-navigation/native'
 
-const AuthorCard = ({ authorId, authorName, authorURL, musicData }) => {
+const AuthorCard = ({ authorId, authorName, authorURL, authorDescription = 'Something about this author', musicData }) => {
   const {
     currentList, setCurrentList,
     listLength, setListLength,
@@ -54,7 +54,8 @@ const AuthorCard = ({ authorId, authorName, authorURL, musicData }) => {
               navigation.navigate('NewAudioPlay', {
                 songColectionURL: 'http://' + ipAddress + ':3177' + authorURL,
                 songColectionName: authorName,
-                authorId: authorId
+                authorId: authorId,
+                authorDescription: authorDescription
               })
             }
             else {
@@ -71,14 +72,17 @@ const AuthorCard = ({ authorId, authorName, authorURL, musicData }) => {
 
           <View style={styles.authorSubContainer}>
             <Text style={styles.authorNameTxt}>{authorName}</Text>
-            <Text style={styles.authortxt}>Somethinng about author</Text>
+            <Text numberOfLines={1} ellipsizeMode='tail' style={styles.authortxt}>{authorDescription}</Text>
+          </View>
+          <View>
+            <AntDesign
+              name='right'
+              color={colors.iconPrimary}
+              size={iconSizes.md}
+            />
           </View>
         </View>
-        <AntDesign
-          name='right'
-          color={colors.iconPrimary}
-          size={iconSizes.md}
-        />
+        
       </TouchableOpacity>
       <View style={styles.authorSongsContainer}>
         {/* <ScrollView> */}
@@ -120,11 +124,13 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   authorContainer: {
+    flex: 1,
     flexDirection: 'row',
     gap: 10,
     alignItems: 'center'
   },
   authorSubContainer: {
+    flex: 1,
     flexDirection: 'column',
   },
   authorNameTxt: {

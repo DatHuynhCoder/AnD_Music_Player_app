@@ -110,6 +110,7 @@ export default function NewAudioPlay({navigation, route}) {
   //check link with album:  ["http:", "", "192.168.137.1:3177", "image", "album", "thongdongmahat.jpg"]
   //check link with author:  ["http:", "", "192.168.137.1:3177", "image", "author", "sontungmtp.png"]
   const songColectionName = route?.params?.songColectionName
+  const authorDescription = route?.params?.authorDescription
   
   const convertTime = milis => {
     let second = milis % 60
@@ -239,6 +240,16 @@ export default function NewAudioPlay({navigation, route}) {
             </TouchableOpacity>
           :
             <></>
+          }
+          {
+            type === 'author'
+            ?
+            <Text style={{color: colors.textPrimary, padding: 15, backgroundColor:' rgba(92, 145, 151, 0.27)', borderRadius: 5}}>
+              {authorDescription}
+            </Text>
+            :
+            <Text>
+            </Text>
           }
         </View>
       </View>
