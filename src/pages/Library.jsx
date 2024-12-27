@@ -7,7 +7,6 @@ import {
   Image,
   Modal,
   Pressable,
-  Alert,
   TextInput,
   ScrollView,
   ActivityIndicator
@@ -26,6 +25,7 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { UserContext } from '../context/UserContext'
 import { AudioContext } from '../context/NewAudioContextProvider'
 import axios from 'axios'
+import Toast from 'react-native-toast-message';
 import { DefaultPlaylistImg } from '../../assets/img/AnD_logo.png'
 import SongCard2 from '../components/SongCard2'
 import AuthorCard2 from '../components/AuthorCard2';
@@ -34,9 +34,9 @@ import Entypo from '@expo/vector-icons/Entypo';
 import {
   useNavigation
 } from '@react-navigation/native';
+import { Audio } from 'expo-av';
 
 const Library = () => {
-  const { currentList } = useContext(AudioContext)
   const {
     userid,
     setUserid,
@@ -47,7 +47,22 @@ const Library = () => {
     setRerenderCxt,
     rerenderCxt
   } = useContext(UserContext)
-  const { setCurrentList } = useContext(AudioContext)
+  const { 
+    currentList, setCurrentList,
+    listLength, setListLength,
+    currentSongid, setCurrentSongid,
+    currentSongimg, setCurrentSongimg,
+    currentName, setCurrentName,
+    currentSinger, setCurrentSinger,
+    playback, setPlayback,
+    status, setStatus,
+    sound, setSound,
+    currentAudioId, setCurrentAudioId,
+    isPlaying, setIsPlaying,
+    currentAudioIndex, setCurrentAudioIndex,
+    playbackPosition, setPlaybackPosition,
+    playbackDuration, setPlaybackDuration,
+  } = useContext(AudioContext)
   const [rerender, setRerender] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
   const navigation = useNavigation();
@@ -102,7 +117,10 @@ const Library = () => {
 
   const handleCreatePlaylist = (playlistName) => {
     if (playlistName === '') {
-      Alert.alert('Please enter playlist name!')
+      Toast.show({
+        type: 'error',
+        text1: 'Please enter playlist name ✍️',
+      });
     }
     else {
       const info = {
@@ -114,12 +132,18 @@ const Library = () => {
         try {
           const response = await axios.post('http://' + ipAddress + ':3177/add-new-playlist', info);
           if (response.data.Status === 'Success') {
-            Alert.alert('Create playlist successfully!');
+            Toast.show({
+              type: 'success',
+              text1: 'Create playlist successfully ✅',
+            });
             setmodalPlaylistVisible(!modalPlaylistVisible);
             setIsLoaded(true)
           }
           else {
-            Alert.alert(response.data.Error);
+            Toast.show({
+              type: 'error',
+              text1: 'Error',
+            });
           }
         }
         catch (error) {
@@ -171,7 +195,10 @@ const Library = () => {
         useravatar: newUserAvatar
       }
       const response = await axios.put('http://' + ipAddress + ':3177/update-useravatar', info);
-      Alert.alert('Update username successfully');
+      Toast.show({
+        type: 'success',
+        text1: 'Update useravatar successfully ✅',
+      });
     } catch (error) {
       console.log('Cannot update user: ', error);
     }
@@ -185,7 +212,10 @@ const Library = () => {
           username: username
         }
         const response = await axios.put('http://' + ipAddress + ':3177/update-username', info);
-        Alert.alert('Update username successfully');
+        Toast.show({
+          type: 'success',
+          text1: 'Update useravatar successfully ✅',
+        });
         setShowModalUsername(!showModalUsername);
       } catch (error) {
         console.log('Cannot update user: ', error);
@@ -202,7 +232,10 @@ const Library = () => {
           playlistname: modalPlaylistname
         }
         const response = await axios.put('http://' + ipAddress + ':3177/update-playlistname', info);
-        Alert.alert('Update playlistname successfully');
+        Toast.show({
+          type: 'success',
+          text1: 'Update playlistname successfully ✅',
+        });
         setShowModalUpandDel(!showModalUpandDel);
       } catch (error) {
         console.log('Cannot update Playlist: ', error);
@@ -215,7 +248,10 @@ const Library = () => {
     const deletePlaylist = async () => {
       try {
         const response = await axios.delete('http://' + ipAddress + ':3177/delete-playlist-by-id?playlistid=' + modalPlaylistid);
-        Alert.alert('Delete playlist successfully');
+        Toast.show({
+          type: 'success',
+          text1: 'Delete playlist successfully ✅',
+        });
         setShowModalUpandDel(!showModalUpandDel);
       } catch (error) {
         console.log('Cannot delete playlist: ', error);
@@ -236,7 +272,7 @@ const Library = () => {
     if (selectedOption === 2) {
       getAuthorFollowed()
     }
-  }, [rerender, selectedOption])
+  }, [rerender, selectedOption, rerenderCxt])
 
   const libraryOptionsData = [
     {
@@ -257,7 +293,6 @@ const Library = () => {
         transparent={true}
         visible={showModalUsername}
         onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
           setShowModalUsername(!showModalUsername);
         }}>
         <View style={styles.centeredView}>
@@ -332,11 +367,28 @@ const Library = () => {
               </Text>
 
               <TouchableOpacity onPress={() => {
+                  async function stopAll() {
+                    await playback.stopAsync()
+                  }
+                  stopAll()
+                  setCurrentList([])
+                  setListLength(0)
+                  setCurrentSongid(0)
+                  setCurrentSongimg('')
+                  setCurrentName('')
+                  setCurrentSinger('')
+                  setPlayback(new Audio.Sound())
+                  setStatus({isLoaded: false, isPlaying: false, positionMillis: 0, durationMillis: 0})
+                  setCurrentAudioId(0)
+                  setIsPlaying(false)
+                  setCurrentAudioIndex(0)
+                  setPlaybackPosition(null)
+                  setPlaybackDuration(null)
                   navigation.navigate('LoginAccount')
                 }} 
                 style={{flexDirection:'row', justifyContent: 'center', gap: 7, backgroundColor:'#ab0d0a', padding: 5, borderRadius: 15}}>
                 <AntDesign name="logout" size={24} color="white" />
-                <Text style={{color: colors.textPrimary, fontWeight: 'bold'}}>Log out</Text>
+                <Text style={{ color: colors.textPrimary, fontWeight: 'bold' }}>Log out</Text>
               </TouchableOpacity>
             </View>
 
@@ -382,17 +434,19 @@ const Library = () => {
                             axios.get('http://' + ipAddress + ':3177/get-listsongs-by-playlistid?playlistid=' + item.playlistid).then(res => {
                               setCurrentList(res.data);
                               if (item.playlistimg !== '') {
-                                navigation.navigate('NewAudioPlay', { 
-                                  songColectionURL: 'http://' + ipAddress + ':3177' + item.playlistimg, 
+                                navigation.navigate('NewAudioPlay', {
+                                  songColectionURL: 'http://' + ipAddress + ':3177' + item.playlistimg,
                                   songColectionName: item.playlistname,
-                                  isPlaylist: true
+                                  isPlaylist: true,
+                                  playlistid: item.playlistid
                                 })
                               }
                               else {
-                                navigation.navigate('NewAudioPlay', { 
-                                  songColectionURL: 'http://' + ipAddress + ':3177/image/album/defaultplaylist.png', 
+                                navigation.navigate('NewAudioPlay', {
+                                  songColectionURL: 'http://' + ipAddress + ':3177/image/album/defaultplaylist.png',
                                   songColectionName: item.playlistname,
-                                  isPlaylist: true
+                                  isPlaylist: true,
+                                  playlistid: item.playlistid
                                 })
                               }
                             })
@@ -414,7 +468,7 @@ const Library = () => {
                                 setModalPlaylistname(item.playlistname);
                                 setShowModalUpandDel(true);
                               }}
-                              style={{ alignSelf: 'center',flex: 2, textAlign:'right'}}>
+                              style={{ alignSelf: 'center', flex: 2, textAlign: 'right' }}>
                               <Entypo name="dots-three-vertical" size={24} color={colors.iconPrimary} />
                             </TouchableOpacity>
                           }
@@ -430,7 +484,6 @@ const Library = () => {
                       transparent={true}
                       visible={showModalUpandDel}
                       onRequestClose={() => {
-                        Alert.alert('Modal has been closed.');
                         setShowModalUpandDel(!showModalUpandDel);
                       }}>
                       <View style={styles.centeredView}>
@@ -474,7 +527,6 @@ const Library = () => {
                       transparent={true}
                       visible={modalPlaylistVisible}
                       onRequestClose={() => {
-                        Alert.alert('Modal has been closed.');
                         setmodalPlaylistVisible(!modalPlaylistVisible);
                       }}>
                       <View style={styles.centeredView}>
@@ -503,7 +555,7 @@ const Library = () => {
                       </View>
                     </Modal>
 
-                    
+
                   </>
                   :
                   <>

@@ -17,12 +17,12 @@ import { AudioContext } from '../context/NewAudioContextProvider';
 const Tab = createBottomTabNavigator();
 
 const MainBottom = () => {
-  const { currentList } = useContext(AudioContext)
+  const { currentList, status } = useContext(AudioContext)
   return (
     <>
     <StatusBar/>
     {
-      currentList.length > 0
+      status.isLoaded === true
       ?
       <FloatingPlayer/>
       :

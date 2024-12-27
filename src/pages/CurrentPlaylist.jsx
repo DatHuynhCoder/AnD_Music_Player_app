@@ -1,5 +1,5 @@
 import { use, useContext, useEffect, useState } from 'react';
-import { Text, View, StyleSheet, Button, TouchableOpacity, Dimensions, TouchableWithoutFeedback, ScrollView,ImageBackground, Image } from 'react-native';
+import { Text, View, StyleSheet, Button, TouchableOpacity, Dimensions, TouchableWithoutFeedback, ScrollView, ImageBackground, Image } from 'react-native';
 import { Audio } from 'expo-av';
 import Slider from '@react-native-community/slider';
 import { colors, misc_colors } from '../constants/color';
@@ -16,8 +16,9 @@ import PlayerButton from '../components/PlayerButton';
 import albumIMG from '../../assets/albumIMG.jpeg'
 import { textSizes } from '../constants/demensions';
 import { UserContext } from '../context/UserContext';
+import Toast from 'react-native-toast-message';
 
-const {width} = Dimensions.get('window')
+const { width } = Dimensions.get('window')
 
 const map = new Map()
 map['ThuyenQuyen'] = '../../assets/ThuyenQuyen.mp3'
@@ -39,38 +40,38 @@ const songs = [
   }
 ]
 
-const SongItem = ({id, img = '../../assets/albumIMG.jpeg', title = '', isPlaying = false, duration = 0, onOptionPress, onSongPress, isActive = false}) => {
-  const {currentSongid} = useContext(AudioContext)
+const SongItem = ({ id, img = '../../assets/albumIMG.jpeg', title = '', isPlaying = false, duration = 0, onOptionPress, onSongPress, isActive = false }) => {
+  const { currentSongid } = useContext(AudioContext)
   return (
     <>
-      <View style={id === currentSongid ? {flexDirection: 'row',alignSelf: 'center',width: width - 80,borderRadius: 25, backgroundColor: 'rgba(92, 145, 151, 0.27)'} : {flexDirection: 'row',alignSelf: 'center',width: width - 80,borderRadius: 25}}>
+      <View style={id === currentSongid ? { flexDirection: 'row', alignSelf: 'center', width: width - 80, borderRadius: 25, backgroundColor: 'rgba(92, 145, 151, 0.27)' } : { flexDirection: 'row', alignSelf: 'center', width: width - 80, borderRadius: 25 }}>
         <TouchableWithoutFeedback onPress={() => onSongPress()}>
-          <View style={{flexDirection: 'row',alignItems: 'center', width: 263,}}>
-            <Image source={{uri: 'http://' + ipAddress + ':3177' + img}} style={{height: 50, width: 50, borderRadius: 25}}></Image>
-            <View style={{width: width - 180,paddingLeft: 10,}}>
-              <Text numberOfLines={1} style={{fontSize: 16,color: colors.textPrimary}}>{title}</Text>
-              <Text style={{fontSize: 14,color: misc_colors.FONT_LIGHT}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', width: 263, }}>
+            <Image source={{ uri: 'http://' + ipAddress + ':3177' + img }} style={{ height: 50, width: 50, borderRadius: 25 }}></Image>
+            <View style={{ width: width - 180, paddingLeft: 10, }}>
+              <Text numberOfLines={1} style={{ fontSize: 16, color: colors.textPrimary }}>{title}</Text>
+              <Text style={{ fontSize: 14, color: misc_colors.FONT_LIGHT }}>
                 {duration}
               </Text>
             </View>
           </View>
         </TouchableWithoutFeedback>
-        <View style={{flexBasis: 50,height: 50,alignItems: 'center',justifyContent: 'center',}}>
-          <Entypo 
-            name="dots-three-vertical" 
-            size={20} 
+        <View style={{ flexBasis: 50, height: 50, alignItems: 'center', justifyContent: 'center', }}>
+          <Entypo
+            name="dots-three-vertical"
+            size={20}
             color={misc_colors.FONT_MEDIUM}
             onPress={onOptionPress}
-            style={{padding: 10}}
+            style={{ padding: 10 }}
           />
         </View>
       </View>
-      <View style={{width: width - 80,backgroundColor: '#333',opacity: 0.3,height: 0.5,alignSelf: 'center',marginTop: 10,marginBottom: 10}}></View>
+      <View style={{ width: width - 80, backgroundColor: '#333', opacity: 0.3, height: 0.5, alignSelf: 'center', marginTop: 10, marginBottom: 10 }}></View>
     </>
   )
 }
 
-export default function CurrentPlaylist({route}) {
+export default function CurrentPlaylist({ route }) {
   const {
     currentList, setCurrentList,
     listLength, setListLength,
@@ -94,23 +95,23 @@ export default function CurrentPlaylist({route}) {
     handlePressForward,
     loadSound
   } = useContext(AudioContext)
-  const {userid, rerenderCxt} = useContext(UserContext)
+  const { userid, rerenderCxt } = useContext(UserContext)
   const [isFollowed, setIsFollowed] = useState(false) // for author list song
   const [songinfo, setSonginfo] = useState({})
   const [favouriteNum, setFavouriteNum] = useState(0)
   const convertTime = milis => {
     let second = milis % 60
     let minute = Math.floor(milis / 60)
-    if(minute == 0) {
-      if(second < 10) {
+    if (minute == 0) {
+      if (second < 10) {
         return `00:0${second}`
       }
       else {
         return `00:${second}`
       }
     }
-    else if(minute > 0 && minute < 10) {
-      if(second < 10) {
+    else if (minute > 0 && minute < 10) {
+      if (second < 10) {
         return `0${minute}:0${second}`
       }
       else {
@@ -118,7 +119,7 @@ export default function CurrentPlaylist({route}) {
       }
     }
     else {
-      if(second < 10) {
+      if (second < 10) {
         return `${minute}:0${second}`
       }
       else {
@@ -127,39 +128,57 @@ export default function CurrentPlaylist({route}) {
     }
   }
   const handle_Follow_UnFolllow = () => {
-    if(isFollowed === false) {
+    if (isFollowed === false) {
       axios.post('http://' + ipAddress + ':3177/follow-author', {
         authorid: authorId,
         userid: userid
       }).then(res => {
-        if(res.data.Status === 'Existed') {
-          alert('You have followed this author')
+        if (res.data.Status === 'Existed') {
+          Toast.show({
+            type: 'info',
+            text1: 'You have followed this author'
+          })
           setIsFollowed(true)
         }
-        else if(res.data.Status === 'Success') {
-          alert('Followed')
+        else if (res.data.Status === 'Success') {
+          Toast.show({
+            type: 'success',
+            text1: 'Followed'
+          })
           setIsFollowed(true)
         }
         else {
-          alert('Error')
+          Toast.show({
+            type: 'error',
+            text1: 'Error'
+          })
         }
       })
     }
-    else if(isFollowed === true) {
+    else if (isFollowed === true) {
       axios.post('http://' + ipAddress + ':3177/unfollow-author', {
         authorid: authorId,
         userid: userid
       }).then(res => {
-        if(res.data.Status === 'NotExisted') {
-          alert('You have unfollowed this author')
+        if (res.data.Status === 'NotExisted') {
+          Toast.show({
+            type: 'info',
+            text1: 'You have unfollowed this author'
+          })
           setIsFollowed(false)
         }
-        else if(res.data.Status === 'Success') {
-          alert('Unfollowed')
+        else if (res.data.Status === 'Success') {
+          Toast.show({
+            type: 'success',
+            text1: 'Unfollowed'
+          })
           setIsFollowed(false)
         }
         else {
-          alert('Error')
+          Toast.show({
+            type: 'error',
+            text1: 'Error'
+          })
         }
       })
     }
@@ -167,23 +186,29 @@ export default function CurrentPlaylist({route}) {
   useEffect(() => {
     async function getSongInfo() {
       await axios.get('http://' + ipAddress + ':3177/get-detail-song-info?songid=' + currentSongid).then(res => {
-        if(res.data.Status === 'Success') {
+        if (res.data.Status === 'Success') {
           console.log('check song info: ', res.data.Result[0])
           setSonginfo(res.data.Result[0])
         }
         else {
-          alert('Error')
+          Toast.show({
+            type: 'error',
+            text1: 'Error'
+          })
         }
       })
     }
     async function getFavouriteNum() {
       await axios.get('http://' + ipAddress + ':3177/count-favourite-by-songid?songid=' + currentSongid).then(res => {
-        if(res.data.Status === 'Success') {
+        if (res.data.Status === 'Success') {
           console.log('check favourite info: ', res.data.Result)
           setFavouriteNum(res.data.Result[0].soluotthich)
         }
         else {
-          alert('Error')
+          Toast.show({
+            type: 'error',
+            text1: 'Error'
+          })
         }
       })
     }
@@ -191,10 +216,11 @@ export default function CurrentPlaylist({route}) {
     getFavouriteNum()
   }, [currentSongid, rerenderCxt])
   return (
-    <View style={{backgroundColor: colors.background, flex: 1, paddingBottom: 130}}>
-      <View style={{backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center'}}>
+    <View style={{ backgroundColor: colors.background, flex: 1, paddingBottom: 130 }}>
+      <View style={{ backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center' }}>
         <View
-          style={{borderWidth: 1,
+          style={{
+            borderWidth: 1,
             borderRadius: 20,
             // overflow: 'hidden',
             height: 150,
@@ -205,30 +231,30 @@ export default function CurrentPlaylist({route}) {
             backgroundColor: 'rgba(1,1,1,0.5)'
           }}
         >
-          <View style={{flex: 1, flexDirection: 'row'}}>
-            <Image source={{uri: 'http://' + ipAddress + ':3177' + currentSongimg}} style={{width: 60, height: 60, borderRadius: 5}}></Image>
-            <View style={{flex: 1, marginLeft: 10, flexDirection: 'column'}}>
-              <Text style={{color: colors.textPrimary}}>{currentName}</Text>
-              <Text style={{color: colors.textPrimary, opacity: 0.5}}>{currentSinger}</Text>
+          <View style={{ flex: 1, flexDirection: 'row' }}>
+            <Image source={{ uri: 'http://' + ipAddress + ':3177' + currentSongimg }} style={{ width: 60, height: 60, borderRadius: 5 }}></Image>
+            <View style={{ flex: 1, marginLeft: 10, flexDirection: 'column' }}>
+              <Text style={{ color: colors.textPrimary }}>{currentName}</Text>
+              <Text style={{ color: colors.textPrimary, opacity: 0.5 }}>{currentSinger}</Text>
               <Text>
-                <AntDesign name="hearto" size={20} color='red' style={{marginRight: 10}}/>
-                <Text style={{color: colors.textPrimary, fontSize: 16 }}> {favouriteNum}</Text>
+                <AntDesign name="hearto" size={20} color='red' style={{ marginRight: 10 }} />
+                <Text style={{ color: colors.textPrimary, fontSize: 16 }}> {favouriteNum}</Text>
               </Text>
             </View>
           </View>
-          <View style={{backgroundColor: 'white', height: 1, opacity: 0.3}}>
+          <View style={{ backgroundColor: 'white', height: 1, opacity: 0.3 }}>
 
           </View>
-          <View style={{display: 'flex', flexDirection: 'row'}}>
-            <View style={{flex: 2}}>
-              <Text style={{color: colors.textPrimary, opacity: 0.5}}>Album</Text>
-              <Text style={{color: colors.textPrimary, opacity: 0.5}}>Author</Text>
-              <Text style={{color: colors.textPrimary, opacity: 0.5}}>Genre</Text>
+          <View style={{ display: 'flex', flexDirection: 'row' }}>
+            <View style={{ flex: 2 }}>
+              <Text style={{ color: colors.textPrimary, opacity: 0.5 }}>Album</Text>
+              <Text style={{ color: colors.textPrimary, opacity: 0.5 }}>Author</Text>
+              <Text style={{ color: colors.textPrimary, opacity: 0.5 }}>Genre</Text>
             </View>
-            <View style={{flex: 5}}>
-              <Text style={{color: colors.textPrimary}}>{songinfo?.albumname}</Text>
-              <Text style={{color: colors.textPrimary}}>{currentSinger}</Text>
-              <Text style={{color: colors.textPrimary}}>{songinfo?.genrename}</Text>
+            <View style={{ flex: 5 }}>
+              <Text style={{ color: colors.textPrimary }}>{songinfo?.albumname}</Text>
+              <Text style={{ color: colors.textPrimary }}>{currentSinger}</Text>
+              <Text style={{ color: colors.textPrimary }}>{songinfo?.genrename}</Text>
             </View>
           </View>
         </View>
@@ -252,16 +278,16 @@ export default function CurrentPlaylist({route}) {
                 setCurrentSinger(song.authorname)
                 console.log('current index: ', currentAudioIndex)
                 setCurrentAudioIndex(index)
-                loadSound({uri: "http://" + ipAddress + ":3177" + song.songuri})
-                
+                loadSound({ uri: "http://" + ipAddress + ":3177" + song.songuri })
+
               }}>
 
             </SongItem>
           })
         }
       </ScrollView>
-    {/* </View> */}
-    
+      {/* </View> */}
+
     </View>
   );
 }
@@ -276,7 +302,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     // paddingBottom: 130,
   },
-  
+
   // followbutton: (isFollowed) => ({
   //   backgroundColor: isFollowed === false ? colors.emphasis : 'rgba(1,1,1,1)',
   //   width: 120,

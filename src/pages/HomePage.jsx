@@ -97,18 +97,20 @@ const HomePage = () => {
       onPress={() => {
         axios.get('http://' + ipAddress + ':3177/get-listsongs-by-playlistid?playlistid=' + item.playlistid).then(res => {
           setCurrentList(res.data)
-          if(item.playlistimg !== ''){
-            navigation.navigate('NewAudioPlay', { 
-              songColectionURL: 'http://' + ipAddress + ':3177' + item.playlistimg, 
+          if (item.playlistimg !== '') {
+            navigation.navigate('NewAudioPlay', {
+              songColectionURL: 'http://' + ipAddress + ':3177' + item.playlistimg,
               songColectionName: item.playlistname,
-              isPlaylist: true 
-              })
+              isPlaylist: true,
+              playlistid: item.playlistid
+            })
           }
           else {
-            navigation.navigate('NewAudioPlay', { 
-              songColectionURL: 'http://' + ipAddress + ':3177/image/album/defaultplaylist.png', 
+            navigation.navigate('NewAudioPlay', {
+              songColectionURL: 'http://' + ipAddress + ':3177/image/album/defaultplaylist.png',
               songColectionName: item.playlistname,
-              isPlaylist: true
+              isPlaylist: true,
+              playlistid: item.playlistid
             })
           }
         })

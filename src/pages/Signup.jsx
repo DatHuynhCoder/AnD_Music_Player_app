@@ -6,7 +6,6 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
-  Alert
 } from 'react-native'
 import React, { useState } from 'react'
 import BouncyCheckbox from "react-native-bouncy-checkbox";
@@ -20,6 +19,8 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
+
+import Toast from 'react-native-toast-message';
 import axios from 'axios';
 
 const isAllNumbers = (str) => {
@@ -37,13 +38,22 @@ const SignUp = ({ navigation }) => {
 
   const handleRegister = () => {
     if (username === '' || phone === '' || email === '' || pass === '' || confirmPass === '') {
-      Alert.alert('Please fill in all the required information!');
+      Toast.show({
+        type: 'error',
+        text1: 'Please fill in all the required information ❌',
+      });
     }
     else if (!isAllNumbers(phone)) {
-      Alert.alert('The phone number must not contain non-numeric characters')
+      Toast.show({
+        type: 'error',
+        text1: 'The phone number must not contain non-numeric characters ❌',
+      });
     }
     else if (pass !== confirmPass) {
-      Alert.alert('Password and confirmation password must match')
+      Toast.show({
+        type: 'error',
+        text1: 'Password and confirmation password must match ❌',
+      });
     }
     else {
       const info = {
@@ -57,15 +67,21 @@ const SignUp = ({ navigation }) => {
         try {
           const response = await axios.post("http://" + ipAddress + ":3177" + "/register", info);
           if (response.data.Status === 'Success') {
-            Alert.alert("Account registration successful, please log in!");
-            const info = {userid : response.data.userid}
+            Toast.show({
+              type: 'success',
+              text1: 'Account registration successful, please log in ✅',
+            });
+            const info = { userid: response.data.userid }
             console.log('Data sent to add-favourite-playlist:', info);
             const favoraddresponse = await axios.post('http://' + ipAddress + ':3177/add-favourite-playlist', info);
             console.log(favoraddresponse.data.Status);
             navigation.navigate('LoginAccount');
           }
           else {
-            Alert.alert(response.data.Error);
+            Toast.show({
+              type: 'error',
+              text1: 'Error ❌',
+            });
           }
         } catch (error) {
           console.log('Loi trong qua trinh dang ky tai khoan')
