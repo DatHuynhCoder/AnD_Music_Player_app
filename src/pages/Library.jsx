@@ -297,7 +297,10 @@ const Library = () => {
                 />
               </Text>
 
-              <AntDesign name="logout" size={24} color="black" onPress={() => navigation.navigate('LoginAccount')} />
+              <TouchableOpacity onPress={() => navigation.navigate('LoginAccount')} style={{flexDirection:'row', justifyContent: 'center', gap: 7, backgroundColor:'#ab0d0a', padding: 5, borderRadius: 15}}>
+                <AntDesign name="logout" size={24} color="white" />
+                <Text style={{color: colors.textPrimary, fontWeight: 'bold'}}>Log out</Text>
+              </TouchableOpacity>
             </View>
 
             <View style={styles.selected_type_container}>
@@ -366,7 +369,7 @@ const Library = () => {
                                 setModalPlaylistname(item.playlistname);
                                 setShowModalUpandDel(true);
                               }}
-                              style={{ alignSelf: 'center' }}>
+                              style={{ alignSelf: 'center',flex: 2, textAlign:'right'}}>
                               <Entypo name="dots-three-vertical" size={24} color={colors.iconPrimary} />
                             </TouchableOpacity>
                           }
@@ -591,7 +594,7 @@ const styles = StyleSheet.create({
   },
   playlist_info: {
     paddingLeft: 5,
-    flex: 1,
+    flex: 5,
     borderTopRightRadius: 10,
     borderBottomRightRadius: 10,
   },

@@ -94,7 +94,7 @@ export default function CurrentPlaylist({route}) {
     handlePressForward,
     loadSound
   } = useContext(AudioContext)
-  const {userid} = useContext(UserContext)
+  const {userid, rerenderCxt} = useContext(UserContext)
   const [isFollowed, setIsFollowed] = useState(false) // for author list song
   const [songinfo, setSonginfo] = useState({})
   const [favouriteNum, setFavouriteNum] = useState(0)
@@ -189,7 +189,7 @@ export default function CurrentPlaylist({route}) {
     }
     getSongInfo()
     getFavouriteNum()
-  }, [currentSongid])
+  }, [currentSongid, rerenderCxt])
   return (
     <View style={{backgroundColor: colors.background, flex: 1, paddingBottom: 130}}>
       <View style={{backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center'}}>
