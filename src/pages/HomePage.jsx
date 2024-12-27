@@ -142,41 +142,42 @@ const HomePage = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView>
-        <View style={styles.headerContainer}>
-          <View style={styles.welcomeUserContainer}>
-            <Image
-              source={useravatar !== '' ? { uri: 'http://' + ipAddress + ':3177' + useravatar } : Default_Avatar}
-              style={styles.userAvatar}
-            />
+      <View style={styles.headerContainer}>
+        <View style={styles.welcomeUserContainer}>
+          <Image
+            source={useravatar !== '' ? { uri: 'http://' + ipAddress + ':3177' + useravatar } : Default_Avatar}
+            style={styles.userAvatar}
+          />
 
-            <View style={styles.userContainer}>
-              <Text style={styles.welcometxt}>Welcome Back !</Text>
-              <Text style={styles.usertxt}>{username}</Text>
-            </View>
-          </View>
-          <View style={styles.userOptionsContainer}>
-            <Ionicons
-              name='stats-chart'
-              color={colors.iconPrimary}
-              size={iconSizes.md}
-            />
-
-            <MaterialCommunityIcons
-              name='bell'
-              color={colors.iconPrimary}
-              size={iconSizes.md}
-            />
-
-            <Ionicons
-              name='settings'
-              color={colors.iconPrimary}
-              size={iconSizes.md}
-            />
-
+          <View style={styles.userContainer}>
+            <Text style={styles.welcometxt}>Welcome Back !</Text>
+            <Text style={styles.usertxt}>{username}</Text>
           </View>
         </View>
+        <View style={styles.userOptionsContainer}>
+          <Ionicons
+            name='stats-chart'
+            color={colors.iconPrimary}
+            size={iconSizes.md}
+          />
 
+          <MaterialCommunityIcons
+            name='bell'
+            color={colors.iconPrimary}
+            size={iconSizes.md}
+          />
+
+          <Ionicons
+            name='settings'
+            color={colors.iconPrimary}
+            size={iconSizes.md}
+          />
+
+        </View>
+      </View>
+
+      <ScrollView>
+        
         {/* Choose your playlist */}
         <View style={styles.playListContainer}>
           <Text style={styles.playListTxt}>From your Library</Text>
