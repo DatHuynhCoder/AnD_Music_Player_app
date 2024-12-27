@@ -6,7 +6,6 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
-  Alert
 } from 'react-native'
 import React, { useState, useContext } from 'react'
 import BouncyCheckbox from "react-native-bouncy-checkbox";
@@ -21,6 +20,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { ipAddress } from '../constants/ipAddress';
 import { UserContext } from '../context/UserContext';
 import axios from 'axios';
+import Toast from 'react-native-toast-message';
 
 const LoginAccount = ({ navigation }) => {
   const [isShow, setIsShow] = useState(false)
@@ -32,7 +32,10 @@ const LoginAccount = ({ navigation }) => {
 
   const handleLogin = () => {
     if (email === '' || pass === '') {
-      Alert.alert('Please fill in all the required information!')
+      Toast.show({
+        type:'error',
+        text1: 'Please fill in all the required information!'
+      })
     }
     else {
       const info = {
@@ -44,14 +47,21 @@ const LoginAccount = ({ navigation }) => {
         try {
           const response = await axios.post("http://" + ipAddress + ":3177" + "/login", info);
           if (response.data.Status === 'Success') {
-            Alert.alert("Account login successful, have fun listening to our music!");
             setUserid(response.data.userid);
             setUsername(response.data.username);
             setUseravatar(response.data.useravatar);
             navigation.navigate('MainBottom');
+            Toast.show({
+              type: 'success',
+              text1: 'Login successfully!',
+              text2: 'Hope you have a great time listening to our music 🎵'
+            });
           }
           else {
-            Alert.alert(response.data.Error);
+            Toast.show({
+              type: 'error',
+              text1: 'Error ❌'
+            })
           }
         } catch (error) {
           console.log('Loi trong qua trinh dang nhap tai khoan')

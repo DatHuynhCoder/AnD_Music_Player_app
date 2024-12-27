@@ -15,7 +15,6 @@ import {
   TextInput,
   Pressable,
   ImageBackground,
-  Alert
 } from 'react-native';
 import { Audio } from 'expo-av';
 import Slider from '@react-native-community/slider';
@@ -29,6 +28,8 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { UserContext } from '../context/UserContext';
 
+
+import Toast from 'react-native-toast-message';
 import axios from 'axios';
 
 import { AudioContext } from '../context/NewAudioContextProvider';
@@ -173,7 +174,10 @@ function PlayerPage({ navigation }) {
       addSongInfo
     );
     if (addSongResponse.data.Status !== 'Success') {
-      Alert.alert(addSongResponse.data.Error || 'Failed to add song to playlist!');
+      Toast.show({
+        type:'error',
+        text1: addSongResponse.data.Error || 'Failed to add song to playlist!'
+      })
       return;
     }
 
@@ -181,13 +185,19 @@ function PlayerPage({ navigation }) {
     await getPlaylist();
     setRerenderCxt(!rerenderCxt);
 
-    Alert.alert('Playlist created and song added successfully!');
+    Toast.show({
+      type: 'success',
+      text1: 'Playlist created and song added successfully!'
+    })
     setmodalPlaylistVisible(false);
   }
 
   const handleCreatePlaylist = async (playlistName) => {
     if (playlistName === '') {
-      Alert.alert('Please enter playlist name!');
+      Toast.show({
+        type: 'error',
+        text1: 'Please enter playlist name! ✍️'
+      })
       return;
     }
   
@@ -200,7 +210,10 @@ function PlayerPage({ navigation }) {
       // Thêm playlist mới
       const response = await axios.post('http://' + ipAddress + ':3177/add-new-playlist', info);
       if (response.data.Status !== 'Success') {
-        Alert.alert(response.data.Error || 'Failed to create playlist!');
+        Toast.show({
+          type: 'error',
+          text1: 'Failed to create playlist ❌'
+        })
         return;
       }
       const newplaylistid = response.data.playlistid;
@@ -216,19 +229,28 @@ function PlayerPage({ navigation }) {
         addSongInfo
       );
       if (addSongResponse.data.Status !== 'Success') {
-        Alert.alert(addSongResponse.data.Error || 'Failed to add song to playlist!');
+        Toast.show({
+          type: 'error',
+          text1: 'Failed to add song to playlist ❌'
+        })
         return;
       }
   
       // Tải lại danh sách playlist
       await getPlaylist();
       setRerenderCxt(!rerenderCxt);
-  
-      Alert.alert('Playlist created and song added successfully!');
+
+      Toast.show({
+        type: 'success',
+        text1: 'Playlist created and song added successfully ✅'
+      })
       setmodalPlaylistVisible(false);
     } catch (error) {
       console.error('Error in handleCreatePlaylist:', error);
-      Alert.alert('An error occurred while creating the playlist!');
+      Toast.show({
+        type: 'error',
+        text1: 'An error occurred while creating the playlist ❌'
+      })
     }
   };  
 
@@ -284,7 +306,6 @@ function PlayerPage({ navigation }) {
         transparent={true}
         visible={modalPlaylistVisible}
         onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
           setmodalPlaylistVisible(!modalPlaylistVisible);
         }}>
         <View style={styles.centeredView}>
@@ -480,11 +501,17 @@ function PlayerPage({ navigation }) {
               userid: userid
             }).then(res => {
               if (res.data.Status === 'Success') {
-                alert('Add to favourite successfully');
+                Toast.show({
+                  type: 'success',
+                  text1: 'Add to favourite successfully ✅'
+                })
                 setRerenderCxt(!rerenderCxt);
               }
               else {
-                alert(res.data.Error)
+                Toast.show({
+                  type: 'error',
+                  text1: 'Error ddd to favourite ❌' + res.data.Error
+                })
               }
             })
           }}/>

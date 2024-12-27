@@ -18,6 +18,8 @@ import albumIMG from '../../assets/albumIMG.jpeg'
 import { textSizes } from '../constants/demensions';
 import { UserContext } from '../context/UserContext';
 
+import Toast from 'react-native-toast-message';
+
 const { width } = Dimensions.get('window')
 
 const map = new Map()
@@ -179,15 +181,24 @@ export default function NewAudioPlay({ navigation, route }) {
         userid: userid
       }).then(res => {
         if (res.data.Status === 'Existed') {
-          alert('You have followed this author')
+          Toast.show({
+            type: 'info',
+            text1: 'You have followed this author'
+          })
           setIsFollowed(true)
         }
         else if (res.data.Status === 'Success') {
-          alert('Followed')
+          Toast.show({
+            type: 'success',
+            text1: 'Followed'
+          })
           setIsFollowed(true)
         }
         else {
-          alert('Error')
+          Toast.show({
+            type: 'error',
+            text1: 'Error'
+          })
         }
       })
     }
@@ -197,15 +208,24 @@ export default function NewAudioPlay({ navigation, route }) {
         userid: userid
       }).then(res => {
         if (res.data.Status === 'NotExisted') {
-          alert('You have unfollowed this author')
+          Toast.show({
+            type: 'info',
+            text1: 'You have unfollowed this author'
+          })
           setIsFollowed(false)
         }
         else if (res.data.Status === 'Success') {
-          alert('Unfollowed')
+          Toast.show({
+            type: 'success',
+            text1: 'Unfollowed'
+          })
           setIsFollowed(false)
         }
         else {
-          alert('Error')
+          Toast.show({
+            type: 'error',
+            text1: 'Error'
+          })
         }
       })
     }
@@ -221,7 +241,10 @@ export default function NewAudioPlay({ navigation, route }) {
           setIsFollowed(false)
         }
         else {
-          alert('Error while check followed')
+          Toast.show({
+            type: 'error',
+            text1: 'Error while check followed ❌'
+          })
         }
       })
     }

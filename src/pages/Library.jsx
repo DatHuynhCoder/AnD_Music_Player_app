@@ -7,7 +7,6 @@ import {
   Image,
   Modal,
   Pressable,
-  Alert,
   TextInput,
   ScrollView,
   ActivityIndicator
@@ -26,6 +25,7 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { UserContext } from '../context/UserContext'
 import { AudioContext } from '../context/NewAudioContextProvider'
 import axios from 'axios'
+import Toast from 'react-native-toast-message';
 import { DefaultPlaylistImg } from '../../assets/img/AnD_logo.png'
 import SongCard2 from '../components/SongCard2'
 import AuthorCard2 from '../components/AuthorCard2';
@@ -102,7 +102,10 @@ const Library = () => {
 
   const handleCreatePlaylist = (playlistName) => {
     if (playlistName === '') {
-      Alert.alert('Please enter playlist name!')
+      Toast.show({
+        type: 'error',
+        text1: 'Please enter playlist name ✍️',
+      });
     }
     else {
       const info = {
@@ -114,12 +117,18 @@ const Library = () => {
         try {
           const response = await axios.post('http://' + ipAddress + ':3177/add-new-playlist', info);
           if (response.data.Status === 'Success') {
-            Alert.alert('Create playlist successfully!');
+            Toast.show({
+              type: 'success',
+              text1: 'Create playlist successfully ✅',
+            });
             setmodalPlaylistVisible(!modalPlaylistVisible);
             setIsLoaded(true)
           }
           else {
-            Alert.alert(response.data.Error);
+            Toast.show({
+              type: 'error',
+              text1: 'Error',
+            });
           }
         }
         catch (error) {
@@ -171,7 +180,10 @@ const Library = () => {
         useravatar: newUserAvatar
       }
       const response = await axios.put('http://' + ipAddress + ':3177/update-useravatar', info);
-      Alert.alert('Update username successfully');
+      Toast.show({
+        type: 'success',
+        text1: 'Update useravatar successfully ✅',
+      });
     } catch (error) {
       console.log('Cannot update user: ', error);
     }
@@ -185,7 +197,10 @@ const Library = () => {
           username: username
         }
         const response = await axios.put('http://' + ipAddress + ':3177/update-username', info);
-        Alert.alert('Update username successfully');
+        Toast.show({
+          type: 'success',
+          text1: 'Update useravatar successfully ✅',
+        });
         setShowModalUsername(!showModalUsername);
       } catch (error) {
         console.log('Cannot update user: ', error);
@@ -202,7 +217,10 @@ const Library = () => {
           playlistname: modalPlaylistname
         }
         const response = await axios.put('http://' + ipAddress + ':3177/update-playlistname', info);
-        Alert.alert('Update playlistname successfully');
+        Toast.show({
+          type: 'success',
+          text1: 'Update playlistname successfully ✅',
+        });
         setShowModalUpandDel(!showModalUpandDel);
       } catch (error) {
         console.log('Cannot update Playlist: ', error);
@@ -215,7 +233,10 @@ const Library = () => {
     const deletePlaylist = async () => {
       try {
         const response = await axios.delete('http://' + ipAddress + ':3177/delete-playlist-by-id?playlistid=' + modalPlaylistid);
-        Alert.alert('Delete playlist successfully');
+        Toast.show({
+          type: 'success',
+          text1: 'Delete playlist successfully ✅',
+        });
         setShowModalUpandDel(!showModalUpandDel);
       } catch (error) {
         console.log('Cannot delete playlist: ', error);
@@ -257,7 +278,6 @@ const Library = () => {
         transparent={true}
         visible={showModalUsername}
         onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
           setShowModalUsername(!showModalUsername);
         }}>
         <View style={styles.centeredView}>
@@ -429,7 +449,6 @@ const Library = () => {
                       transparent={true}
                       visible={showModalUpandDel}
                       onRequestClose={() => {
-                        Alert.alert('Modal has been closed.');
                         setShowModalUpandDel(!showModalUpandDel);
                       }}>
                       <View style={styles.centeredView}>
@@ -473,7 +492,6 @@ const Library = () => {
                       transparent={true}
                       visible={modalPlaylistVisible}
                       onRequestClose={() => {
-                        Alert.alert('Modal has been closed.');
                         setmodalPlaylistVisible(!modalPlaylistVisible);
                       }}>
                       <View style={styles.centeredView}>
