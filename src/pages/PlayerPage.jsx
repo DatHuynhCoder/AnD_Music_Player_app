@@ -130,6 +130,7 @@ function PlayerPage({ navigation }) {
     sound, setSound,
     currentAudioIndex, setCurrentAudioIndex,
     isPlaying, setIsPlaying,
+    isRandoming, setIsRandoming,
     playbackPosition, setPlaybackPosition,
     playbackDuration, setPlaybackDuration,
     sliderPosition, setSliderPosition,
@@ -380,35 +381,46 @@ function PlayerPage({ navigation }) {
             </View>
           </View>
         </View>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 30, marginBottom: 10 }}>
+          {/* <Entypo name="shuffle" size={24} color={isRandoming === false ? colors.iconPrimary : colors.emphasis} onPress={() => {
+            console.log('press me set shuffle')
+            console.log('isRandoming before set: ', isRandoming)
+            setIsRandoming(prev => !prev)
+            console.log('isRandoming after set: ', isRandoming)
+          }}/> */}
+          <Text style={{ marginLeft: 1, color: 'white' }}>
+            {/* {convertTime(Math.floor(playbackDuration / 1000))} */}
+          </Text>
+        </View>
         <View style={{ marginVertical: 10 }}>
-            <Slider
-              style={{ width: 393, height: 40 }}
-              minimumValue={0}
-              maximumValue={1}
-              value={playbackPosition / playbackDuration}
-              // onValueChange={setSliderPosition}
-              minimumTrackTintColor='#00C2CB'
-              maximumTrackTintColor='white'
-            >
-            </Slider>
+          <Slider
+            style={{ width: 393, height: 40 }}
+            minimumValue={0}
+            maximumValue={1}
+            value={playbackPosition / playbackDuration}
+            // onValueChange={setSliderPosition}
+            minimumTrackTintColor='#00C2CB'
+            maximumTrackTintColor='white'
+          >
+          </Slider>
           {/* <TouchableWithoutFeedback onPress={() => handlePressSlider()}> */}
-            <Slider
-              style={{ width: 393, height: 40, position: 'absolute', zIndex: 1000 }}
-              minimumValue={0}
-              maximumValue={1}
-              onValueChange={(e) => {
-                async function changePos() {
-                  let letgo = playbackDuration * e
-                  setPlaybackPosition(letgo)
-                  await playback.setPositionAsync(letgo)
-                }
-                changePos()
-                // setSliderPosition(e)
-              }}
-              minimumTrackTintColor='rgba(1,1,1,0)'
-              maximumTrackTintColor='rgba(1,1,1,0)'
-              thumbTintColor='rgba(1,1,1,0)'
-            ></Slider>
+          <Slider
+            style={{ width: 393, height: 40, position: 'absolute', zIndex: 1000 }}
+            minimumValue={0}
+            maximumValue={1}
+            onValueChange={(e) => {
+              async function changePos() {
+                let letgo = playbackDuration * e
+                setPlaybackPosition(letgo)
+                await playback.setPositionAsync(letgo)
+              }
+              changePos()
+              // setSliderPosition(e)
+            }}
+            minimumTrackTintColor='rgba(1,1,1,0)'
+            maximumTrackTintColor='rgba(1,1,1,0)'
+            thumbTintColor='rgba(1,1,1,0)'
+          ></Slider>
           {/* </TouchableWithoutFeedback> */}
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 30 }}>
             <Text style={{ color: 'white' }}>{convertTime(Math.floor(playbackPosition / 1000))} </Text>
@@ -421,8 +433,9 @@ function PlayerPage({ navigation }) {
           <View>
             <Entypo name="loop" size={24} color={status.isLooping === false ? "white" : colors.emphasis} style={{ marginLeft: 10 }}
               onPress={() => {
-                async function setShuffle() {
+                async function setLoop() {
                   if (status.isLooping === false) {
+                    setIsRandoming(false)
                     const status = await playback.setIsLoopingAsync(true)
                     console.log('status after enable loop: ', status)
                     setStatus(status)
@@ -432,7 +445,7 @@ function PlayerPage({ navigation }) {
                     setStatus(status)
                   }
                 }
-                setShuffle()
+                setLoop()
               }}
             />
           </View>
