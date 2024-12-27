@@ -34,9 +34,9 @@ import Entypo from '@expo/vector-icons/Entypo';
 import {
   useNavigation
 } from '@react-navigation/native';
+import { Audio } from 'expo-av';
 
 const Library = () => {
-  const { currentList } = useContext(AudioContext)
   const {
     userid,
     setUserid,
@@ -47,7 +47,22 @@ const Library = () => {
     setRerenderCxt,
     rerenderCxt
   } = useContext(UserContext)
-  const { setCurrentList } = useContext(AudioContext)
+  const { 
+    currentList, setCurrentList,
+    listLength, setListLength,
+    currentSongid, setCurrentSongid,
+    currentSongimg, setCurrentSongimg,
+    currentName, setCurrentName,
+    currentSinger, setCurrentSinger,
+    playback, setPlayback,
+    status, setStatus,
+    sound, setSound,
+    currentAudioId, setCurrentAudioId,
+    isPlaying, setIsPlaying,
+    currentAudioIndex, setCurrentAudioIndex,
+    playbackPosition, setPlaybackPosition,
+    playbackDuration, setPlaybackDuration,
+  } = useContext(AudioContext)
   const [rerender, setRerender] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
   const navigation = useNavigation();
@@ -351,7 +366,27 @@ const Library = () => {
                 />
               </Text>
 
-              <TouchableOpacity onPress={() => navigation.navigate('LoginAccount')} style={{ flexDirection: 'row', justifyContent: 'center', gap: 7, backgroundColor: '#ab0d0a', padding: 5, borderRadius: 15 }}>
+              <TouchableOpacity onPress={() => {
+                  async function stopAll() {
+                    await playback.stopAsync()
+                  }
+                  stopAll()
+                  setCurrentList([])
+                  setListLength(0)
+                  setCurrentSongid(0)
+                  setCurrentSongimg('')
+                  setCurrentName('')
+                  setCurrentSinger('')
+                  setPlayback(new Audio.Sound())
+                  setStatus({isLoaded: false, isPlaying: false, positionMillis: 0, durationMillis: 0})
+                  setCurrentAudioId(0)
+                  setIsPlaying(false)
+                  setCurrentAudioIndex(0)
+                  setPlaybackPosition(null)
+                  setPlaybackDuration(null)
+                  navigation.navigate('LoginAccount')
+                }} 
+                style={{flexDirection:'row', justifyContent: 'center', gap: 7, backgroundColor:'#ab0d0a', padding: 5, borderRadius: 15}}>
                 <AntDesign name="logout" size={24} color="white" />
                 <Text style={{ color: colors.textPrimary, fontWeight: 'bold' }}>Log out</Text>
               </TouchableOpacity>
