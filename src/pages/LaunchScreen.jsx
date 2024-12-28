@@ -14,7 +14,7 @@ import { colors } from '../constants/color'
 
 const LaunchScreen = ({ navigation }) => {
   useEffect(() => {
-    setTimeout(() => navigation.navigate('Login'),3000)
+    setTimeout(() => navigation.navigate('LoginAccount'),3000)
   },[])
 
   return (

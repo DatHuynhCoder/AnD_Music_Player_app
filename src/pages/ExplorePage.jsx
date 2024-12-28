@@ -15,6 +15,7 @@ import { colors } from '../constants/color'
 import { iconSizes, textSizes } from '../constants/demensions';
 import { ipAddress } from '../constants/ipAddress.js';
 import AnDLogo from '../../assets/img/AnD_logo.png';
+import exploreBanner from '../../assets/img/exploreBanner.png'
 //components
 import SongCard2 from '../components/SongCard2';
 import AuthorCard from '../components/AuthorCard';
@@ -289,7 +290,7 @@ const ExplorePage = () => {
         {
           searchQuery === '' &&
           <View>
-            <FlatList
+            {/* <FlatList
               nestedScrollEnabled = {true}
               data={musicArea}
               ListHeaderComponent={(
@@ -308,6 +309,11 @@ const ExplorePage = () => {
               columnWrapperStyle={{ justifyContent: 'space-between' }}
               ItemSeparatorComponent={() => <View style={{ height: 10 }} />}
               keyExtractor={(item, index) => index.toString()}
+            /> */}
+
+            <Image 
+              source={exploreBanner}
+              style={{width: '100%', height: '200'}}
             />
             {/* Top Albums */}
             <Text style={styles.HeaderTxt}>Top Albums</Text>
